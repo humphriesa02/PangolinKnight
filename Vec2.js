@@ -27,7 +27,7 @@ class Vec2 {
         this.y /= scalar;
     }
 
-    mulitply(scalar) {
+    multiply(scalar) {
         this.x *= scalar;
         this.y *= scalar;
     }
@@ -50,6 +50,22 @@ class Vec2 {
 
     get_magnitude_squared() {
         return (this.x * this.x) + (this.y * this.y);
+    }
+
+    compute_magnitude() {
+        return Math.sqrt(this.get_magnitude_squared());
+    }
+
+    normalize() {
+        let magnitude_squared = this.get_magnitude_squared();
+        if (magnitude_squared == 0) 
+        {
+            this.x = 0;
+            this.y = 0;
+        }
+        else{
+            this.multiply(1 / Math.sqrt(magnitude_squared));
+        }
     }
 
     cross_product(other) {
