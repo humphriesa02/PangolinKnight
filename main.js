@@ -9,10 +9,6 @@ ASSET_MANAGER.downloadAll(() => {
 	const ctx = canvas.getContext("2d");
 	ctx.imageSmoothingEnabled = false;
 
-	let pangolin = new Pangolin(gameEngine);
-	
-	gameEngine.addEntity(pangolin)
-
 	gameEngine.init(ctx);
 
 	gameEngine.start();
