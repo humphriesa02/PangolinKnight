@@ -28,7 +28,7 @@ class Pangolin{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 2; i++){ // 2 States right now, idle and walking
+        for (let i = 0; i < 3; i++){ // 2 States right now, idle and walking
         this.animations.push([]);
             for (let j = 0; j < 4; j++){ // 4 directions
                 this.animations[i].push([]);
@@ -55,7 +55,6 @@ class Pangolin{
         //facing right
         this.animations[1][0] = new Animator(this.spritesheet, 0, 96, 48.25, 48, 2, 0.25, true);
 
-
         // facing left
         this.animations[1][1] = new Animator(this.spritesheet, 0, 144, 48.25, 48, 2, 0.25, true);
 
@@ -65,23 +64,46 @@ class Pangolin{
         // facing down
         this.animations[1][3] = new Animator(this.spritesheet, 0, 0, 48, 48, 2, 0.25, true);
 
+        //Rolling animations, state 2
+        this.animations[2][0] = new Animator(this.spritesheet, 0, 192, 48, 48, 3, 0.1, true);
+
+        this.animations[2][1] = new Animator(this.spritesheet, 0, 192, 48, 48, 3, 0.1, true);
+
+        this.animations[2][2] = new Animator(this.spritesheet, 0, 192, 48, 48, 3, 0.1, true);
+
+        this.animations[2][3] = new Animator(this.spritesheet, 0, 192, 48, 48, 3, 0.1, true);
+
 
     }
 
     update(){
+        if(this.game.keys["r"]){
+            this.rolling = !this.rolling;
+        }
         // Reset velocity
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
 
         // Compute direction from keypresses
-        this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
-        this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
-
-        // Figure out the state for animation
-        if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
-            this.state = 0;
+        if(!this.rolling){
+            this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
+            this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
         }
         else{
+            this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.roll_speed);
+            this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.roll_speed);
+        }
+        
+
+        // Figure out the state for animation
+        if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){ // holding still
+            if(this.rolling){
+                this.state = 2;
+            }
+            else
+                this.state = 0;
+        }
+        else{ // moving
             if(this.rolling){
                 this.state = 2;
             }
