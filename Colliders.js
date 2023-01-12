@@ -1,9 +1,9 @@
 const _GRAVITY_ACCELERATION = 980;
 const _AIR_DENSITY = .00123;
 const _DRAG_COEFFICIENT = 0.06;
-const _WIND_SPEED = 0;
+const _WIND_SPEED = 15;
 const _GROUND_PLANE = 730;
-const _RESTITUTION = 0.2;
+const _RESTITUTION = 0;
 
 class Particle {
     constructor(kinematic = false) {
@@ -31,6 +31,7 @@ class Particle {
     
         let entitiesCount = gameEngine.entities.length;
 
+        // Check for collisions against all entities
         for (let i = 0; i < entitiesCount; i++) {
             let entity = gameEngine.entities[i];
             if (this != entity) {
@@ -74,6 +75,47 @@ class Particle {
                                 / (this.v_pos.y - this.v_prev_pos.y) * 
                                 (this.v_pos.x - this.v_prev_pos.x)) + 
                                 this.v_prev_pos.x;
+
+                this.b_collision = true;
+            }
+        }
+        // Check for collisions with horizontal bounds
+        if (this.v_pos.x >= 1024 - this.f_radius) {
+            let normal = new Vec2(-1, 0);
+            let relative_velocity = this.v_velocity.clone();
+            let rvn = relative_velocity.dot(normal);    // The component of the relative velocity in the direction of the collision unit normal vector
+            // Check to see if the particle is moving toward the ground
+            if (rvn < 0.0) {
+                let impulse = -rvn * (_RESTITUTION + 1) * this.f_mass;
+                let impact_force = normal.clone();
+                impact_force.multiply(impulse / dt)
+                this.v_impact_forces.add(impact_force);
+
+                this.v_pos.x = 1024 - this.f_radius;
+                this.v_pos.y = ((1024 - this.f_radius + this.v_prev_pos.x) 
+                                / (this.v_pos.x - this.v_prev_pos.x) * 
+                                (this.v_pos.y - this.v_prev_pos.y)) + 
+                                this.v_prev_pos.y;
+
+                this.b_collision = true;
+            }
+        }
+        else if (this.v_pos.x < this.f_radius) {
+            let normal = new Vec2(1, 0);
+            let relative_velocity = this.v_velocity.clone();
+            let rvn = relative_velocity.dot(normal);    // The component of the relative velocity in the direction of the collision unit normal vector
+            // Check to see if the particle is moving toward the ground
+            if (rvn < 0.0) {
+                let impulse = -rvn * (_RESTITUTION + 1) * this.f_mass;
+                let impact_force = normal.clone();
+                impact_force.multiply(impulse / dt)
+                this.v_impact_forces.add(impact_force);
+
+                this.v_pos.x = this.f_radius;
+                this.v_pos.y = ((this.f_radius - this.v_prev_pos.x) 
+                                / (this.v_pos.x - this.v_prev_pos.x) * 
+                                (this.v_pos.y - this.v_prev_pos.y)) + 
+                                this.v_prev_pos.y;
 
                 this.b_collision = true;
             }
@@ -125,9 +167,6 @@ class Particle {
 
         // Misc. calculations:
         this.f_speed = Math.sqrt(this.v_velocity.get_magnitude_squared());
-
-        if      (this.v_pos.x < 3)       { this.v_pos.x = 3; }
-        else if (this.v_pos.x > 1020)    { this.v_pos.x = 1020; }
     }
 
     update() {
@@ -139,11 +178,9 @@ class Particle {
     }
 
     draw(ctx) {
-        //ctx.save()
         let x = this.v_pos.x;
         let y = this.v_pos.y;
         let radius = this.f_radius;
         drawCircle(ctx, x, y, radius, this.color, this.color, 3);
-        //ctx.restore();
     }
 }
