@@ -1,9 +1,9 @@
 const _GRAVITY_ACCELERATION = 980;
 const _AIR_DENSITY = .00123;
 const _DRAG_COEFFICIENT = 0.06;
-const _WIND_SPEED = 15;
+const _WIND_SPEED = 0;
 const _GROUND_PLANE = 730;
-const _RESTITUTION = 0;
+const _RESTITUTION = 0.2;
 
 class Particle {
     constructor(kinematic = false) {
@@ -37,9 +37,9 @@ class Particle {
             if (this != entity) {
                 let radii = this.f_radius + entity.f_radius;
                 let distance = Vec2.diff(this.v_pos, entity.v_pos);
-                let seperation = distance.compute_magnitude() - radii;
+                let distance_squared = distance.dot(distance);
 
-                if (seperation <= 0.0) {
+                if (distance_squared <= radii * radii) {
                     distance.normalize();
                     let normal = distance.clone();
                     let relative_velocity = Vec2.diff(this.v_velocity, entity.v_velocity);
@@ -51,6 +51,7 @@ class Particle {
                         impact_force.multiply(impulse / dt);
                         this.v_impact_forces.add(impact_force);
 
+                        let seperation = Math.sqrt(distance_squared) - radii;
                         let ns = Vec2.scale(normal, seperation);
                         this.v_pos.minus(ns);
                         this.b_collision = true;

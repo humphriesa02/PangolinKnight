@@ -2,7 +2,7 @@ function physics_test_init() {
     let units = [];
     let pos_x = 0.0;
     let pos_y = 0.0;
-    for (i = 0; i < 50; i++) {
+    for (i = 0; i < 1500; i++) {
         pos_x = (Math.random() * 256) + 256;
         pos_y = (Math.random() * 25) + 25;
 
