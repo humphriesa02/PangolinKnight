@@ -1,7 +1,7 @@
 const _GRAVITY_ACCELERATION = 980;
-const _AIR_DENSITY = .123;
+const _AIR_DENSITY = .00123;
 const _DRAG_COEFFICIENT = 0.06;
-const _WIND_SPEED = 30;
+const _WIND_SPEED = 0;
 const _GROUND_PLANE = 730;
 const _RESTITUTION = 0.2;
 
@@ -16,7 +16,7 @@ class Particle {
         this.f_speed = 0.0;                         // Speed (magnitude of the velocity)
         this.v_forces = new Vec2();                 // Total force acting on the particle
         this.v_impact_forces = new Vec2();          // Total forces from an impact acting on the particle
-        this.f_radius = 1;                        // Particle radius used for collision detection
+        this.f_radius = 10;                         // Particle radius used for collision detection
         this.v_gravity = new Vec2(0,                // Gravity force vector
             this.f_mass * _GRAVITY_ACCELERATION);
         this.b_collision = false;                   // Whether the particle has collided with something
@@ -70,7 +70,7 @@ class Particle {
                 this.v_impact_forces.add(impact_force);
 
                 this.v_pos.y = _GROUND_PLANE - this.f_radius;
-                this.v_pos.x = ((_GROUND_PLANE + this.f_radius - this.v_prev_pos.y) 
+                this.v_pos.x = ((_GROUND_PLANE - this.f_radius + this.v_prev_pos.y) 
                                 / (this.v_pos.y - this.v_prev_pos.y) * 
                                 (this.v_pos.x - this.v_prev_pos.x)) + 
                                 this.v_prev_pos.x;
@@ -139,15 +139,11 @@ class Particle {
     }
 
     draw(ctx) {
-        ctx.save();
-        //let x = Math.floor(this.v_pos.x);
-        //let y = Math.floor(this.v_pos.y);
-        //let radius = Math.ceil(this.f_radius);
+        //ctx.save()
         let x = this.v_pos.x;
         let y = this.v_pos.y;
         let radius = this.f_radius;
-        drawCircle(ctx, x, y, radius, this.color, this.color, 1);
-        //ctx.fillRect(x, y, 3, 3);
-        ctx.restore();
+        drawCircle(ctx, x, y, radius, this.color, this.color, 3);
+        //ctx.restore();
     }
 }

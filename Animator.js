@@ -43,7 +43,6 @@ class Animator {
 }
 
 function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
-    ctx.save();
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
     if (fill) {

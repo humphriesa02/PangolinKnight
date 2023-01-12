@@ -8,6 +8,7 @@ function physics_test_init() {
 
         let particle = new Particle(true);
         particle.v_pos = new Vec2(pos_x, pos_y);
+        particle.f_radius = Math.random() * 10;
         units.push(particle);
     }
     for (i = 0; i < 10; i++)

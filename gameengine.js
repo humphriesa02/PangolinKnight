@@ -90,6 +90,11 @@ class GameEngine {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
+        let fps = Math.round(1 / this.clockTick);
+        let text = "fps: " + fps.toString();
+        this.ctx.fillText(text, 980, 20);
+        this.ctx.stroke();
     };
 
     update() {
@@ -108,12 +113,6 @@ class GameEngine {
                 this.entities.splice(i, 1);
             }
         }
-
-        // This doesnt work
-        let fps = 1 / this.clockTick;
-        let text = "fps: " + fps.toString();
-        this.ctx.font = "48px serif";
-        this.ctx.fillText(text, 250, 250);
     };
 
     loop() {
