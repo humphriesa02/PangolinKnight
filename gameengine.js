@@ -25,9 +25,10 @@ class GameEngine {
         this.ctx = ctx;
         this.startInput();
         this.timer = new Timer();
-        this.entities = physics_test_init();
+        //this.entities = physics_test_init();
         let pangolin = new Pangolin(gameEngine);
-	    this.addEntity(pangolin)
+	    this.addEntity(pangolin);
+        this.addEntity(new map(pangolin));
     };
 
     start() {
