@@ -5,10 +5,10 @@ class map{
         this.spriteSheet = ASSET_MANAGER.getAsset("./sprites/map.png");
         this.animations = [];
         this.scale = 3;
-        this.laodAnimations();
+        this.loadAnimations();
         this.addEntities();
     }
-    laodAnimations(){
+    loadAnimations(){
         for(var i = 0; i < 3; i++) {//3 columns
             this.animations.push([]);
             for(var j = 0; j < 3; j++){//3 rows
