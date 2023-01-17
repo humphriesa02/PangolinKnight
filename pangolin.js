@@ -215,7 +215,10 @@ class Pangolin{
     }
 
     draw(ctx){
-        console.log("state: ", this.state, " facing: ", this.facing);
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 64, 64)
+        //console.log("state: ", this.state, " facing: ", this.facing);
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 64, 64);
+    }
+
+    register_input(){
     }
 }

@@ -27,7 +27,8 @@ class GameEngine {
         this.timer = new Timer();
         //this.entities = physics_test_init();
         let pangolin = new Pangolin(gameEngine);
-	    this.addEntity(pangolin)
+	    this.addEntity(pangolin);
+        this.addEntity(new map(pangolin));
     };
 
     start() {
