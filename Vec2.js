@@ -68,7 +68,15 @@ class Vec2 {
         }
     }
 
-    cross_product(other) {
+    dot(other) {
+        return this.x * other.x + this.y * other.y;
+    }
+
+    cross(other) {
         return this.x * other.y - this.y * other.x;
+    }
+
+    clone() {
+        return new Vec2(this.x, this.y);
     }
 }
