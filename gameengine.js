@@ -25,6 +25,9 @@ class GameEngine {
         this.ctx = ctx;
         this.startInput();
         this.timer = new Timer();
+        //this.entities = physics_test_init();
+        let pangolin = new Pangolin(gameEngine);
+	    this.addEntity(pangolin)
     };
 
     start() {
@@ -89,6 +92,11 @@ class GameEngine {
         for (let i = this.entities.length - 1; i >= 0; i--) {
             this.entities[i].draw(this.ctx, this);
         }
+
+        let fps = Math.round(1 / this.clockTick);
+        let text = "fps: " + fps.toString();
+        this.ctx.fillText(text, 980, 20);
+        this.ctx.stroke();
     };
 
     update() {
@@ -113,6 +121,8 @@ class GameEngine {
         this.clockTick = this.timer.tick();
         this.update();
         this.draw();
+
+        this.click = null;
     };
 
 };
