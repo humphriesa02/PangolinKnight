@@ -27,3 +27,15 @@ function physics_test_init() {
 
     return units;
 }
+
+function overlap_AABB_AABB(a, b) {
+    if (Math.abs(a.center.x - b.center.x) > (a.halfwidth.x + b.halfwidth.x)) { return false; }
+    if (Math.abs(a.center.y - b.center.y) > (a.halfwidth.y + b.halfwidth.y)) { return false; }
+    return true;
+}
+
+function simple_AABB_AABB_collision(a, b) {
+    if (overlap_AABB_AABB(a.transform.pos, a.collider.collider, b.transform.pos, b.collider.collider )) {
+        
+    }
+}

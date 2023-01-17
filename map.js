@@ -1,10 +1,13 @@
 class map{
     constructor(player){
         this.player = player;
-        this.position = [0,0];
+        this.prev_pos = {x: 0, y: 0};
+        this.room_position = {x: 0, y: 0};
         this.spriteSheet = ASSET_MANAGER.getAsset("./sprites/map.png");
         this.animations = [];
-        this.scale = 3;
+        this.scale = 4;
+        this.ROOM_HEIGHT = 8 * 16 * this.scale;
+        this.ROOM_WIDTH = 10 * 16 * this.scale;
         this.loadAnimations();
         this.addEntities();
     }
@@ -29,8 +32,7 @@ class map{
         this.animations[2][2] = new Animator(this.spriteSheet, 0, 0, 160, 128, 1, 1, true, this.scale);
     }
     addEntities(){
-        let pass = ('room' + this.position[0]) + this.position[1];
-        this.room = rooms[pass];
+        this.room = rooms["room00"];
         for(let i = 0; i < this.room.pots.length; i++){
             gameEngine.addEntity(new pot(this.room.pots[i]));
         }
@@ -38,10 +40,23 @@ class map{
             gameEngine.addEntity(new block(this.room.blocks[i]));
         }
     }
-    update(){
 
+    update(){
+        this.player_room();
     }
+
     draw(ctx){
-        this.animations[this.position[0]][this.position[1]].drawFrame(gameEngine.clockTick,ctx, 0,0,160,128);
+        this.animations[this.room_position.x][this.room_position.y].drawFrame(gameEngine.clockTick,ctx, 0,0,160,128);
+    }
+
+    player_room() {
+        let room_x = Math.floor(this.player.transform.pos.x / this.ROOM_WIDTH);
+        let room_y = Math.floor(this.player.transform.pos.y / this.ROOM_HEIGHT); 
+        this.room_position = {x: room_x, y: room_y};
+        if (this.room_position.x != this.prev_pos.x || this.room_position.y != this.prev_pos.y)
+        {
+            console.log("Room changed");
+        }
+        this.prev_pos = {x: this.room_position.x, y: this.room_position.y};
     }
 }
