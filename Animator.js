@@ -9,18 +9,18 @@ class Animator {
     drawFrame(tick, ctx, x, y, width = this.width, height = this.height) {
         if (this.repeat || !this.done)
         {
+            const frame = this.currentFrame();
             this.elapsedTime += tick;
             if (this.elapsedTime > this.totalTime) {
                 this.elapsedTime -= this.totalTime;
                 if (!this.repeat) { this.done = true; }
             }
-            const frame = this.currentFrame();
 
             ctx.drawImage(this.spritesheet, 
                 this.xStart + this.width*frame, this.yStart, 
                 this.width, this.height, 
                 x, y, 
-                width, height);
+                width, height);  
         }
     }
 
