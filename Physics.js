@@ -121,5 +121,4 @@ function collisions(entities) {
             prevent_overlap(entities[i], entities[j]);
         }
     }
-
 }

@@ -1,6 +1,6 @@
 class Animator {
-    constructor(spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat = true) {
-        Object.assign(this, {spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat});
+    constructor(spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat = true, scale = 1) {
+        Object.assign(this, {spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat, scale});
         this.elapsedTime = 0;
         this.totalTime = frameCount * frameDuration;
         this.done = false;
@@ -9,18 +9,19 @@ class Animator {
     drawFrame(tick, ctx, x, y, width = this.width, height = this.height) {
         if (this.repeat || !this.done)
         {
+            const frame = this.currentFrame();
             this.elapsedTime += tick;
             if (this.elapsedTime > this.totalTime) {
                 this.elapsedTime -= this.totalTime;
                 if (!this.repeat) { this.done = true; }
             }
-            const frame = this.currentFrame();
 
             ctx.drawImage(this.spritesheet, 
                 this.xStart + this.width*frame, this.yStart, 
                 this.width, this.height, 
                 x, y, 
-                width, height);
+                width * this.scale, height * this.scale);
+
         }
     }
 

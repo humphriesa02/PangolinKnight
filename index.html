@@ -5,19 +5,33 @@
     <meta charset="utf-8">
     <title>Test</title>
   
+    <script type="text/javascript" src="./levels.js"></script>
+    <script type="text/javascript" src="./pot.js"></script>
+    <script type="text/javascript" src="./chest.js"></script>
+    <script type="text/javascript" src="./door.js"></script>
+    <script type="text/javascript" src="./statue.js"></script>
+    <script type="text/javascript" src="./block.js"></script>
+    <script type="text/javascript" src="./crystal.js"></script>
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./timer.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
     <script type="text/javascript" src="./util.js"></script>
     <script type="text/javascript" src="./Vec2.js"></script>
     <script type="text/javascript" src="./Components.js"></script>
+    <script type="text/javascript" src="./sword.js"></script>
     <script type="text/javascript" src="./pangolin.js"></script>
     <script type="text/javascript" src="./Colliders.js"></script>
     <script type="text/javascript" src="./Physics.js"></script>
     <script type="text/javascript" src="./Animator.js"></script>
+    <script type="text/javascript" src="./map.js"></script>
+    <script type="text/javascript" src="./sceneManager.js"></script>
     <script type="text/javascript" src="./main.js"></script>
 </head>
 <body>
-    <canvas id="gameWorld" width="1024" height="768" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
+    <canvas id="gameWorld" width="640" height="512" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
+    <div>
+        <br />
+        <input type="checkbox" id="debug"> Debug <input type="checkbox" id="mute"> Mute <input type="range" id="volume" min="0" max="1" value="0.1" step="0.05"> Volume
+    </div>
 </body>
 </html>
