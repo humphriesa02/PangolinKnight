@@ -17,6 +17,7 @@ class Sword{
                 break;
             case 3:
                 this.transform = new Transform(new Vec2(sword_pos.x - 64, sword_pos.y));
+                break;
         }
         
         this.collider;
@@ -38,66 +39,72 @@ class Sword{
         // Sword slash animations
 
         // facing right
-        this.animations[0] = new Animator(this.spritesheet, 0, 48, 16, 16, 3, 0.07, false);
+        this.animations[0] = new Animator(this.spritesheet, 0, 48, 16, 16, 4, 0.065, false);
 
         // facing left
-        this.animations[1] = new Animator(this.spritesheet, 0, 32, 16, 16, 3, 0.07, false);
+        this.animations[1] = new Animator(this.spritesheet, 0, 32, 16, 16, 4, 0.065, false);
 
         // facing up
-        this.animations[2] = new Animator(this.spritesheet, 0, 16, 16, 16, 3, 0.07, false);
+        this.animations[2] = new Animator(this.spritesheet, 0, 16, 16, 16, 4, 0.065, false);
 
         // facing down
-        this.animations[3] = new Animator(this.spritesheet, 0, 0, 16, 16, 3, 0.07, false);
+        this.animations[3] = new Animator(this.spritesheet, 0, 0, 16, 16, 4, 0.065, false);
     }
 
     update(){
         switch(this.facing){
             
             case 0: // facing right
-                if(this.getAccurateFrame(0) == 0){
+                if(this.animations[0].currentFrame() == 0){
                     this.transform.pos.y = this.player_pos.y - 64;
                 } 
-                else if(this.getAccurateFrame(0) == 1){
-                    this.transform.pos.x = this.player_pos.x + 64;
+                else if(this.animations[0].currentFrame() == 1){
+                    this.transform.pos.x = this.player_pos.x + 50;
                 }
-                else if(this.getAccurateFrame(0) == 2){
-                    this.transform.pos.y = this.player_pos.y;
+                else if(this.animations[0].currentFrame() == 2){
+                    this.transform.pos.y = this.player_pos.y;  
+                    this.transform.pos.x = this.player_pos.x + 64;
                 }
                 break;
 
                 case 1: // facing left
-                if(this.getAccurateFrame(1) == 0){
+                if(this.animations[1].currentFrame() == 0){
                     this.transform.pos.y = this.player_pos.y - 64;
                 } 
-                else if(this.getAccurateFrame(1) == 1){
-                    this.transform.pos.x = this.player_pos.x - 64;
+                else if(this.animations[1].currentFrame() == 1){
+                    this.transform.pos.x = this.player_pos.x - 50;
                 }
-                else if(this.getAccurateFrame(1) == 2){
+                else if(this.animations[1].currentFrame() == 2){
                     this.transform.pos.y = this.player_pos.y;
+                    this.transform.pos.x = this.player_pos.x - 64;
                 }
                 break;
 
                 case 2: // facing up
-                if(this.getAccurateFrame(2) == 0){
+                if(this.animations[2].currentFrame() == 0){
                     this.transform.pos.x = this.player_pos.x + 64;
                 } 
-                else if(this.getAccurateFrame(2) == 1){
-                    this.transform.pos.y = this.player_pos.y - 64;
+                else if(this.animations[2].currentFrame() == 1){
+                    this.transform.pos.y = this.player_pos.y - 50;
+                    this.transform.pos.x = this.player_pos.x + 50;
                 }
-                else if(this.getAccurateFrame(2) == 2){
+                else if(this.animations[2].currentFrame() == 2){
                     this.transform.pos.x = this.player_pos.x;
+                    this.transform.pos.y = this.player_pos.y - 64
                 }
                 break;
 
                 case 3: // facing down
-                if(this.getAccurateFrame(3) == 0){
+                if(this.animations[3].currentFrame() == 0){
                     this.transform.pos.x = this.player_pos.x - 64;
                 } 
-                else if(this.getAccurateFrame(3) == 1){
-                    this.transform.pos.y = this.player_pos.y + 64;
+                else if(this.animations[3].currentFrame() == 1){
+                    this.transform.pos.y = this.player_pos.y + 50;
+                    this.transform.pos.x = this.player_pos.x - 50;
                 }
-                else if(this.getAccurateFrame(3) == 2){
+                else if(this.animations[3].currentFrame() == 2){
                     this.transform.pos.x = this.player_pos.x;
+                    this.transform.pos.y = this.player_pos.y + 64;
                 }
                 break;
         }
@@ -107,13 +114,6 @@ class Sword{
         }
       
 
-    }
-
-    // Since calling "getFrame" in update will be late
-    // (the frame we have in update will be one frame behind what is drawn)
-    // We can instead ask for what frame we will have in the next game tick
-    getAccurateFrame(direction){
-        return Math.floor((this.animations[direction].elapsedTime + this.game.clockTick)/ this.animations[direction].frameDuration)
     }
 
     draw(ctx){
