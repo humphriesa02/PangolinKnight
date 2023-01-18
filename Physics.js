@@ -28,14 +28,97 @@ function physics_test_init() {
     return units;
 }
 
-function overlap_AABB_AABB(a, b) {
-    if (Math.abs(a.center.x - b.center.x) > (a.halfwidth.x + b.halfwidth.x)) { return false; }
-    if (Math.abs(a.center.y - b.center.y) > (a.halfwidth.y + b.halfwidth.y)) { return false; }
+function testAABBAABB(a, b) {
+    if (Math.abs(a.center.x - b.center.x) > (a.half.x + b.half.x)) { return false; }
+    if (Math.abs(a.center.y - b.center.y) > (a.half.y + b.half.y)) { return false; }
     return true;
 }
 
-function simple_AABB_AABB_collision(a, b) {
-    if (overlap_AABB_AABB(a.transform.pos, a.collider.collider, b.transform.pos, b.collider.collider )) {
-        
+function get_AABBAABB_overlap(a, b, ac = a.center, bc = b.center) {
+    let ox = a.half.x + b.half.x - Math.abs(ac.x - bc.x);
+    let oy = a.half.y + b.half.y - Math.abs(ac.y - bc.y);
+    return {x: ox, y: oy};
+}
+
+// Prevents overlap between two entities a and b if both should prevent overlap
+function prevent_overlap(a, b) {
+    // Checks if a and b have colliders, block movement, have moved since the last frame,
+    // and if they are overlapping, if any of those conditions are false it exits early
+    if (!a.hasOwnProperty(collider) || !b.hasOwnProperty(collider)) return;
+    if (!a.collider.block_move || !b.collider.block_move) return;
+    if (a.transform.pos == a.transform.prev_pos &&
+        b.transform.pos == b.transform.prev_pos) return;
+    
+    let overlap = get_AABBAABB_overlap(a.collider.body, b.collider.body)
+    if (overlap.x <= 0 || overlap.y <= 0) return;
+
+    // Gets the overlap between a and b on the previous time step, along with a ratio of speeds between a and b
+    let prev_overlap = get_AABBAABB_overlap(a.collider.body, b.collider.body, a.transform.prev_pos, b.transform.prev_pos);
+    let speed_a_sqr = a.transform.velocity.dot(a.transform.velocity);
+    let speed_b_sqr = b.transform.velocity.dot(b.transform.velocity);
+    let speed_ratio_a = speed_a_sqr / (speed_a_sqr + speed_b_sqr);
+    let speed_ratio_b = speed_b_sqr / (speed_a_sqr + speed_b_sqr);
+
+    // If the overlap is horizontal
+    if (prev_overlap.y > 0) {
+        // If a is on the left push a to the left and b to the right
+        if (a.transform.pos.x < b.tranform.pos.x) {
+            a.transform.pos.x -= overlap.x * speed_ratio_a
+            b.transform.pos.x += overlap.x * speed_ratio_b
+        }
+        // If a is on the right push a to the right and b to the left
+        else {
+            a.transform.pos.x += overlap.x * speed_ratio_a
+            b.transform.pos.x -= overlap.x * speed_ratio_b
+        }
+    }
+    // If the overlap is vertical
+    else if (prev_overlap.x > 0) {
+        // If a is on the left push a to the left and b to the right
+        if (a.transform.pos.y < b.tranform.pos.y) {
+            a.transform.pos.y -= overlap.y * speed_ratio_a
+            b.transform.pos.y += overlap.y * speed_ratio_b
+        }
+        // If a is on the right push a to the right and b to the left
+        else {
+            a.transform.pos.y += overlap.y * speed_ratio_a
+            b.transform.pos.y -= overlap.y * speed_ratio_b
+        }
+    }
+    // If the overlap is perfectly diagonal
+    else {
+        let relative_velocity = Vec2.diff(a.transform.velocity, b.transform.velocity);
+        // If the relative velocity is greater in the horizontal component then favor
+        // pushing the objects out in the vertical direction
+        if (Math.abs(relative_velocity.x) > Math.abs(relative_velocity.y)) {
+            if (a.transform.pos.y < b.tranform.pos.y) {
+                a.transform.pos.y -= overlap.y * speed_ratio_a
+                b.transform.pos.y += overlap.y * speed_ratio_b
+            }
+            else {
+                a.transform.pos.y += overlap.y * speed_ratio_a
+                b.transform.pos.y -= overlap.y * speed_ratio_b
+            }
+        }
+        // If the speed is greater in the vertical then favor pushing in the horizontal
+        else {
+            if (a.transform.pos.x < b.tranform.pos.x) {
+                a.transform.pos.x -= overlap.x * speed_ratio_a
+                b.transform.pos.x += overlap.x * speed_ratio_b
+            }
+            else {
+                a.transform.pos.x += overlap.x * speed_ratio_a
+                b.transform.pos.x -= overlap.x * speed_ratio_b
+            }
+        }
+    }
+}
+
+function collisions(entities) {
+    let entities_count = entities.length;
+    for (let i = 0; i < entities_count; i++) {
+        for (let j = i + 1; j < entities_count; j++) {
+            prevent_overlap(entities[i], entities[j]);
+        }
     }
 }

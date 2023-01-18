@@ -112,6 +112,8 @@ class GameEngine {
                 this.entities.splice(i, 1);
             }
         }
+
+        collisions(this.entities);
     };
 
     loop() {

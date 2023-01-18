@@ -35,8 +35,8 @@ class Input {
 }
 
 class Collider {
-    constructor(collider, block_move, block_vision, block_jump) {
-        this.collider = collider;
+    constructor(body, block_move, block_vision, block_jump) {
+        this.body = body;
         this.block_move = block_move;
         this.block_vision = block_vision;
         this.block_jump = block_jump;
