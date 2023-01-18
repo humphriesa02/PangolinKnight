@@ -25,8 +25,8 @@ class Pangolin{
 
         // Jump variables
         this.jump_speed = 300;
-        this.jump_time = 5;
-        this.jump_distance = 300;
+        this.jump_time = 4;
+        this.jump_distance = 140;
         this.jump_height = 96;
         this.z = 0; // Give us the impression of a "fake" jump when in top down
         this.distance_remaining;
@@ -133,16 +133,16 @@ class Pangolin{
         // Jump animations, state 5
 
         //facing right
-        this.animations[5][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.15, false);
+        this.animations[5][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, false);
 
         //facing left
-        this.animations[5][1] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.15, false);
+        this.animations[5][1] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, false);
 
         //facing up
-        this.animations[5][2] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.15, false);
+        this.animations[5][2] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, false);
 
         //facing down
-        this.animations[5][3] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.15, false);
+        this.animations[5][3] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, false);
     }
 
     update(){
@@ -196,19 +196,19 @@ class Pangolin{
         // Sword slash check
         if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && !this.jumping){
             // Figure out which direction we are slashing in
-            if(Math.abs(this.game.click.x-this.transform.pos.x) > Math.abs(this.game.click.y-this.transform.pos.y)){// X is farther
-                if(this.game.click.x > this.transform.pos.x){
+            if(Math.abs(this.game.click.x-(this.transform.pos.x - screenX())) > Math.abs(this.game.click.y-(this.transform.pos.y-screenY()))){// X is farther
+                if(this.game.click.x > this.transform.pos.x - screenX()){
                     this.facing = 0;
                 }
-                else if(this.game.click.x < this.transform.pos.x){
+                else if(this.game.click.x < this.transform.pos.x - screenX()){
                     this.facing = 1;
                 }
             }
             else{
-                if(this.game.click.y < this.transform.pos.y){
+                if(this.game.click.y < this.transform.pos.y - screenY()){
                     this.facing = 2;
                 }
-                else if(this.game.click.y > this.transform.pos.y){
+                else if(this.game.click.y > this.transform.pos.y - screenY()){
                     this.facing = 3;
                 }
             }
@@ -292,7 +292,12 @@ class Pangolin{
     }
 
     draw(ctx){
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenx(), (this.transform.pos.y - this.z) - screenY(), 64, 64)
+        if(document.getElementById("debug").checked){
+            ctx.beginPath();
+            ctx.rect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 64, 64);
+            ctx.stroke();
+        }
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 64, 64)
     }
 
 
@@ -334,7 +339,7 @@ class Shadow{
 
     draw(ctx){
         if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, 64, 64);
+            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 64, 64);
         }
         
     }
