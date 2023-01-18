@@ -25,10 +25,6 @@ class GameEngine {
         this.ctx = ctx;
         this.startInput();
         this.timer = new Timer();
-        //this.entities = physics_test_init();
-        let pangolin = new Pangolin(gameEngine);
-	    this.addEntity(pangolin);
-        this.addEntity(new map(pangolin));
     };
 
     start() {
@@ -90,7 +86,7 @@ class GameEngine {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         // Draw latest things first
-        for (let i = this.entities.length - 1; i >= 0; i--) {
+        for (let i =  0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx, this);
         }
 
