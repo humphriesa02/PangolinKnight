@@ -1,10 +1,9 @@
-class pot{
-    constructor(position, scale){
-        this.scale = scale;
+class chest{
+    constructor(position,scale){
         this.position = position;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-
-        this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true, 4);
+        this.scale = scale;
+        this.animator = new Animator(this.spritesheet, 112, 16, 16, 16, 1, 1, true, this.scale);
     }
     update(){
 

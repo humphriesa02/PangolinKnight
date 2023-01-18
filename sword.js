@@ -117,6 +117,6 @@ class Sword{
     }
 
     draw(ctx){
-        this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 64, 64)
+        this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - (gameEngine.camera.x * gameEngine.camera.roomWidth), this.transform.pos.y - (gameEngine.camera.y * gameEngine.camera.roomHeight), 64, 64)
     }
 }

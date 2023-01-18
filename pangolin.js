@@ -4,7 +4,7 @@ class Pangolin{
         this.game = game;
 
         // Components
-        this.transform = new Transform(new Vec2(100,100), new Vec2(0,0), 1, new Vec2(0,0));
+        this.transform = new Transform(new Vec2(64,128), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider;
         this.shadow = new Shadow(this.game, this.transform.pos);
@@ -292,7 +292,7 @@ class Pangolin{
     }
 
     draw(ctx){
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 64, 64)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenx(), (this.transform.pos.y - this.z) - screenY(), 64, 64)
     }
 
 
