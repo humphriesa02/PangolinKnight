@@ -12,6 +12,7 @@ class sceneManager{
         this.game.addEntity(this)
     }
     loadLevel(level){
+    
         this.level = levels[level];
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
@@ -42,6 +43,7 @@ class sceneManager{
 
         this.player = new Pangolin(gameEngine);
         gameEngine.addEntity(this.player);
+        gameEngine.addEntity(new Test_Block());
     }
     update(){
         if(this.x < Math.floor((this.player.transform.pos.x + 32)/this.roomWidth)){
