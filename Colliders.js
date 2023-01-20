@@ -134,7 +134,7 @@ class Particle {
             // Add impact forces only (if any)
             this.v_forces.add(this.v_impact_forces);
         }
-        else {
+        //else {
             // Gravity
             this.v_forces.add(this.v_gravity);
 
@@ -153,7 +153,7 @@ class Particle {
             v_wind.x = 0.5 * _AIR_DENSITY * _WIND_SPEED * _WIND_SPEED *
                 (Math.PI * this.f_radius * this.f_radius) * _DRAG_COEFFICIENT;
             this.v_forces.add(v_wind);
-        }
+        //}
     }
 
     update_body_euler(dt) {
