@@ -1,5 +1,6 @@
 class Frog{
     constructor(info, scale, player){
+        this.scale = scale;
         this.transform = new Transform(new Vec2(info[0][0] * 16 * scale, info[0][1] * 16 * scale), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider;
@@ -87,7 +88,7 @@ class Frog{
     }
 
     draw(ctx){
-        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * scale, 16 * scale);
+        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * this.scale, 16 * this.scale);
     }
 
 }
