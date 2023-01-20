@@ -1,13 +1,12 @@
 class Frog{
-    constructor(info, scale, player){
-        this.scale = scale;
-        this.transform = new Transform(new Vec2(info[0][0] * 16 * scale, info[0][1] * 16 * scale), new Vec2(0,0), 1, new Vec2(0,0));
+    constructor(info, player){
+        this.transform = new Transform(new Vec2(info[0][0] * 16 * params.scale, info[0][1] * 16 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider;
+        this.collider = new Collider(new AABB(this.transform.pos, 8 * params.scale, 8 * params.scale), true, true, false);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
         this.facing = 0;
         this.dead = false;
-        this.move_speed = 18.75 * scale;
+        this.move_speed = 18.75 * params.scale;
         this.move_time = 3;
         this.delay_time = 3;
         this.player = player;
@@ -88,7 +87,10 @@ class Frog{
     }
 
     draw(ctx){
-        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * this.scale, 16 * this.scale);
+        if(document.getElementById("debug").checked){
+            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(),tileSize,tileSize);
+        }
+        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16, 16);
     }
 
 }

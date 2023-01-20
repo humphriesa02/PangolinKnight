@@ -6,7 +6,7 @@ class Pangolin{
         // Components
         this.transform = new Transform(new Vec2(16 * params.scale,32 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider = new Collider(new AABB(this.transform.pos, 32, 32), true, true, false);
+        this.collider = new Collider(new AABB(this.transform.pos, 8 * params.scale, 8 * params.scale), true, true, false);
         this.shadow = new Shadow(this.game, this.transform.pos);
 
         // Reference to our spritesheet
