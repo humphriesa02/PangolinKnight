@@ -1,24 +1,24 @@
 class door{
-    constructor(info,scale){
+    constructor(info){
         this.position = info[0];
         this.state = info[1]; // 0 = left, 1 = up, 2 = right, 3 = down
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        this.scale = scale;
+        this.scale = params.scale;
         this.loadAnimations();
     }
     loadAnimations(){
         switch(this.state){
             case 0:
-                this.animator = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 1, true, 4);
+                this.animator = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 1, true);
                 break;
             case 1:
-                this.animator = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 1, true, 4);
+                this.animator = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 1, true);
                 break;
             case 2:
-                this.animator = new Animator(this.spritesheet, 96, 0, 16, 16, 1, 1, true, 4);
+                this.animator = new Animator(this.spritesheet, 96, 0, 16, 16, 1, 1, true);
                 break;
             case 3:
-                this.animator = new Animator(this.spritesheet, 112, 0, 16, 16, 1, 1, true, 4);
+                this.animator = new Animator(this.spritesheet, 112, 0, 16, 16, 1, 1, true);
                 break;
         }
     }

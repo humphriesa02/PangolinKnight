@@ -15,9 +15,22 @@ ASSET_MANAGER.downloadAll(() => {
 	const ctx = canvas.getContext("2d");
 	ctx.imageSmoothingEnabled = false;
 
+	params.scale = document.getElementById("scale").value;
+	tileSize = 16 * params.scale;
+	const setScale = document.getElementById("reset");
+
 	gameEngine.init(ctx);
 
 	new sceneManager(gameEngine);
 
 	gameEngine.start();
+
+	setScale.addEventListener('click', function(e) {
+		params.scale = document.getElementById("scale").value;
+		tileSize = 16 * params.scale;
+		clearEntities();
+		ctx.canvas.width =  10 * tileSize;
+		ctx.canvas.height = 8 * tileSize;
+		ctx.imageSmoothingEnabled = false;
+	});
 });

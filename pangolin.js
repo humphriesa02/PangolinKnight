@@ -1,14 +1,13 @@
 class Pangolin{
-    constructor(game){
+    constructor(){
         // Game reference we pass in
-        this.game = game;
+        this.game = gameEngine;
 
         // Components
-        this.transform = new Transform(new Vec2(64,128), new Vec2(0,0), 1, new Vec2(0,0));
+        this.transform = new Transform(new Vec2(16 * params.scale,32 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider = new Collider(new AABB(this.transform.pos, 32, 32), true, true, false);
         this.shadow = new Shadow(this.game, this.transform.pos);
-        this.game.addEntity(this.shadow);
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -295,11 +294,9 @@ class Pangolin{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.beginPath();
-            ctx.rect(this.transform.pos.x - screenX() - 32, this.transform.pos.y - screenY() - 32, 64, 64);
-            ctx.stroke();
+            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(),tileSize,tileSize);
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX() - 32, (this.transform.pos.y - this.z) - screenY() - 32, 64, 64)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 16, 16)
     }
 
 
@@ -341,7 +338,7 @@ class Shadow{
 
     draw(ctx){
         if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 64, 64);
+            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 16, 16);
         }
         
     }
