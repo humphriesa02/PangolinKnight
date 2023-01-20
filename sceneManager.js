@@ -13,6 +13,7 @@ class sceneManager{
         this.game.addEntity(this)
     }
     loadLevel(level){
+    
         this.level = levels[level];
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
@@ -45,6 +46,7 @@ class sceneManager{
             gameEngine.addEntity(new Frog(this.level.frogs[i], 4, this.player));
         }
         gameEngine.addEntity(this.player);
+        gameEngine.addEntity(new Test_Block());
     }
     update(){
         if(this.x < Math.floor((this.player.transform.pos.x + 32)/this.roomWidth)){

@@ -1,5 +1,6 @@
 class Transform {
-    constructor(pos, prev_pos, scale, velocity, acceleration, facing, angle) {
+    constructor(pos, prev_pos = pos, scale = 1, velocity = new Vec2(0, 0),
+     acceleration  = new Vec2(0, 0), facing = new Vec2(0, 0), angle = 0) {
         this.pos = pos;
         this.prev_pos = prev_pos;
         this.scale = scale;

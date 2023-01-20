@@ -6,7 +6,7 @@ class Pangolin{
         // Components
         this.transform = new Transform(new Vec2(64,128), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider;
+        this.collider = new Collider(new AABB(this.transform.pos, 32, 32), true, true, false);
         this.shadow = new Shadow(this.game, this.transform.pos);
         this.game.addEntity(this.shadow);
 
@@ -287,6 +287,8 @@ class Pangolin{
         // ---------- a state doesn't wish for it to change, so this set works fine no matter what. -- //
 
         // Adjust position from velocity
+        this.transform.prev_pos.x = this.transform.pos.x;
+        this.transform.prev_pos.y = this.transform.pos.y
         this.transform.pos.x += this.transform.velocity.x;
         this.transform.pos.y += this.transform.velocity.y; 
     }
@@ -294,10 +296,10 @@ class Pangolin{
     draw(ctx){
         if(document.getElementById("debug").checked){
             ctx.beginPath();
-            ctx.rect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 64, 64);
+            ctx.rect(this.transform.pos.x - screenX() - 32, this.transform.pos.y - screenY() - 32, 64, 64);
             ctx.stroke();
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 64, 64)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX() - 32, (this.transform.pos.y - this.z) - screenY() - 32, 64, 64)
     }
 
 
