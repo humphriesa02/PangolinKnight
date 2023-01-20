@@ -8,6 +8,7 @@ class sceneManager{
         this.roomWidth = 64 * 10;
         this.roomHeight = 64 * 8;
 
+        this.player = new Pangolin(gameEngine);
         this.loadLevel(1);
         this.game.addEntity(this)
     }
@@ -40,7 +41,9 @@ class sceneManager{
             gameEngine.addEntity(new statue(this.level.statues[i], 4))
         }
 
-        this.player = new Pangolin(gameEngine);
+        for(let i = 0; i < this.level.frogs.length; i++){
+            gameEngine.addEntity(new Frog(this.level.frogs[i], 4, this.player));
+        }
         gameEngine.addEntity(this.player);
     }
     update(){
