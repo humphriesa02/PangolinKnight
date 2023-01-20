@@ -8,7 +8,6 @@ class Pangolin{
         this.health = new Health(10, 10);
         this.collider;
         this.shadow = new Shadow(this.game, this.transform.pos);
-        this.game.addEntity(this.shadow);
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");

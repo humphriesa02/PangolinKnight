@@ -39,7 +39,7 @@ class sceneManager{
         for(let i = 0; i < this.level.statues.length; i++){
             gameEngine.addEntity(new statue(this.level.statues[i]))
         }
-
+        this.game.addEntity(this.player.shadow);
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
     }
