@@ -292,7 +292,7 @@ class Pangolin{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * params.scale, 16 * params.scale);
+            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(),tileSize,tileSize);
         }
         this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 16, 16)
     }

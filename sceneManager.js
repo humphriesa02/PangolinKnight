@@ -5,8 +5,8 @@ class sceneManager{
         this.x = 0;
         this.y = 0;
 
-        this.roomWidth = 16 * params.scale * 10;
-        this.roomHeight = 16 * params.scale * 8;
+        this.roomWidth =tileSize * 10;
+        this.roomHeight =tileSize * 8;
 
         this.player = new Pangolin(gameEngine);
         this.loadLevel(1);

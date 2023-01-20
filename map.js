@@ -1,9 +1,10 @@
 class map{
-    constructor(spriteSheet){
-        this.position = {x: 0,y: 0};
-        this.spriteSheet = ASSET_MANAGER.getAsset(spriteSheet);
+    constructor(player){
+        this.player = player;
+        this.position = {x : 0,y : 0};
+        this.spriteSheet = ASSET_MANAGER.getAsset("./sprites/map.png");
         this.animations = [];
-        this.scale = params.scale;
+        this.scale = 3;
         this.loadAnimations();
     }
     loadAnimations(){
