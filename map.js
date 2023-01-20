@@ -3,7 +3,7 @@ class map{
         this.position = {x: 0,y: 0};
         this.spriteSheet = ASSET_MANAGER.getAsset(spriteSheet);
         this.animations = [];
-        this.scale = 4;
+        this.scale = params.scale;
         this.loadAnimations();
     }
     loadAnimations(){

@@ -1,10 +1,10 @@
 class Pangolin{
-    constructor(game){
+    constructor(){
         // Game reference we pass in
-        this.game = game;
+        this.game = gameEngine;
 
         // Components
-        this.transform = new Transform(new Vec2(64,128), new Vec2(0,0), 1, new Vec2(0,0));
+        this.transform = new Transform(new Vec2(16 * params.scale,32 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider;
         this.shadow = new Shadow(this.game, this.transform.pos);
@@ -293,11 +293,9 @@ class Pangolin{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.beginPath();
-            ctx.rect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 64, 64);
-            ctx.stroke();
+            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * params.scale, 16 * params.scale);
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 64, 64)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 16, 16)
     }
 
 
@@ -339,7 +337,7 @@ class Shadow{
 
     draw(ctx){
         if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 64, 64);
+            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 16, 16);
         }
         
     }

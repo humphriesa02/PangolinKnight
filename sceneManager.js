@@ -5,11 +5,11 @@ class sceneManager{
         this.x = 0;
         this.y = 0;
 
-        this.roomWidth = 64 * 10;
-        this.roomHeight = 64 * 8;
+        this.roomWidth = 16 * params.scale * 10;
+        this.roomHeight = 16 * params.scale * 8;
 
+        this.player = new Pangolin(gameEngine);
         this.loadLevel(1);
-        this.game.addEntity(this)
     }
     loadLevel(level){
         this.level = levels[level];
@@ -17,47 +17,47 @@ class sceneManager{
         gameEngine.addEntity(this.map);
         
         for(let i = 0; i < this.level.pots.length; i++){
-            gameEngine.addEntity(new pot(this.level.pots[i], 4))
+            gameEngine.addEntity(new pot(this.level.pots[i]))
         }
 
         for(let i = 0; i < this.level.blocks.length; i++){
-            gameEngine.addEntity(new block(this.level.blocks[i], 4))
+            gameEngine.addEntity(new block(this.level.blocks[i]))
         }
 
         for(let i = 0; i < this.level.chests.length; i++){
-            gameEngine.addEntity(new chest(this.level.chests[i], 4))
+            gameEngine.addEntity(new chest(this.level.chests[i]))
         }
 
         for(let i = 0; i < this.level.doors.length; i++){
-            gameEngine.addEntity(new door(this.level.doors[i], 4))
+            gameEngine.addEntity(new door(this.level.doors[i]))
         }
 
         for(let i = 0; i < this.level.crystals.length; i++){
-            gameEngine.addEntity(new crystal(this.level.crystals[i], 4))
+            gameEngine.addEntity(new crystal(this.level.crystals[i]))
         }
 
         for(let i = 0; i < this.level.statues.length; i++){
-            gameEngine.addEntity(new statue(this.level.statues[i], 4))
+            gameEngine.addEntity(new statue(this.level.statues[i]))
         }
 
-        this.player = new Pangolin(gameEngine);
         gameEngine.addEntity(this.player);
+        this.game.addEntity(this)
     }
     update(){
-        if(this.x < Math.floor((this.player.transform.pos.x + 32)/this.roomWidth)){
+        if(this.x < Math.floor((this.player.transform.pos.x + (8 * params.scale))/this.roomWidth)){
             this.x++;
             this.map.position.x++;
         }
-        else if(this.x > Math.floor((this.player.transform.pos.x + 32)/this.roomWidth)){
+        else if(this.x > Math.floor((this.player.transform.pos.x + (8 * params.scale))/this.roomWidth)){
             this.x--;
             this.map.position.x--;
         }
 
-        if(this.y < Math.floor((this.player.transform.pos.y + 32)/this.roomHeight)){
+        if(this.y < Math.floor((this.player.transform.pos.y + (8 * params.scale))/this.roomHeight)){
             this.y++;
             this.map.position.y++;
         }
-        else if(this.y > Math.floor((this.player.transform.pos.y + 32)/this.roomHeight)){
+        else if(this.y > Math.floor((this.player.transform.pos.y + (8 * params.scale))/this.roomHeight)){
             this.y--;
             this.map.position.y--;
         }

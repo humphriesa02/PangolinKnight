@@ -14,9 +14,20 @@ ASSET_MANAGER.downloadAll(() => {
 	const ctx = canvas.getContext("2d");
 	ctx.imageSmoothingEnabled = false;
 
+	params.scale = document.getElementById("scale").value;
+	const setScale = document.getElementById("reset");
+
 	gameEngine.init(ctx);
 
 	new sceneManager(gameEngine);
 
 	gameEngine.start();
+
+	setScale.addEventListener('click', function(e) {
+		params.scale = document.getElementById("scale").value;
+		clearEntities();
+		ctx.canvas.width = 16 * 10 * params.scale;
+		ctx.canvas.height = 16 * 8 * params.scale;
+		ctx.imageSmoothingEnabled = false;
+	});
 });
