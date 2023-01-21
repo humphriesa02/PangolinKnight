@@ -16,7 +16,6 @@ ASSET_MANAGER.downloadAll(() => {
 	ctx.imageSmoothingEnabled = false;
 
 	params.scale = document.getElementById("scale").value;
-	tileSize = 16 * params.scale;
 	const setScale = document.getElementById("reset");
 
 	gameEngine.init(ctx);
@@ -27,10 +26,9 @@ ASSET_MANAGER.downloadAll(() => {
 
 	setScale.addEventListener('click', function(e) {
 		params.scale = document.getElementById("scale").value;
-		tileSize = 16 * params.scale;
 		clearEntities();
-		ctx.canvas.width =  10 * tileSize;
-		ctx.canvas.height = 8 * tileSize;
+		ctx.canvas.width =  10 * tileSize * params.scale;
+		ctx.canvas.height = 8 * tileSize * params.scale;
 		ctx.imageSmoothingEnabled = false;
 	});
 });

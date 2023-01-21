@@ -127,17 +127,15 @@ function collisions(entities) {
 
 class Test_Block {
     constructor(x, y) {
-        this.transform = new Transform(new Vec2(72 * params.scale, 67.5 * params.scale));
+        this.transform = new Transform(new Vec2(60, 60));
         this.transform.prev_pos = this.transform.pos;
-        this.collider = new Collider(new AABB(this.transform.pos, 8 * params.scale, 8 * params.scale), true, true, false);
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
     }
 
     update() {}
 
     draw(ctx) {
-        ctx.beginPath();
-        ctx.rect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16 * params.scale, 16 * params.scale);
-        ctx.stroke();
+        draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
     }
 
 }

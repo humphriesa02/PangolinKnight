@@ -1,12 +1,13 @@
 class Frog{
     constructor(info, player){
-        this.transform = new Transform(new Vec2(info[0][0] * 16 * params.scale, info[0][1] * 16 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
+        this.tag = "enemy";
+        this.transform = new Transform(new Vec2(info[0][0] * 16, info[0][1] * 16), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider = new Collider(new AABB(this.transform.pos, 8 * params.scale, 8 * params.scale), true, true, false);
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
         this.facing = 0;
         this.dead = false;
-        this.move_speed = 18.75 * params.scale;
+        this.move_speed = 18.75;
         this.move_time = 3;
         this.delay_time = 3;
         this.player = player;
@@ -88,9 +89,9 @@ class Frog{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(),tileSize,tileSize);
+            ctx.strokeRect((this.transform.pos.x - screenX()) * params.scale, (this.transform.pos.y - screenY()) * params.scale,tileSize * params.scale,tileSize * params.scale);
         }
-        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x - screenX(), this.transform.pos.y - screenY(), 16, 16);
+        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16);
     }
 
 }

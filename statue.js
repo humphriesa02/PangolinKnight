@@ -2,7 +2,6 @@ class statue{
     constructor(position){
         this.position = position;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        this.scale = params.scale;
         this.animator = new Animator(this.spritesheet, 96, 32, 16, 16, 1, 1, true);
     }
     update(){

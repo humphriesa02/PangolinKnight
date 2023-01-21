@@ -3,7 +3,6 @@ class door{
         this.position = info[0];
         this.state = info[1]; // 0 = left, 1 = up, 2 = right, 3 = down
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        this.scale = params.scale;
         this.loadAnimations();
     }
     loadAnimations(){

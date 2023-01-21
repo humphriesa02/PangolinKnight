@@ -51,7 +51,7 @@ window.requestAnimFrame = (() => {
         });
 })();
 
-var tileSize = 16 * params.scale;
+var tileSize = 16;
 /**
  * Returns distance from two points
  * @param {Number} p1, p2 Two objects with x and y coordinates

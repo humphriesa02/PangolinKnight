@@ -50,20 +50,20 @@ class sceneManager{
         this.game.addEntity(this)
     }
     update(){
-        if(this.x < Math.floor((this.player.transform.pos.x + (8 * params.scale))/this.roomWidth)){
+        if(this.x < Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
             this.x++;
             this.map.position.x++;
         }
-        else if(this.x > Math.floor((this.player.transform.pos.x + (8 * params.scale))/this.roomWidth)){
+        else if(this.x > Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
             this.x--;
             this.map.position.x--;
         }
 
-        if(this.y < Math.floor((this.player.transform.pos.y + (8 * params.scale))/this.roomHeight)){
+        if(this.y < Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
             this.y++;
             this.map.position.y++;
         }
-        else if(this.y > Math.floor((this.player.transform.pos.y + (8 * params.scale))/this.roomHeight)){
+        else if(this.y > Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
             this.y--;
             this.map.position.y--;
         }

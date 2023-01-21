@@ -4,9 +4,10 @@ class Pangolin{
         this.game = gameEngine;
 
         // Components
-        this.transform = new Transform(new Vec2(16 * params.scale,32 * params.scale), new Vec2(0,0), 1, new Vec2(0,0));
+        this.tag = "player";
+        this.transform = new Transform(new Vec2(16, 32), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider = new Collider(new AABB(this.transform.pos, 8 * params.scale, 8 * params.scale), true, true, false);
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.shadow = new Shadow(this.game, this.transform.pos);
 
         // Reference to our spritesheet
@@ -294,9 +295,9 @@ class Pangolin{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.strokeRect(this.transform.pos.x - screenX(), this.transform.pos.y - screenY(),tileSize,tileSize);
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - screenX(), (this.transform.pos.y - this.z) - screenY(), 16, 16)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16)
     }
 
 
@@ -338,7 +339,7 @@ class Shadow{
 
     draw(ctx){
         if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x - screenX(), this.player_pos.y - screenY(), 16, 16);
+            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, 16, 16);
         }
         
     }

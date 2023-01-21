@@ -1,6 +1,6 @@
 class pot{
     constructor(position){
-        this.scale = params.scale;
+        this.tag = "object";
         this.position = position;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
 

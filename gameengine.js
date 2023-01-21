@@ -8,6 +8,7 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
+        this.entity_map = new Map();
 
         // Information on the input
         this.click = null;
@@ -79,6 +80,15 @@ class GameEngine {
 
     addEntity(entity) {
         this.entities.push(entity);
+
+        if (entity.tag !== undefined) {
+            if (this.entity_map.get(entity.tag) === undefined) {
+                this.entity_map.set(entity.tag, [entity]);
+            }
+            else {
+                this.entity_map.get(entity.tag).push(entity);
+            }
+        }
     };
 
     draw() {

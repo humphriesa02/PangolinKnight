@@ -1,5 +1,6 @@
 class Sword{
     constructor(game, facing, player_pos){
+        this.tag = "sword";
         Object.assign(this, {game, facing, player_pos});
         // Components
         let sword_pos = Object.assign({},player_pos);
@@ -7,16 +8,16 @@ class Sword{
         // Decide where the sword will initially start
         switch(this.facing){
             case 0:
-                this.transform = new Transform(new Vec2(sword_pos.x, sword_pos.y - (16 * params.scale)));
+                this.transform = new Transform(new Vec2(sword_pos.x, sword_pos.y - 16));
                 break;
             case 1:
-                this.transform = new Transform(new Vec2(sword_pos.x, sword_pos.y - (16 * params.scale)));
+                this.transform = new Transform(new Vec2(sword_pos.x, sword_pos.y - 16));
                 break;
             case 2:
-                this.transform = new Transform(new Vec2(sword_pos.x + (16 * params.scale), sword_pos.y));
+                this.transform = new Transform(new Vec2(sword_pos.x + 16, sword_pos.y));
                 break;
             case 3:
-                this.transform = new Transform(new Vec2(sword_pos.x - (16 * params.scale), sword_pos.y));
+                this.transform = new Transform(new Vec2(sword_pos.x - 16, sword_pos.y));
                 break;
         }
         
@@ -56,55 +57,55 @@ class Sword{
             
             case 0: // facing right
                 if(this.animations[0].currentFrame() == 0){
-                    this.transform.pos.y = this.player_pos.y - (16 * params.scale);
+                    this.transform.pos.y = this.player_pos.y - (16);
                 } 
                 else if(this.animations[0].currentFrame() == 1){
-                    this.transform.pos.x = this.player_pos.x + (12.5 * params.scale);
+                    this.transform.pos.x = this.player_pos.x + (12.5);
                 }
                 else if(this.animations[0].currentFrame() == 2){
                     this.transform.pos.y = this.player_pos.y;  
-                    this.transform.pos.x = this.player_pos.x + (16 * params.scale);
+                    this.transform.pos.x = this.player_pos.x + (16);
                 }
                 break;
 
                 case 1: // facing left
                 if(this.animations[1].currentFrame() == 0){
-                    this.transform.pos.y = this.player_pos.y - (16 * params.scale);
+                    this.transform.pos.y = this.player_pos.y - (16);
                 } 
                 else if(this.animations[1].currentFrame() == 1){
-                    this.transform.pos.x = this.player_pos.x - (12.5 * params.scale);
+                    this.transform.pos.x = this.player_pos.x - (12.5);
                 }
                 else if(this.animations[1].currentFrame() == 2){
                     this.transform.pos.y = this.player_pos.y;
-                    this.transform.pos.x = this.player_pos.x - (16 * params.scale);
+                    this.transform.pos.x = this.player_pos.x - (16);
                 }
                 break;
 
                 case 2: // facing up
                 if(this.animations[2].currentFrame() == 0){
-                    this.transform.pos.x = this.player_pos.x + (16 * params.scale);
+                    this.transform.pos.x = this.player_pos.x + (16);
                 } 
                 else if(this.animations[2].currentFrame() == 1){
-                    this.transform.pos.y = this.player_pos.y - (12.5 * params.scale);
-                    this.transform.pos.x = this.player_pos.x + (12.5 * params.scale);
+                    this.transform.pos.y = this.player_pos.y - (12.5);
+                    this.transform.pos.x = this.player_pos.x + (12.5);
                 }
                 else if(this.animations[2].currentFrame() == 2){
                     this.transform.pos.x = this.player_pos.x;
-                    this.transform.pos.y = this.player_pos.y - (16 * params.scale)
+                    this.transform.pos.y = this.player_pos.y - (16)
                 }
                 break;
 
                 case 3: // facing down
                 if(this.animations[3].currentFrame() == 0){
-                    this.transform.pos.x = this.player_pos.x - (16 * params.scale);
+                    this.transform.pos.x = this.player_pos.x - (16);
                 } 
                 else if(this.animations[3].currentFrame() == 1){
-                    this.transform.pos.y = this.player_pos.y + (12.5 * params.scale);
-                    this.transform.pos.x = this.player_pos.x - (12.5 * params.scale);
+                    this.transform.pos.y = this.player_pos.y + (12.5);
+                    this.transform.pos.x = this.player_pos.x - (12.5);
                 }
                 else if(this.animations[3].currentFrame() == 2){
                     this.transform.pos.x = this.player_pos.x;
-                    this.transform.pos.y = this.player_pos.y + (16 * params.scale);
+                    this.transform.pos.y = this.player_pos.y + (16);
                 }
                 break;
         }
