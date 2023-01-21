@@ -55,11 +55,16 @@ function prevent_overlap(a, b) {
     let prev_overlap = get_AABBAABB_overlap(a.collider.body, b.collider.body, a.transform.prev_pos, b.transform.prev_pos);
     let speed_a_sqr = a.transform.velocity.dot(a.transform.velocity);
     let speed_b_sqr = b.transform.velocity.dot(b.transform.velocity);
-    let speed_ratio_a = speed_a_sqr / (speed_a_sqr + speed_b_sqr);
-    let speed_ratio_b = speed_b_sqr / (speed_a_sqr + speed_b_sqr);
+    let speed_ratio_a = 0.5;
+    let speed_ratio_b = 0.5;
+
+    if (speed_a_sqr != 0 || speed_b_sqr != 0) {
+        speed_ratio_a = speed_a_sqr / (speed_a_sqr + speed_b_sqr);
+        speed_ratio_b = speed_b_sqr / (speed_a_sqr + speed_b_sqr);
+    }
 
     // If the overlap is horizontal
-    if (prev_overlap.y > 0) {
+    if (prev_overlap.y > 0.0001) {
         // If a is on the left push a to the left and b to the right
         if (a.transform.pos.x < b.transform.pos.x) {
             a.transform.pos.x -= overlap.x * speed_ratio_a
@@ -72,13 +77,13 @@ function prevent_overlap(a, b) {
         }
     }
     // If the overlap is vertical
-    else if (prev_overlap.x > 0) {
-        // If a is on the left push a to the left and b to the right
+    else if (prev_overlap.x > 0.0001) {
+        // If a is above, push a up and b down
         if (a.transform.pos.y < b.transform.pos.y) {
             a.transform.pos.y -= overlap.y * speed_ratio_a
             b.transform.pos.y += overlap.y * speed_ratio_b
         }
-        // If a is on the right push a to the right and b to the left
+        // If a below, push a down and b up
         else {
             a.transform.pos.y += overlap.y * speed_ratio_a
             b.transform.pos.y -= overlap.y * speed_ratio_b
@@ -110,6 +115,10 @@ function prevent_overlap(a, b) {
                 b.transform.pos.x -= overlap.x * speed_ratio_b
             }
         }
+    }
+    if (Number.isNaN(a.transform.pos.x) || Number.isNaN(a.transform.pos.y) || Number.isNaN(b.transform.pos.x) || Number.isNaN(b.transform.pos.y)) {
+        console.log(a);
+        console.log(b);
     }
 }
 

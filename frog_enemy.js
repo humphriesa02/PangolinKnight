@@ -83,6 +83,8 @@ class Frog{
         }
 
          // Adjust position from velocity
+         this.transform.prev_pos.x = this.transform.pos.x;
+         this.transform.prev_pos.y = this.transform.pos.y;
          this.transform.pos.x += this.transform.velocity.x;
          this.transform.pos.y += this.transform.velocity.y; 
     }
