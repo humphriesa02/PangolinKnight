@@ -118,6 +118,9 @@ class Sword{
     }
 
     draw(ctx){
+        if(document.getElementById("debug").checked){
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
+        }
         this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x - (gameEngine.camera.x * gameEngine.camera.roomWidth), this.transform.pos.y - (gameEngine.camera.y * gameEngine.camera.roomHeight), 16, 16)
     }
 }
