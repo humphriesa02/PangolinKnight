@@ -20,14 +20,14 @@ class Pangolin{
         this.dead = false;
 
         // Some movement variables
-        this.walk_speed = 50;
-        this.roll_speed = 200;
+        this.walk_speed = 12.5;
+        this.roll_speed = 50;
 
         // Jump variables
-        this.jump_speed = 300;
-        this.jump_time = 4;
-        this.jump_distance = 140;
-        this.jump_height = 96;
+        this.jump_speed = 53;
+        this.jump_time = 100;
+        this.jump_distance = 60;
+        this.jump_height = 30;
         this.z = 0; // Give us the impression of a "fake" jump when in top down
         this.distance_remaining;
 
@@ -44,6 +44,12 @@ class Pangolin{
         // Animations
         this.animations = [];
         this.loadAnimations();
+
+        // Taking damage
+        this.invulnerable = false;
+        this.inverted = false;
+        this.invulnerable_time = 0.15;
+        this.switch_time = 0.1;
     }
 
     // Set up our animations variable
@@ -193,28 +199,45 @@ class Pangolin{
             this.jump_cooldown_end = this.game.timer.gameTime + this.animations[5][0].totalTime;
         }
 
+        
+        if(this.invulnerable && this.switch_time <= 0){
+            if(this.invulnerable_time <= 0){
+                this.invulnerable = false;
+                this.inverted = false;
+                this.invulnerable_time = 0.2;
+            }
+            else{
+                this.inverted = !this.inverted;
+                this.switch_time = 0.1;
+                this.invulnerable_time -= gameEngine.clockTick;
+            }
+            
+        }
+        this.switch_time -= gameEngine.clockTick;
+
         // Sword slash check
         if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && !this.jumping){
             // Figure out which direction we are slashing in
-            if(Math.abs(this.game.click.x-(this.transform.pos.x - screenX())) > Math.abs(this.game.click.y-(this.transform.pos.y-screenY()))){// X is farther
-                if(this.game.click.x > this.transform.pos.x - screenX()){
+            if(Math.abs((this.game.click.x / params.scale)-(this.transform.pos.x)) > Math.abs((this.game.click.y / params.scale)-(this.transform.pos.y))){// X is farther
+                if((this.game.click.x / params.scale) > this.transform.pos.x){
                     this.facing = 0;
                 }
-                else if(this.game.click.x < this.transform.pos.x - screenX()){
+                else if((this.game.click.x / params.scale) < this.transform.pos.x ){
                     this.facing = 1;
                 }
             }
             else{
-                if(this.game.click.y < this.transform.pos.y - screenY()){
+                if((this.game.click.y / params.scale) < this.transform.pos.y ){
                     this.facing = 2;
                 }
-                else if(this.game.click.y > this.transform.pos.y - screenY()){
+                else if((this.game.click.y / params.scale) > this.transform.pos.y){
                     this.facing = 3;
                 }
             }
 
             // Initiate the sword slash
             this.attacking = true;
+            this.rolling = false;
             let sword = new Sword(this.game, this.facing, this.transform.pos);
             this.game.addEntity(sword);
             this.attack_end_time = this.game.timer.gameTime + this.animations[4][0].totalTime;
@@ -297,7 +320,7 @@ class Pangolin{
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16)
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.inverted);
     }
 
 
@@ -318,8 +341,17 @@ class Pangolin{
                 break;
                 
         }
-        this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time);
+        this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time * gameEngine.clockTick);
         this.z = Math.sin(((this.distance_remaining / this.jump_distance) * Math.PI)) * this.jump_height;
+        console.log("z", this.z);
+    }
+
+    hit(){
+        if(!this.invulnerable){
+            this.health.current--;
+            console.log(this.health.current);
+            this.invulnerable = true;
+        }
     }
 }
 
