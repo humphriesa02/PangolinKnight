@@ -14,7 +14,7 @@ class sceneManager{
     loadLevel(level){
     
         this.level = levels[level];
-        /*
+        
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
         
@@ -41,7 +41,7 @@ class sceneManager{
         for(let i = 0; i < this.level.statues.length; i++){
             gameEngine.addEntity(new statue(this.level.statues[i]))
         }
-        */
+        
         for(let i = 0; i < this.level.frogs.length; i++){
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
@@ -53,20 +53,16 @@ class sceneManager{
     update(){
         if(this.x < Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
             this.x++;
-            this.map.position.x++;
         }
         else if(this.x > Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
             this.x--;
-            this.map.position.x--;
         }
 
         if(this.y < Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
             this.y++;
-            this.map.position.y++;
         }
         else if(this.y > Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
             this.y--;
-            this.map.position.y--;
         }
     }
     draw(ctx){
