@@ -8,5 +8,17 @@ var levels = {
         crystals : [[13,3],[16,3],[12,13]],
         statues : [[3,12],[6,12],[22,2],[27,2],[22,5],[27,5],[22,10],[27,10],[22,13],[27,13]],
         frogs : [[[4,5]]]
+    },
+
+    2: {
+        mapSprite: '',
+        pots : [],
+        blocks : [],
+        chests : [],
+        doors : [],
+        crystals : [],
+        statues : [],
+        colliders: [],
+        frogs : []
     }
 }
