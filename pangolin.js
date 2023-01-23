@@ -217,20 +217,21 @@ class Pangolin{
 
         // Sword slash check
         if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && !this.jumping){
+            console.log("Player", this.transform.pos);
             // Figure out which direction we are slashing in
-            if(Math.abs((this.game.click.x / params.scale)-(this.transform.pos.x)) > Math.abs((this.game.click.y / params.scale)-(this.transform.pos.y))){// X is farther
-                if((this.game.click.x / params.scale) > this.transform.pos.x){
+            if(Math.abs( this.game.click.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.click.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
+                if( this.game.click.x > convertToScreenPos(this.transform.pos.x, 0).x){
                     this.facing = 0;
                 }
-                else if((this.game.click.x / params.scale) < this.transform.pos.x ){
+                else if( this.game.click.x < convertToScreenPos(this.transform.pos.x, 0).x){
                     this.facing = 1;
                 }
             }
             else{
-                if((this.game.click.y / params.scale) < this.transform.pos.y ){
+                if( this.game.click.y < convertToScreenPos(0, this.transform.pos.y).y ){
                     this.facing = 2;
                 }
-                else if((this.game.click.y / params.scale) > this.transform.pos.y){
+                else if( this.game.click.y > convertToScreenPos(0, this.transform.pos.y).y){
                     this.facing = 3;
                 }
             }

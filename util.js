@@ -69,6 +69,10 @@ function clearEntities() {
     new sceneManager(gameEngine);
 };
 
+const convertToScreenPos = (x, y) => {
+    return {x: (x - screenX()) * params.scale, y: (y - screenY()) * params.scale};
+}
+
 const screenX = () => {
     return (gameEngine.camera.x * gameEngine.camera.roomWidth);
 }
