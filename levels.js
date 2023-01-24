@@ -1,16 +1,17 @@
 var levels = {
     1 : {
         mapSprite: './sprites/map.png',
-        pots : [[1,1],[2,1],[1,6],[2,6],[11,1],[11,6],[18,1],[18,6],[24,3],[25,3],[24,4],[25,4],[23,14],[24,14],[25,14],[26,14]],
-        blocks : [[7,3],[7,4],[8,2],[8,5],[17,9]],
-        chests : [[18,9]],
-        doors : [[[10,11],0],[[10,12],0]],
-        crystals : [[13,3],[16,3],[12,13]],
-        statues : [[3,12],[6,12],[22,2],[27,2],[22,5],[27,5],[22,10],[27,10],[22,13],[27,13]],
-        frogs : [[[4,5]]]
+        pots : [{position : [1,1]},{position : [2,1]},{position : [1,6]},{position : [2,6]},{position : [11,1]},{position : [11,6]},{position : [18,1]},{position : [18,6]},{position : [24,3]},{position : [25,3]},{position : [24,4]},{position : [25,4]},{position : [23,14]},{position : [24,14]},{position : [25,14]},{position : [26,14]}],
+        blocks : [{position : [7,3]},{position : [7,4]},{position : [8,2]},{position : [8,5]},{position : [17,9]}],
+        chests : [{position : [18,9]}],
+        doors : [{position : [10,11], state : 0},{position : [10,12],state :0}],
+        crystals : [{position : [13,3]},{position : [16,3]},{position : [12,13]}],
+        statues : [{position : [3,12]},{position : [6,12]},{position : [22,2]},{position : [27,2]},{position : [22,5]},{position : [27,5]},{position : [22,10]},{position : [27,10]},{position : [22,13]},{position : [27,13]}],
+        frogs : [{position : [5,6]}],
+        stairs : [{position : [1,9]}],
+        rooms : [{position : [0,0]},{position : [0,1]},{position : [0,2]},{position : [1,0]},{position : [1,1]},{position : [1,2]},{position : [2,0]},{position : [2,1]},{position : [2,2]}]
     },
-
-    2: {
+    2 : {
         mapSprite: '',
         pots : [],
         blocks : [],
@@ -18,7 +19,8 @@ var levels = {
         doors : [],
         crystals : [],
         statues : [],
-        colliders: [],
-        frogs : []
+        frogs : [],
+        stairs : [],
+        rooms : []
     }
 }

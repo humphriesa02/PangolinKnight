@@ -1,6 +1,6 @@
 class block{
-    constructor(position){
-        this.position = position;
+    constructor(info){
+        this.position = info.position;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.animator = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
     }

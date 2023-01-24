@@ -5,9 +5,6 @@ class sceneManager{
         this.x = 0;
         this.y = 0;
 
-        this.roomWidth =tileSize * 10;
-        this.roomHeight =tileSize * 8;
-
         this.player = new Pangolin(gameEngine);
         this.loadLevel(1);
     }
@@ -45,23 +42,27 @@ class sceneManager{
         for(let i = 0; i < this.level.frogs.length; i++){
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
+
+        for(let i = 0; i < this.level.stairs.length; i++){
+            gameEngine.addEntity(new stair(this.level.stairs[i]));
+        }
         gameEngine.addEntity(new Test_Block());
         this.game.addEntity(this.player.shadow);
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
     }
     update(){
-        if(this.x < Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
+        if(this.x < Math.floor((this.player.transform.pos.x + (8))/roomWidth)){
             this.x++;
         }
-        else if(this.x > Math.floor((this.player.transform.pos.x + (8))/this.roomWidth)){
+        else if(this.x > Math.floor((this.player.transform.pos.x + (8))/roomWidth)){
             this.x--;
         }
 
-        if(this.y < Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
+        if(this.y < Math.floor((this.player.transform.pos.y + (8))/roomHeight)){
             this.y++;
         }
-        else if(this.y > Math.floor((this.player.transform.pos.y + (8))/this.roomHeight)){
+        else if(this.y > Math.floor((this.player.transform.pos.y + (8))/roomHeight)){
             this.y--;
         }
     }
