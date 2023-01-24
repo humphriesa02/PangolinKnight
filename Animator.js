@@ -20,7 +20,7 @@ class Animator {
             ctx.drawImage(this.spritesheet, 
                 this.xStart + this.width*frame, this.yStart, 
                 this.width, this.height, 
-                (x - screenX()) * params.scale, (y - screenY()) * params.scale, 
+                (x - screenX() - width / 2) * params.scale, (y - screenY() - height / 2) * params.scale, 
                 width * this.scale, height * this.scale);
 
         }
@@ -61,7 +61,7 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
 function draw_rect(ctx, x, y, width, height, fill, stroke, strokeWidth)
 {
     ctx.beginPath();
-        ctx.rect((x - screenX()) * params.scale, (y - screenY()) * params.scale, width * params.scale, height * params.scale);
+        ctx.rect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
         ctx.stroke();
     if (fill) {
         ctx.fillStyle = fill;

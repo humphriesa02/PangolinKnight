@@ -8,7 +8,11 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
-        this.entity_map = new Map();
+        this.entity_map = new Map([
+            ["player", []],
+            ["enemy", []],
+            ["sword", []],
+        ]);
 
         // Information on the input
         this.click = null;
@@ -20,6 +24,8 @@ class GameEngine {
         this.options = options || {
             debugging: false,
         };
+
+        this.gravity = false;
     };
 
     init(ctx) {
@@ -123,7 +129,7 @@ class GameEngine {
             }
         }
 
-        collisions(this.entities);
+        physics(this.entity_map);
     };
 
     loop() {

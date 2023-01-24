@@ -8,6 +8,7 @@ class Pangolin{
         this.transform = new Transform(new Vec2(16, 32), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+        this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
 
         // Reference to our spritesheet
@@ -310,6 +311,7 @@ class Pangolin{
         // ---------- This may or may not change depending on the state. Velocity won't change if
         // ---------- a state doesn't wish for it to change, so this set works fine no matter what. -- //
 
+        this.transform.velocity.y += this.gravity.velocity;
         // Adjust position from velocity
         this.transform.prev_pos.x = this.transform.pos.x;
         this.transform.prev_pos.y = this.transform.pos.y

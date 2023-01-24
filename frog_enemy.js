@@ -91,7 +91,7 @@ class Frog{
 
     draw(ctx){
         if(document.getElementById("debug").checked){
-            ctx.strokeRect((this.transform.pos.x - screenX()) * params.scale, (this.transform.pos.y - screenY()) * params.scale,tileSize * params.scale,tileSize * params.scale);
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
         this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16);
     }

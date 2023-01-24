@@ -36,8 +36,8 @@ class Input {
 }
 
 class Collider {
-    constructor(body, block_move, block_vision, block_jump) {
-        this.body = body;
+    constructor(area, block_move, block_vision, block_jump) {
+        this.area = area;
         this.block_move = block_move;
         this.block_vision = block_vision;
         this.block_jump = block_jump;
@@ -48,6 +48,12 @@ class Patrol_AI {
     constructor(patrol_points, current_position) {
         this.patrol_points = patrol_points;
         this.current_position = current_position;
+    }
+}
+
+class Gravity {
+    constructor() {
+        this.velocity = 0.0;
     }
 }
 

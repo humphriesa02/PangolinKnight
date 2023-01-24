@@ -7,6 +7,6 @@ class map{
 
     }
     draw(ctx){
-        this.animations.drawFrame(gameEngine.clockTick,ctx, 0,0,480,384);
+        this.animations.drawFrame(gameEngine.clockTick,ctx, 240,192,480,384);
     }
 }
