@@ -1,15 +1,15 @@
 class pot{
-    constructor(position, scale){
-        this.scale = scale;
+    constructor(position){
+        this.tag = "object";
         this.position = position;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
 
-        this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true, 4);
+        this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
     }
     update(){
 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.position[0] * 16 * this.scale - screenX(), this.position[1] * 16 * this.scale - screenY(), 16, 16);
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.position[0] * 16, this.position[1] * 16, 16, 16);
     }
 }

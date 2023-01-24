@@ -187,7 +187,8 @@ class Particle {
 }
 
 class AABB {
-    constructor(halfwidth_x, halfwidth_y) {
-        this.halfwidth = {x: halfwidth_x, y:halfwidth_y};
+    constructor(center, halfwidth_x, halfwidth_y) {
+        this.center = center;
+        this.half = {x: halfwidth_x, y: halfwidth_y};
     }
 }
