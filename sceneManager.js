@@ -45,7 +45,8 @@ class sceneManager{
         for(let i = 0; i < this.level.frogs.length; i++){
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
-        gameEngine.addEntity(new Test_Block());
+        gameEngine.addEntity(new Test_Block(60, 60, 8, 8));
+        gameEngine.addEntity(new Test_Block(80, 120, 80, 8));
         this.game.addEntity(this.player.shadow);
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
