@@ -9,6 +9,7 @@ ASSET_MANAGER.queueDownload("./sprites/map.png");
 ASSET_MANAGER.queueDownload("./sprites/Entities.png")
 ASSET_MANAGER.queueDownload("./sprites/pangolin_shadow.png");
 ASSET_MANAGER.queueDownload("./sprites/frog_enemy.png");
+ASSET_MANAGER.queueDownload("./sprites/Level1map.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
@@ -27,8 +28,8 @@ ASSET_MANAGER.downloadAll(() => {
 	setScale.addEventListener('click', function(e) {
 		params.scale = document.getElementById("scale").value;
 		clearEntities();
-		ctx.canvas.width =  10 * tileSize * params.scale;
-		ctx.canvas.height = 8 * tileSize * params.scale;
+		ctx.canvas.width =  roomWidth * params.scale;
+		ctx.canvas.height = roomHeight * params.scale;
 		ctx.imageSmoothingEnabled = false;
 	});
 });

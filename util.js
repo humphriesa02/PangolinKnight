@@ -52,8 +52,8 @@ window.requestAnimFrame = (() => {
 })();
 
 var tileSize = 16;
-var roomWidth =tileSize * 10;
-var roomHeight =tileSize * 8;
+var roomWidth =tileSize * 17;
+var roomHeight =tileSize * 13;
 /**
  * Returns distance from two points
  * @param {Number} p1, p2 Two objects with x and y coordinates
