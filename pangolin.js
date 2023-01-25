@@ -6,8 +6,10 @@ class Pangolin{
         // Components
         this.tag = "player";
         this.transform = new Transform(new Vec2(16, 32), new Vec2(0,0), 1, new Vec2(0,0));
-        this.health = new Health(10, 10);
+        this.health = new Health(3, 3);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+        this.knockback = new Knockback();
+        this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
 
@@ -80,16 +82,16 @@ class Pangolin{
         // idle-roll animation, state 1
 
         //facing right
-        this.animations[1][0] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 1, 0.1, true);
+        this.animations[1][0] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 1, 1, true);
 
         //facing left
-        this.animations[1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 1, 0.1, true);
+        this.animations[1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 1, 1, true);
 
         //facing up
-        this.animations[1][2] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 1, 0.1, true);
+        this.animations[1][2] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 1, 1, true);
 
         //facing down
-        this.animations[1][3] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 1, 0.1, true);
+        this.animations[1][3] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 1, 1, true);
 
 
         //walking animation, state 2
@@ -153,9 +155,17 @@ class Pangolin{
     }
 
     update(){
-        // Reset velocity
+        // If we run out of health, die
+        if(this.health.current <= 0 ){
+            this.removeFromWorld = true;
+        }
+    
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
+
+        if(this.invincible.active){
+            invulnerability_active(this);
+        }
 
         // ----------- This section is dedicated for seeing if we have finished an animation ---- //
         // ----------- i.e., to check if we have finished sword slashing or jumping ------------- //
@@ -201,20 +211,6 @@ class Pangolin{
         }
 
         
-        if(this.invulnerable && this.switch_time <= 0){
-            if(this.invulnerable_time <= 0){
-                this.invulnerable = false;
-                this.inverted = false;
-                this.invulnerable_time = 0.2;
-            }
-            else{
-                this.inverted = !this.inverted;
-                this.switch_time = 0.1;
-                this.invulnerable_time -= gameEngine.clockTick;
-            }
-            
-        }
-        this.switch_time -= gameEngine.clockTick;
 
         // Sword slash check
         if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && !this.jumping){
@@ -240,7 +236,7 @@ class Pangolin{
             // Initiate the sword slash
             this.attacking = true;
             this.rolling = false;
-            let sword = new Sword(this.game, this.facing, this.transform.pos);
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this);
             this.game.addEntity(sword);
             this.attack_end_time = this.game.timer.gameTime + this.animations[4][0].totalTime;
         }
@@ -258,6 +254,9 @@ class Pangolin{
         else if (this.jumping){
             this.state = 5;
             this.jump();
+        }
+        else if(this.knockback.active){
+            knockback(this);
         }
         else{
             // Set velocity
@@ -323,7 +322,7 @@ class Pangolin{
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.inverted);
+        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.invincible.inverted);
     }
 
 
@@ -347,14 +346,6 @@ class Pangolin{
         this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time * gameEngine.clockTick);
         this.z = Math.sin(((this.distance_remaining / this.jump_distance) * Math.PI)) * this.jump_height;
         console.log("z", this.z);
-    }
-
-    hit(){
-        if(!this.invulnerable){
-            this.health.current--;
-            console.log(this.health.current);
-            this.invulnerable = true;
-        }
     }
 }
 

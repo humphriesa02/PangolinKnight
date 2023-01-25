@@ -9,6 +9,7 @@ ASSET_MANAGER.queueDownload("./sprites/map.png");
 ASSET_MANAGER.queueDownload("./sprites/Entities.png")
 ASSET_MANAGER.queueDownload("./sprites/pangolin_shadow.png");
 ASSET_MANAGER.queueDownload("./sprites/frog_enemy.png");
+ASSET_MANAGER.queueDownload("./sprites/explosion.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
