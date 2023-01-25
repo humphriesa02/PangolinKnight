@@ -8,6 +8,6 @@ class block{
 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.position[0] * 16 + 8, this.position[1] * 16 + 8, 16, 16);
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.position[0], this.position[1], 16, 16);
     }
 }

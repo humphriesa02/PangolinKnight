@@ -5,7 +5,7 @@ class Pangolin{
 
         // Components
         this.tag = "player";
-        this.transform = new Transform(new Vec2(16, 32), new Vec2(0,0), 1, new Vec2(0,0));
+        this.transform = new Transform(new Vec2(24, 66), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.gravity = new Gravity();

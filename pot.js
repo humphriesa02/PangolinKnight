@@ -1,7 +1,7 @@
 class pot{
     constructor(position){
         this.tag = "tile";
-        this.transform = new Transform(new Vec2(position[0] * 16 + 8, position[1] * 16 + 8));
+        this.transform = new Transform(new Vec2(position[0], position[1]));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
 

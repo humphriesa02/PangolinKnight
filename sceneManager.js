@@ -19,30 +19,32 @@ class sceneManager{
         gameEngine.addEntity(this.map);
         
         for(let i = 0; i < this.level.pots.length; i++){
-            gameEngine.addEntity(new pot(this.level.pots[i]))
+            gameEngine.addEntity(new pot(grid_to_mid_pixel(this.level.pots[i])))
         }
 
         for(let i = 0; i < this.level.blocks.length; i++){
-            gameEngine.addEntity(new block(this.level.blocks[i]))
+            gameEngine.addEntity(new block(grid_to_mid_pixel(this.level.blocks[i])))
         }
 
         for(let i = 0; i < this.level.chests.length; i++){
-            gameEngine.addEntity(new chest(this.level.chests[i]))
+            gameEngine.addEntity(new chest(grid_to_mid_pixel(this.level.chests[i])))
         }
 
         for(let i = 0; i < this.level.doors.length; i++){
+            this.level.doors[i][0] = grid_to_mid_pixel(this.level.doors[i][0])
             gameEngine.addEntity(new door(this.level.doors[i]))
         }
 
         for(let i = 0; i < this.level.crystals.length; i++){
-            gameEngine.addEntity(new crystal(this.level.crystals[i]))
+            gameEngine.addEntity(new crystal(grid_to_mid_pixel(this.level.crystals[i])))
         }
 
         for(let i = 0; i < this.level.statues.length; i++){
-            gameEngine.addEntity(new statue(this.level.statues[i]))
+            gameEngine.addEntity(new statue(grid_to_mid_pixel(this.level.statues[i])))
         }
         
         for(let i = 0; i < this.level.frogs.length; i++){
+            this.level.frogs[i][0] = grid_to_mid_pixel(this.level.frogs[i][0])
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
         gameEngine.addEntity(new Test_Block(60, 60, 8, 8));

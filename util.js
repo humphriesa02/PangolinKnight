@@ -80,3 +80,9 @@ const screenX = () => {
 const screenY = () => {
     return (gameEngine.camera.y * gameEngine.camera.roomHeight);
 }
+
+function grid_to_mid_pixel(grid_pos, halfwidth_x = 8, halfwidth_y = 8) {
+    let x = grid_pos[0] * tileSize + halfwidth_x;
+    let y = grid_pos[1] * tileSize + halfwidth_y;
+    return [x,y];
+}
