@@ -25,7 +25,7 @@ class GameEngine {
             debugging: false,
         };
 
-        this.gravity = true;
+        this.gravity = false;
     };
 
     init(ctx) {
