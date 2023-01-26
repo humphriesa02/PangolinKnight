@@ -37,12 +37,6 @@ class Frog{
     
 
     update(){
-        // If we run out of health, die
-        if(this.health.current <= 0 ){
-            let explosion = new Explosion(this);
-            gameEngine.addEntity(explosion);
-            this.removeFromWorld = true;
-        }
 
         // Reset velocity
         this.transform.velocity.x = 0;

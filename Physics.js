@@ -74,6 +74,7 @@ function prevent_overlap(a, b) {
             a.transform.pos.y -= overlap.y;
             if (gameEngine.gravity && a.gravity !== undefined) {
                 a.gravity.velocity = 0.0;
+                a.jumping = false;
             }
         }
         // If a below, push a down and b up
@@ -164,7 +165,7 @@ function physics(entities) {
     for (entity of gameEngine.entities) {
         if (entity.gravity !== undefined) {
             if (gameEngine.gravity) {
-                entity.gravity.velocity += .0098;
+                entity.gravity.velocity += .08;
             }
             else {
                 entity.gravity.velocity = 0.0;

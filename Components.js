@@ -87,6 +87,11 @@ function hit(entity,attacker,damage = 1){
             // We aren't invincible, take damage
             if(!entity.invincible.active){
                 entity.health.current -= damage;
+                if(entity.health.current <= 0){
+                    let explosion = new Explosion(entity);
+                    gameEngine.addEntity(explosion);
+                    entity.removeFromWorld = true;
+                }
                 entity.invincible.active = true;
                 if(entity.knockback !== undefined){
                     entity.knockback.attacker = attacker;
