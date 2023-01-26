@@ -74,6 +74,7 @@ function prevent_overlap(a, b) {
             a.transform.pos.y -= overlap.y;
             if (gameEngine.gravity && a.gravity !== undefined) {
                 a.gravity.velocity = 0.0;
+                a.grounded = true;
                 a.jumping = false;
             }
         }

@@ -33,6 +33,7 @@ class Pangolin{
         this.jump_height = 30;
         this.z = 0; // Give us the impression of a "fake" jump when in top down
         this.distance_remaining;
+        this.grounded = true;
 
         // State change variables
         this.roll_cooldown_end = 0;
@@ -156,29 +157,28 @@ class Pangolin{
 
         //non-rolling
         //facing right
-        this.animations[3][0][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, false);
+        this.animations[3][0][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, true);
 
         //facing left
-        this.animations[3][1][0] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, false);
+        this.animations[3][1][0] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, true);
 
         //facing up
-        this.animations[3][2][0] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, false);
+        this.animations[3][2][0] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, true);
 
         //facing down
-        this.animations[3][3][0] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, false);
+        this.animations[3][3][0] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, true);
 
         //rolling
-        //facing right
-        this.animations[3][0][1] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, false);
+        this.animations[3][0][1] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 3, 0.1, true);
 
         //facing left
-        this.animations[3][1][1] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, false);
+        this.animations[3][1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 3, 0.1, true);
 
         //facing up
-        this.animations[3][2][1] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, false);
+        this.animations[3][2][1] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 3, 0.1, true);
 
         //facing down
-        this.animations[3][3][1] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, false);
+        this.animations[3][3][1] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 3, 0.1, true);
     }
 
     update(){
@@ -208,6 +208,7 @@ class Pangolin{
         this.state = state_enum.jumping;
         if(gameEngine.gravity){
             this.gravity.velocity = -2;
+            this.grounded = false;
         }
     }
 
@@ -296,14 +297,18 @@ class Pangolin{
         else if(this.state == state_enum.slashing && !this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
             return;
         }
-        else if(this.state == state_enum.jumping && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
-            for(let i = 0; i < 4; i++){
-                this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
-                this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
+        else if(this.state == state_enum.jumping){
+            if((!gameEngine.gravity && this.distance_remaining <= 1) || (gameEngine.gravity && this.grounded)){
+                for(let i = 0; i < 4; i++){
+                    this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
+                    this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
+                }
+                //this.z = 0;
+                this.shadow.visible = false;
+                this.state = state_enum.idle;
             }
-            this.z = 0;
-            this.shadow.visible = false;
-            this.state = state_enum.idle;
+            
+            
         }
 
     }
@@ -312,9 +317,12 @@ class Pangolin{
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
 
-        if(this.state !== state_enum.slashing){
+        if(this.state !== state_enum.slashing && !this.knockback.active){
             this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed) *this.game.clockTick);
             this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed)*this.game.clockTick);
+        }
+        else if (this.knockback.active){
+            knockback(this);
         }
         
 
