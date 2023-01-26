@@ -42,6 +42,6 @@ var levels = {
         chests : [{position : [49, 14]},{position : [35, 14]},{position : [42, 6]},{position : [18, 14]}],
         //doors : [{position : [76, 25]},{position : [42, 26]},{position : [42, 13]},{position : [17, 45]},{position : [17, 6]},{position : [16, 32]},{position : [59, 64]}],
         stairs : [{position : [1, 45]}],
-        frogs : [],
+        frogs : [{position : [58,45]}],
         rooms : []}
 }
