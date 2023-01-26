@@ -1,5 +1,7 @@
 /** Global Parameters Object */
-const params = { };
+const params = { 
+    scale : 0
+};
 
 /**
  * @param {Number} n
@@ -49,6 +51,7 @@ window.requestAnimFrame = (() => {
         });
 })();
 
+var tileSize = 16;
 /**
  * Returns distance from two points
  * @param {Number} p1, p2 Two objects with x and y coordinates
@@ -57,3 +60,28 @@ window.requestAnimFrame = (() => {
 const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
+
+function clearEntities() {
+    gameEngine.entities.forEach(function (entity) {
+        entity.removeFromWorld = true;
+    });
+    gameEngine.update();
+    new sceneManager(gameEngine);
+};
+
+const convertToScreenPos = (x, y) => {
+    return {x: (x - screenX()) * params.scale, y: (y - screenY()) * params.scale};
+}
+
+const screenX = () => {
+    return (gameEngine.camera.x * gameEngine.camera.roomWidth);
+}
+
+const screenY = () => {
+    return (gameEngine.camera.y * gameEngine.camera.roomHeight);
+}
+
+const state_enum={idle: 0,
+    walking: 1,
+    slashing: 2,
+    jumping: 3 }

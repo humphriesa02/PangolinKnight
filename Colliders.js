@@ -185,3 +185,10 @@ class Particle {
         drawCircle(ctx, x, y, radius, this.color, this.color, 3);
     }
 }
+
+class AABB {
+    constructor(center, halfwidth_x, halfwidth_y) {
+        this.center = center;
+        this.half = {x: halfwidth_x, y: halfwidth_y};
+    }
+}

@@ -8,6 +8,11 @@ class GameEngine {
 
         // Everything that will be updated and drawn each frame
         this.entities = [];
+        this.entity_map = new Map([
+            ["player", []],
+            ["enemy", []],
+            ["sword", []],
+        ]);
 
         // Information on the input
         this.click = null;
@@ -19,15 +24,14 @@ class GameEngine {
         this.options = options || {
             debugging: false,
         };
+
+        this.gravity = false;
     };
 
     init(ctx) {
         this.ctx = ctx;
         this.startInput();
         this.timer = new Timer();
-        //this.entities = physics_test_init();
-        let pangolin = new Pangolin(gameEngine);
-	    this.addEntity(pangolin)
     };
 
     start() {
@@ -82,6 +86,15 @@ class GameEngine {
 
     addEntity(entity) {
         this.entities.push(entity);
+
+        if (entity.tag !== undefined) {
+            if (this.entity_map.get(entity.tag) === undefined) {
+                this.entity_map.set(entity.tag, [entity]);
+            }
+            else {
+                this.entity_map.get(entity.tag).push(entity);
+            }
+        }
     };
 
     draw() {
@@ -89,7 +102,7 @@ class GameEngine {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         // Draw latest things first
-        for (let i = this.entities.length - 1; i >= 0; i--) {
+        for (let i =  0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx, this);
         }
 
@@ -112,9 +125,12 @@ class GameEngine {
 
         for (let i = this.entities.length - 1; i >= 0; --i) {
             if (this.entities[i].removeFromWorld) {
+                this.entity_map.set(this.entities[i].tag, []);
                 this.entities.splice(i, 1);
             }
         }
+
+        physics(this.entity_map);
     };
 
     loop() {
