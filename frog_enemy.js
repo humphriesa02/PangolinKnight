@@ -5,7 +5,6 @@ class Frog{
         this.health = new Health(3, 3);
         this.invincible = new Invincible(0.05);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
-        this.knockback = new Knockback();
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
         this.facing = 0;
         this.dead = false;
@@ -38,18 +37,20 @@ class Frog{
 
     update(){
 
-        // Reset velocity
-        this.transform.velocity.x = 0;
-        this.transform.velocity.y = 0;
 
         if(this.invincible.active){
             invulnerability_active(this);  
         }
         
-        if(this.knockback.active){
-            knockback(this);
+        if (this.knockback != undefined){
+            if(gameEngine.timer.gameTime >= this.knockback.knockback_end_time){
+                this.knockback = undefined;
+            }
         }
         else{
+            // Reset velocity
+            this.transform.velocity.x = 0;
+            this.transform.velocity.y = 0;
             if (this.transform.pos.x < this.player.transform.pos.x && this.move_time > 0){
                 this.transform.velocity.x += this.move_speed * gameEngine.clockTick;
                 this.move_time -= gameEngine.clockTick;
