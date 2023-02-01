@@ -35,11 +35,14 @@ class Pangolin{
 
         // State change variables
         this.roll_cooldown_end = 0;
-        this.attack_end_time = 0;
+        this.attack_cooldown_end = 0;
         this.jump_cooldown_end = 0;
+        this.interaction_cooldown_end = 0;
 
         // Flag variables
         this.rolling = false;
+        this.interacting = false; // Used for collision based interactions with other entities
+        this.interaction_cooldown_duration = 0.5;
 
         // Animations
         this.animations = [];
@@ -222,6 +225,21 @@ class Pangolin{
 
     // Get input
     input(){
+        if(this.interacting && this.game.timer.gameTime >= this.interaction_cooldown_end){
+            this.interacting = false;
+            this.interaction_cooldown_end = this.game.timer.gameTime + this.interaction_cooldown_duration;
+        }
+        else if(this.game.keys["e"] && this.game.timer.gameTime >= this.interaction_cooldown_end){
+            this.interacting = !this.interacting;
+            for(let i = 0; i < gameEngine.entities.length; i++){
+                if(gameEngine.entities[i].tag == "prop"){
+                    gameEngine.entities[i].activate(this);
+                    break;
+                }
+            }
+            this.interaction_cooldown_end = this.game.timer.gameTime + this.interaction_cooldown_duration;
+        }
+
         // Rolling transition check
         if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end){
             this.rolling = !this.rolling;
@@ -239,7 +257,7 @@ class Pangolin{
         
 
         // Sword slash check
-        if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && this.state != state_enum.jumping){
+        if(this.game.click && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping){
             // Figure out which direction we are slashing in
             if(Math.abs( this.game.click.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.click.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
                 if( this.game.click.x > convertToScreenPos(this.transform.pos.x, 0).x){
@@ -263,38 +281,39 @@ class Pangolin{
             this.rolling = false;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this);
             this.game.addEntity(sword);
-            this.attack_end_time = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
+            this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
     }
 
     // Move player
     movement(){
-
         if (this.knockback !== undefined){
             if(gameEngine.timer.gameTime >= this.knockback.knockback_end_time){
                 this.knockback = undefined;
             }
         }
         else{
+            this.transform.velocity.x = 0;
+            this.transform.velocity.y = 0;
             if(this.state !== state_enum.slashing){
                 this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed) *this.game.clockTick);
                 this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed)*this.game.clockTick);
+           
+                // Figure out the direction for animation
+                if(this.transform.velocity.x > 0){ // Facing right
+                    this.facing = 0;
+                }
+                else if (this.transform.velocity.x < 0){ // Facing left
+                    this.facing = 1;
+                }
+                if (this.transform.velocity.y < 0){ // Facing up
+                    this.facing = 2;
+                }
+                else if (this.transform.velocity.y > 0){ // Facing down
+                    this.facing = 3;
+                }
             }
           
-            // Figure out the direction for animation
-            if(this.transform.velocity.x > 0){ // Facing right
-                this.facing = 0;
-            }
-            else if (this.transform.velocity.x < 0){ // Facing left
-                this.facing = 1;
-            }
-            if (this.transform.velocity.y < 0){ // Facing up
-                this.facing = 2;
-            }
-            else if (this.transform.velocity.y > 0){ // Facing down
-                this.facing = 3;
-            }
-    
             if(this.state != state_enum.jumping && this.state != state_enum.slashing){
                 if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
                     this.state = state_enum.idle; // idle state
