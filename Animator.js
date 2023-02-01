@@ -62,12 +62,10 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
 
 function draw_rect(ctx, x, y, width, height, fill, stroke, strokeWidth)
 {
-    ctx.beginPath();
-        ctx.rect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
-        ctx.stroke();
+    ctx.strokeRect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
     if (fill) {
         ctx.fillStyle = fill;
-        ctx.fill();
+        ctx.fillrect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
     }
     if (stroke) {
         ctx.lineWidth = strokeWidth;

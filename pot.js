@@ -1,7 +1,7 @@
 class pot{
-    constructor(position){
+    constructor(info){
         this.tag = "prop";
-        this.transform = new Transform(new Vec2(position[0] * 16 + 8, position[1] * 16 + 8));
+        this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
 
@@ -30,8 +30,10 @@ class pot{
         this.transform.pos.y += this.transform.velocity.y; 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.z, 16, 16);
-        draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
+        if(document.getElementById("debug").checked){
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
+        }
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.z, 16, 16);
     }
 
     activate(entity){

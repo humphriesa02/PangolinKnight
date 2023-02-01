@@ -1,12 +1,16 @@
 class door{
-    constructor(info){
-        this.position = info[0];
-        this.state = info[1]; // 0 = left, 1 = up, 2 = right, 3 = down
+    constructor(position, info){
+        this.tag = "tile"
+        this.state = info.state; // left = 0, up = 1, right = 2, down = 3, invisable = 4, open = 5
+        this.transform = new Transform(new Vec2(position[0] * 16 + 8, position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        this.loadAnimations();
+        if(this.state != 5){
+            this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+        }
+        this.loadAnimations(this.state);
     }
-    loadAnimations(){
-        switch(this.state){
+    loadAnimations(state){
+        switch(state){
             case 0:
                 this.animator = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 1, true);
                 break;
@@ -19,12 +23,21 @@ class door{
             case 3:
                 this.animator = new Animator(this.spritesheet, 112, 0, 16, 16, 1, 1, true);
                 break;
+            case 4:
+                this.animator = new Animator(this.spritesheet, 112, 48, 16, 16, 1, 1, true);
+                break;
+            case 5:
+                this.animator = new Animator(this.spritesheet, 112, 48, 16, 16, 1, 1, true);
+                break;
         }
     }
     update(){
 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.position[0] * 16, this.position[1] * 16, 16, 16);
+        if(document.getElementById("debug").checked){
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
+        }
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
     }
 }

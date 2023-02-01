@@ -52,6 +52,8 @@ window.requestAnimFrame = (() => {
 })();
 
 var tileSize = 16;
+var roomWidth =tileSize * 17;
+var roomHeight =tileSize * 13;
 /**
  * Returns distance from two points
  * @param {Number} p1, p2 Two objects with x and y coordinates
@@ -74,7 +76,7 @@ const convertToScreenPos = (x, y) => {
 }
 
 const screenX = () => {
-    return (gameEngine.camera.x * gameEngine.camera.roomWidth);
+    return (gameEngine.camera.x * roomWidth);
 }
 
 const screenY = () => {
