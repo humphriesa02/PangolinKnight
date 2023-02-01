@@ -19,6 +19,10 @@ class sceneManager{
         for(let i = 0; i < this.level.pots.length; i++){
             gameEngine.addEntity(new pot(this.level.pots[i]))
         }
+        
+        for(let i = 0; i < this.level.pits.length; i++){
+            gameEngine.addEntity(new pit(this.level.pits[i]))
+        }
 
         for(let i = 0; i < this.level.blocks.length; i++){
             gameEngine.addEntity(new block(this.level.blocks[i]))
