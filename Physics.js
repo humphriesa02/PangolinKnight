@@ -74,6 +74,8 @@ function prevent_overlap(a, b) {
             a.transform.pos.y -= overlap.y;
             if (gameEngine.gravity && a.gravity !== undefined) {
                 a.gravity.velocity = 0.0;
+                a.grounded = true;
+                a.jumping = false;
             }
         }
         // If a below, push a down and b up
@@ -120,6 +122,22 @@ function character_tile_collisions(entities) {
     }
 }
 
+function player_enemy_collisions(entities){
+    
+    let characters = entities.get("player").concat(entities.get("enemy"));
+
+    for (player of entities.get("player")){
+        for (character of characters){
+            if(character.tag != "player"){
+                if (character.collider !== undefined && testAABBAABB(player.collider.area, character.collider.area)) {
+                    console.log("PLAYER HIT");
+                    hit(player, character);
+                }
+            }
+        }
+    }
+}
+
 // Checks for and handles collision between swords and characters
 function sword_character_collisions(entities) {
 
@@ -130,6 +148,9 @@ function sword_character_collisions(entities) {
             if (character != sword.owner) {
                 if (character.collider !== undefined && testAABBAABB(sword.collider.area, character.collider.area)) {
                     // Attack goes here
+                    if(character.health !== undefined){
+                        hit(character, sword);
+                    }
                 }
             }
         }
@@ -138,13 +159,14 @@ function sword_character_collisions(entities) {
 
 function physics(entities) {
     character_tile_collisions(entities);
-    //sword_character_collisions(entities);
+    player_enemy_collisions(entities);
+    sword_character_collisions(entities);
 
     
     for (entity of gameEngine.entities) {
         if (entity.gravity !== undefined) {
             if (gameEngine.gravity) {
-                entity.gravity.velocity += .0098;
+                entity.gravity.velocity += .08;
             }
             else {
                 entity.gravity.velocity = 0.0;

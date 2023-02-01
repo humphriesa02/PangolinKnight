@@ -7,7 +7,7 @@ class Animator {
         this.done = false;
     }
 
-    drawFrame(tick, ctx, x, y, width = this.width, height = this.height) {
+    drawFrame(tick, ctx, x, y, width = this.width, height = this.height, inverted = false) {
         if (this.repeat || !this.done)
         {
             const frame = this.currentFrame();
@@ -17,6 +17,8 @@ class Animator {
                 if (!this.repeat) { this.done = true; }
             }
 
+            if(inverted){ ctx.filter = 'invert(1)'; }
+            else { ctx.filter = 'none'; }
             ctx.drawImage(this.spritesheet, 
                 this.xStart + this.width*frame, this.yStart, 
                 this.width, this.height, 

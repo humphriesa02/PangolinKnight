@@ -8,6 +8,8 @@ class Pangolin{
         this.transform = new Transform(new Vec2(24, 40), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
         this.collider = new Collider(new AABB(this.transform.pos, 7.5, 7.5), true, true, false);
+        this.knockback = new Knockback();
+        this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
 
@@ -17,7 +19,7 @@ class Pangolin{
 
         // Some state variables
         this.facing = 0; // 0 = right, 1 = left, 2 = up, 3 = down
-        this.state = 1; // 0 = idle, 1 = roll-idle, 2 = walking, 3 = rolling, 4 = sword slash
+        this.state = state_enum.idle; // 0 = idle, 1 = roll-idle, 2 = walking, 3 = rolling, 4 = sword slash
         this.dead = false;
 
         // Some movement variables
@@ -31,6 +33,7 @@ class Pangolin{
         this.jump_height = 30;
         this.z = 0; // Give us the impression of a "fake" jump when in top down
         this.distance_remaining;
+        this.grounded = true;
 
         // State change variables
         this.roll_cooldown_end = 0;
@@ -38,9 +41,8 @@ class Pangolin{
         this.jump_cooldown_end = 0;
 
         // Flag variables
+        
         this.rolling = false;
-        this.attacking = false;
-        this.jumping = false;
 
         // Animations
         this.animations = [];
@@ -55,170 +57,204 @@ class Pangolin{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 6; i++){ // 6 States, idle, roll-idle, walking, rolling, slashing, jumping
-        this.animations.push([]);
+        for (let i = 0; i < 6; i++){ // 4 States, idle, walking, slashing, jumping
+            this.animations.push([]);
             for (let j = 0; j < 4; j++){ // 4 directions
                 this.animations[i].push([]);
+                for(let k = 0; k < 2; k++){ // Swapping between rolling and not rolling
+                    this.animations[i][j].push([]);
+                }
             }
         }
 
         // idle animation, state 0
 
+        // Non-rolling
         // facing right
-        this.animations[0][0] = new Animator(this.walk_spritesheet, 0, 0, 16, 16, 1, 0.33, true);
+        this.animations[0][0][0] = new Animator(this.walk_spritesheet, 0, 0, 16, 16, 1, 0.33, true);
 
         // facing left
-        this.animations[0][1] = new Animator(this.walk_spritesheet, 0, 16, 16, 16, 1, 0.33, true);
+        this.animations[0][1][0] = new Animator(this.walk_spritesheet, 0, 16, 16, 16, 1, 0.33, true);
 
         // facing up
-        this.animations[0][2] = new Animator(this.walk_spritesheet, 0, 32, 16, 16, 1, 0.33, true);
+        this.animations[0][2][0] = new Animator(this.walk_spritesheet, 0, 32, 16, 16, 1, 0.33, true);
 
         // facing down
-        this.animations[0][3] = new Animator(this.walk_spritesheet, 0, 48, 16, 16, 1, 0.33, true);
+        this.animations[0][3][0] = new Animator(this.walk_spritesheet, 0, 48, 16, 16, 1, 0.33, true);
 
-
-        // idle-roll animation, state 1
-
+        //Rolling
         //facing right
-        this.animations[1][0] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 1, 0.1, true);
+        this.animations[0][0][1] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 1, 1, true);
 
         //facing left
-        this.animations[1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 1, 0.1, true);
+        this.animations[0][1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 1, 1, true);
 
         //facing up
-        this.animations[1][2] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 1, 0.1, true);
+        this.animations[0][2][1] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 1, 1, true);
 
         //facing down
-        this.animations[1][3] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 1, 0.1, true);
+        this.animations[0][3][1] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 1, 1, true);
 
 
-        //walking animation, state 2
+        //Moving animation, state 2
 
+        //Non-rolling
         //facing right
-        this.animations[2][0] = new Animator(this.walk_spritesheet, 0, 0, 16, 16, 2, 0.2, true);
+        this.animations[1][0][0] = new Animator(this.walk_spritesheet, 0, 0, 16, 16, 2, 0.2, true);
 
         // facing left
-        this.animations[2][1] = new Animator(this.walk_spritesheet, 0, 16, 16, 16, 2, 0.2, true);
+        this.animations[1][1][0] = new Animator(this.walk_spritesheet, 0, 16, 16, 16, 2, 0.2, true);
 
         // facing up
-        this.animations[2][2] = new Animator(this.walk_spritesheet, 0, 32, 16, 16, 2, 0.2, true);
+        this.animations[1][2][0] = new Animator(this.walk_spritesheet, 0, 32, 16, 16, 2, 0.2, true);
 
         // facing down
-        this.animations[2][3] = new Animator(this.walk_spritesheet, 0, 48, 16, 16, 2, 0.2, true);
+        this.animations[1][3][0] = new Animator(this.walk_spritesheet, 0, 48, 16, 16, 2, 0.2, true);
         
-
-        //Rolling animations, state 3
-
+        //Rolling
         //facing right
-        this.animations[3][0] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 3, 0.1, true);
+        this.animations[1][0][1] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 3, 0.1, true);
 
         //facing left
-        this.animations[3][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 3, 0.1, true);
+        this.animations[1][1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 3, 0.1, true);
 
         //facing up
-        this.animations[3][2] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 3, 0.1, true);
+        this.animations[1][2][1] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 3, 0.1, true);
 
         //facing down
-        this.animations[3][3] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 3, 0.1, true);
+        this.animations[1][3][1] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 3, 0.1, true);
 
 
         // Sword slash animations, state 4
 
         //facing right
-        this.animations[4][0] = new Animator(this.slash_spritesheet, 0, 32, 16, 16, 4, 0.065, false);
+        this.animations[2][0][0] = new Animator(this.slash_spritesheet, 0, 32, 16, 16, 4, 0.065, false);
 
         //facing left
-        this.animations[4][1] = new Animator(this.slash_spritesheet, 0, 48, 16, 16, 4, 0.065, false);
+        this.animations[2][1][0] = new Animator(this.slash_spritesheet, 0, 48, 16, 16, 4, 0.065, false);
 
         //facing up
-        this.animations[4][2] = new Animator(this.slash_spritesheet, 0, 16, 16, 16, 4, 0.065, false);
+        this.animations[2][2][0] = new Animator(this.slash_spritesheet, 0, 16, 16, 16, 4, 0.065, false);
 
         //facing down
-        this.animations[4][3] = new Animator(this.slash_spritesheet, 0, 0, 16, 16, 4, 0.065, false);
+        this.animations[2][3][0] = new Animator(this.slash_spritesheet, 0, 0, 16, 16, 4, 0.065, false);
+
+        // rolling
+        //facing right
+        this.animations[2][0][1] = new Animator(this.slash_spritesheet, 0, 32, 16, 16, 4, 0.065, false);
+
+        //facing left
+        this.animations[2][1][1] = new Animator(this.slash_spritesheet, 0, 48, 16, 16, 4, 0.065, false);
+
+        //facing up
+        this.animations[2][2][1] = new Animator(this.slash_spritesheet, 0, 16, 16, 16, 4, 0.065, false);
+
+        //facing down
+        this.animations[2][3][1] = new Animator(this.slash_spritesheet, 0, 0, 16, 16, 4, 0.065, false);
 
 
         // Jump animations, state 5
 
+        //non-rolling
         //facing right
-        this.animations[5][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, false);
+        this.animations[3][0][0] = new Animator(this.walk_spritesheet, 0, 128, 16, 16, 3, 0.2, true);
 
         //facing left
-        this.animations[5][1] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, false);
+        this.animations[3][1][0] = new Animator(this.walk_spritesheet, 0, 144, 16, 16, 3, 0.2, true);
 
         //facing up
-        this.animations[5][2] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, false);
+        this.animations[3][2][0] = new Animator(this.walk_spritesheet, 0, 160, 16, 16, 3, 0.2, true);
 
         //facing down
-        this.animations[5][3] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, false);
+        this.animations[3][3][0] = new Animator(this.walk_spritesheet, 0, 176, 16, 16, 3, 0.2, true);
+
+        //rolling
+        this.animations[3][0][1] = new Animator(this.walk_spritesheet, 0, 64, 16, 16, 3, 0.1, true);
+
+        //facing left
+        this.animations[3][1][1] = new Animator(this.walk_spritesheet, 0, 80, 16, 16, 3, 0.1, true);
+
+        //facing up
+        this.animations[3][2][1] = new Animator(this.walk_spritesheet, 0, 96, 16, 16, 3, 0.1, true);
+
+        //facing down
+        this.animations[3][3][1] = new Animator(this.walk_spritesheet, 0, 112, 16, 16, 3, 0.1, true);
     }
 
     update(){
-        // Reset velocity
-        this.transform.velocity.x = 0;
-        this.transform.velocity.y = 0;
+    
+        console.log(this.state);
 
-        // ----------- This section is dedicated for seeing if we have finished an animation ---- //
-        // ----------- i.e., to check if we have finished sword slashing or jumping ------------- //
-        
-        // Check to see if the flag boolean state animation is done
-        // if it is, reset all its animation and set the flag to false
-        if(this.attacking && this.animations[this.state][this.facing].done){
-            for(let i = 0; i < 4; i++){
-                this.animations[4][i].elapsedTime = 0;
-                this.animations[4][i].done = false;
-            }
-            this.attacking = false;
+        if(this.invincible.active){
+            invulnerability_active(this);
         }
-        else if(this.attacking && !this.animations[this.state][this.facing].done){
-            return;
+        this.check_input();
+        this.check_animation_end();
+        this.movement();
+        // top down jump
+        if(!gameEngine.gravity && this.state == state_enum.jumping){
+            this.jump_path();
         }
-        else if(this.jumping && this.animations[this.state][this.facing].done){
-            for(let i = 0; i < 4; i++){
-                this.animations[5][i].elapsedTime = 0;
-                this.animations[5][i].done = false;
-            }
-            this.z = 0;
-            this.shadow.visible = false;
-            this.jumping = false;
+    }
+
+    draw(ctx){
+        if(document.getElementById("debug").checked){
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
+        this.animations[this.state][this.facing][this.rolling ? 1 : 0].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.invincible.inverted);
+    }
 
+    jump(){
+        this.state = state_enum.jumping;
+        if(gameEngine.gravity){
+            this.gravity.velocity = -2;
+            this.grounded = false;
+        }
+    }
 
-        // ----------- This section is dedicated to checking for specific key presses in order to change states ---- //
-        // -----------  we do not actually change states here, just set booleans. I.e. "attacking" ------------------ //
+    jump_path(){
+        console.log("We jumped");
+        switch(this.facing){
+            case 0:
+                this.transform.velocity.x = this.jump_speed * this.game.clockTick;
+                break;
+            case 1:
+                this.transform.velocity.x = -(this.jump_speed * this.game.clockTick)
+                break;
+            case 2:
+                this.transform.velocity.y = -this.jump_speed * this.game.clockTick;
+                break;
+            case 3:
+                this.transform.velocity.y = (this.jump_speed * this.game.clockTick)
+                break;
+                    
+        }
+        this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time * gameEngine.clockTick);
+        this.z = Math.sin(((this.distance_remaining / this.jump_distance) * Math.PI)) * this.jump_height;
+        console.log("z", this.z);   
+    }
 
+    // ----------- This section is dedicated to checking for specific key presses in order to change states ---- //
+    // -----------  we do not actually change states here, just set booleans. I.e. "attacking" ------------------ //
+    check_input(){
         // Rolling transition check
-        if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end && !this.jumping){
+        if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end){
             this.rolling = !this.rolling;
-            this.roll_cooldown_end = this.game.timer.gameTime + this.animations[3][0].totalTime;
+            this.roll_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.walking][0][this.rolling ? 1 : 0].totalTime;
         }
 
         //Jump check
-        if(this.game.keys[" "] && this.game.timer.gameTime >= this.jump_cooldown_end && !this.jumping){ //Pressing space
-            this.jumping = true;
+        if(this.game.keys[" "] && this.game.timer.gameTime >= this.jump_cooldown_end && this.state != state_enum.jumping){ //Pressing space
+            this.jump();
             this.shadow.visible = true;
             this.distance_remaining = this.jump_distance;
-            this.jump_cooldown_end = this.game.timer.gameTime + this.animations[5][0].totalTime;
+            this.jump_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.jumping][0][this.rolling ? 1 : 0].totalTime;
         }
 
         
-        if(this.invulnerable && this.switch_time <= 0){
-            if(this.invulnerable_time <= 0){
-                this.invulnerable = false;
-                this.inverted = false;
-                this.invulnerable_time = 0.2;
-            }
-            else{
-                this.inverted = !this.inverted;
-                this.switch_time = 0.1;
-                this.invulnerable_time -= gameEngine.clockTick;
-            }
-            
-        }
-        this.switch_time -= gameEngine.clockTick;
 
         // Sword slash check
-        if(this.game.click && this.game.timer.gameTime >= this.attack_end_time && !this.jumping){
-            console.log("Player", this.transform.pos);
+        if(this.game.click && this.game.timer.gameTime >= this.attack_end_time){
             // Figure out which direction we are slashing in
             if(Math.abs( this.game.click.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.click.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
                 if( this.game.click.x > convertToScreenPos(this.transform.pos.x, 0).x){
@@ -238,59 +274,58 @@ class Pangolin{
             }
 
             // Initiate the sword slash
-            this.attacking = true;
+            this.state = state_enum.slashing;
             this.rolling = false;
-            let sword = new Sword(this.game, this.facing, this.transform.pos);
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this);
             this.game.addEntity(sword);
-            this.attack_end_time = this.game.timer.gameTime + this.animations[4][0].totalTime;
+            this.attack_end_time = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
+    }
 
-
-
-        // ----------- This section is dedicated to changing states. State changes are mainly determined by flag booleans ---- //
-        // ----------- i.e., if we have the attacking flag set then our state is 4. ------------------------------------------ //
-        //             possible fix here, every frame of say, the attack animation, we reset state to 4.
-        //             May be faster to have a check somewhere saying "are we in state 4, then skip"
-
-        if(this.attacking){
-            this.state = 4;
-        }
-        else if (this.jumping){
-            this.state = 5;
-            this.jump();
-        }
-        else{
-            // Set velocity
-            if(!this.rolling){
-                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed*this.game.clockTick);
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed*this.game.clockTick);
+    // ----------- This section is dedicated for seeing if we have finished an animation ---- //
+    // ----------- i.e., to check if we have finished sword slashing or jumping ------------- //
+    check_animation_end(){
+        // Check to see if the flag boolean state animation is done
+        // if it is, reset all its animation and set the flag to false
+        if(this.state == state_enum.slashing && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
+            for(let i = 0; i < 4; i++){
+                this.animations[state_enum.slashing][i][this.rolling ? 1 : 0].elapsedTime = 0;
+                this.animations[state_enum.slashing][i][this.rolling ? 1 : 0].done = false;
             }
-            else{
-                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.roll_speed*this.game.clockTick);
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.roll_speed*this.game.clockTick);
-            }
-
-            // Either idle, roll-idle, walking, or rolling states here
-            if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){ // holding still
-                if(this.rolling){ // idle rolling state
-                    this.state = 1;
+            this.state = state_enum.idle;
+        }
+        else if(this.state == state_enum.slashing && !this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
+            return;
+        }
+        else if(this.state == state_enum.jumping){
+            if((!gameEngine.gravity && this.distance_remaining <= 1) || (gameEngine.gravity && this.grounded)){
+                for(let i = 0; i < 4; i++){
+                    this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
+                    this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
                 }
-                else
-                    this.state = 0; // idle walking state
+                //this.z = 0;
+                this.shadow.visible = false;
+                this.state = state_enum.idle;
             }
-            else{ // moving
-                if(this.rolling){ // moving rolling state
-                    this.state = 3;
-                }
-                else
-                    this.state = 2; // moving walking state
-            }
+            
+            
         }
 
+    }
 
-        // ----------- This section is dedicated determining which direction we are facing. --------- //
-        // ----------- we will need to determine if our facing can change mid action, like jumping -- //
+    movement(){
+        this.transform.velocity.x = 0;
+        this.transform.velocity.y = 0;
+
+        if(this.state !== state_enum.slashing && !this.knockback.active){
+            this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed) *this.game.clockTick);
+            this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed)*this.game.clockTick);
+        }
+        else if (this.knockback.active){
+            knockback(this);
+        }
         
+
         // Figure out the direction for animation
         if(this.transform.velocity.x > 0){ // Facing right
             this.facing = 0;
@@ -305,11 +340,16 @@ class Pangolin{
             this.facing = 3;
         }
 
+        if(this.state != state_enum.jumping && this.state != state_enum.slashing){
+            if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
+                this.state = state_enum.idle; // idle state
+            }
+            else{ // moving
+                this.state = state_enum.walking; // moving state
+            }
+        }
 
-        
-        // ---------- Finally, we will adjust where our actual game object is located in the world. -- //
-        // ---------- This may or may not change depending on the state. Velocity won't change if
-        // ---------- a state doesn't wish for it to change, so this set works fine no matter what. -- //
+        // Adjust where our actual game object is located in the world. -- //
 
         this.transform.velocity.y += this.gravity.velocity;
         // Adjust position from velocity
@@ -317,44 +357,7 @@ class Pangolin{
         this.transform.prev_pos.y = this.transform.pos.y
         this.transform.pos.x += this.transform.velocity.x;
         this.transform.pos.y += this.transform.velocity.y; 
-    }
-
-    draw(ctx){
-        if(document.getElementById("debug").checked){
-            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
-        }
-        this.animations[this.state][this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.inverted);
-    }
-
-
-    jump(){
-        console.log("We jumped");
-        switch(this.facing){
-            case 0:
-                this.transform.velocity.x = this.jump_speed * this.game.clockTick;
-                break;
-            case 1:
-                this.transform.velocity.x = -(this.jump_speed * this.game.clockTick)
-                break;
-            case 2:
-                this.transform.velocity.y = -this.jump_speed * this.game.clockTick;
-                break;
-            case 3:
-                this.transform.velocity.y = (this.jump_speed * this.game.clockTick)
-                break;
-                
-        }
-        this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time * gameEngine.clockTick);
-        this.z = Math.sin(((this.distance_remaining / this.jump_distance) * Math.PI)) * this.jump_height;
-        console.log("z", this.z);
-    }
-
-    hit(){
-        if(!this.invulnerable){
-            this.health.current--;
-            console.log(this.health.current);
-            this.invulnerable = true;
-        }
+        
     }
 }
 

@@ -80,5 +80,10 @@ const screenX = () => {
 }
 
 const screenY = () => {
-    return (gameEngine.camera.y * roomHeight);
+    return (gameEngine.camera.y * gameEngine.camera.roomHeight);
 }
+
+const state_enum={idle: 0,
+    walking: 1,
+    slashing: 2,
+    jumping: 3 }

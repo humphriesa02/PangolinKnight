@@ -1,10 +1,11 @@
 class Sword{
-    constructor(game, facing, player_pos){
+    constructor(game, facing, player_pos, player){
         this.tag = "sword";
         Object.assign(this, {game, facing, player_pos});
         // Components
         let sword_pos = Object.assign({},player_pos);
 
+        this.owner = player;
         // Decide where the sword will initially start
         switch(this.facing){
             case 0:
@@ -21,7 +22,7 @@ class Sword{
                 break;
         }
         
-        this.collider;
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
 
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sword_anim.png");
 

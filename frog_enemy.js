@@ -3,7 +3,9 @@ class Frog{
         this.tag = "enemy";
         this.transform = new Transform(new Vec2(info.position[0] * 16, info.position[1] * 16), new Vec2(0,0), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
+        this.invincible = new Invincible(0.05);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+        this.knockback = new Knockback();
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
         this.facing = 0;
         this.dead = false;
@@ -35,33 +37,44 @@ class Frog{
     
 
     update(){
+
         // Reset velocity
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
+
+        if(this.invincible.active){
+            invulnerability_active(this);  
+        }
         
-        if (this.transform.pos.x < this.player.transform.pos.x && this.move_time > 0){
-            this.transform.velocity.x += this.move_speed * gameEngine.clockTick;
-            this.move_time -= gameEngine.clockTick;
-        }
-        else if (this.transform.pos.x > this.player.transform.pos.x && this.move_time > 0){
-            this.transform.velocity.x -= this.move_speed * gameEngine.clockTick;
-            this.move_time -= gameEngine.clockTick;
-        }
-        if (this.transform.pos.y < this.player.transform.pos.y && this.move_time > 0){
-            this.transform.velocity.y += this.move_speed * gameEngine.clockTick;
-            this.move_time -= gameEngine.clockTick;
-        }
-        else if (this.transform.pos.y > this.player.transform.pos.y && this.move_time > 0){
-            this.transform.velocity.y -= this.move_speed * gameEngine.clockTick;
-            this.move_time -= gameEngine.clockTick;
-        }
-        else if(this.delay_time <= 0){
-            this.move_time = Math.random() * 3;
-            this.delay_time = Math.random() * 3;
+        if(this.knockback.active){
+            knockback(this);
         }
         else{
-            this.delay_time-=gameEngine.clockTick;
+            if (this.transform.pos.x < this.player.transform.pos.x && this.move_time > 0){
+                this.transform.velocity.x += this.move_speed * gameEngine.clockTick;
+                this.move_time -= gameEngine.clockTick;
+            }
+            else if (this.transform.pos.x > this.player.transform.pos.x && this.move_time > 0){
+                this.transform.velocity.x -= this.move_speed * gameEngine.clockTick;
+                this.move_time -= gameEngine.clockTick;
+            }
+            if (this.transform.pos.y < this.player.transform.pos.y && this.move_time > 0){
+                this.transform.velocity.y += this.move_speed * gameEngine.clockTick;
+                this.move_time -= gameEngine.clockTick;
+            }
+            else if (this.transform.pos.y > this.player.transform.pos.y && this.move_time > 0){
+                this.transform.velocity.y -= this.move_speed * gameEngine.clockTick;
+                this.move_time -= gameEngine.clockTick;
+            }
+            else if(this.delay_time <= 0){
+                this.move_time = Math.random() * 3;
+                this.delay_time = Math.random() * 3;
+            }
+            else{
+                this.delay_time-=gameEngine.clockTick;
+            }
         }
+        
 
 
         // Figure out the direction for animation
@@ -93,7 +106,7 @@ class Frog{
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
-        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16);
+        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, this.invincible.inverted);
     }
 
 }
