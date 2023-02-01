@@ -80,7 +80,7 @@ const screenX = () => {
 }
 
 const screenY = () => {
-    return (gameEngine.camera.y * gameEngine.camera.roomHeight);
+    return (gameEngine.camera.y * roomHeight);
 }
 
 const state_enum={idle: 0,
