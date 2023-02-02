@@ -2,7 +2,7 @@ class Frog{
     constructor(info, player){
         this.tag = "enemy";
         this.transform = new Transform(new Vec2(info.position[0] * 16, info.position[1] * 16), new Vec2(0,0), 1, new Vec2(0,0));
-        this.health = new Health(10, 10);
+        this.health = new Health(3, 3);
         this.invincible = new Invincible(0.05);
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");

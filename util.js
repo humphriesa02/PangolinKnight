@@ -68,7 +68,6 @@ function clearEntities() {
         entity.removeFromWorld = true;
     });
     gameEngine.update();
-    new sceneManager(gameEngine);
 };
 
 const convertToScreenPos = (x, y) => {

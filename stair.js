@@ -1,6 +1,7 @@
 class stair{
     constructor(info){
-        this.tag = "tile"
+        this.tag = "prop"
+        this.state = info.state;
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
@@ -15,5 +16,9 @@ class stair{
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
         }
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
+    }
+    activate(){
+        clearEntities();
+        gameEngine.camera.loadLevel(this.state);
     }
 }
