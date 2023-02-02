@@ -1,7 +1,6 @@
 class Animator {
     constructor(spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat = true) {
         Object.assign(this, {spritesheet, xStart, yStart, width, height, frameCount, frameDuration, repeat});
-        this.scale = params.scale;
         this.elapsedTime = 0;
         this.totalTime = frameCount * frameDuration;
         this.done = false;
@@ -23,7 +22,7 @@ class Animator {
                 this.xStart + this.width*frame, this.yStart, 
                 this.width, this.height, 
                 (x - screenX() - width / 2) * params.scale, (y - screenY() - height / 2) * params.scale, 
-                width * this.scale, height * this.scale);
+                width * params.scale, height * params.scale);
 
         }
     }
