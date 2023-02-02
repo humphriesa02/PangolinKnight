@@ -12,6 +12,7 @@ class GameEngine {
             ["player", []],
             ["enemy", []],
             ["sword", []],
+            ["prop", []]
         ]);
 
         // Information on the input
