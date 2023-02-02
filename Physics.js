@@ -1,3 +1,5 @@
+const _GRAVITY = 0.08;
+
 function physics_test_init() {
     let units = [];
     let pos_x = 0.0;
@@ -26,6 +28,87 @@ function physics_test_init() {
     }
 
     return units;
+}
+
+function physics(entities) {
+    character_tile_collisions(entities);
+    player_enemy_collisions(entities);
+    sword_character_collisions(entities);
+    player_prop_collisions(entities);
+
+    
+    for (entity of gameEngine.entities) {
+        if (entity.gravity !== undefined) {
+            if (gameEngine.gravity) {
+                entity.gravity.velocity += _GRAVITY;
+            }
+            else {
+                entity.gravity.velocity = 0.0;
+            }
+        }
+    }
+    
+}
+
+// Checks for and handles collision between characters and tiles
+function character_tile_collisions(entities) {
+
+    let characters = entities.get("player").concat(entities.get("enemy"));
+
+    for (character of characters) {
+        if (character.collider !== undefined && character.collider.block_move) {
+            for (tile of entities.get("tile")) {
+                prevent_overlap(character, tile);
+            }
+        }
+    }
+}
+
+function player_enemy_collisions(entities){
+    
+    let characters = entities.get("player").concat(entities.get("enemy"));
+
+    for (player of entities.get("player")){
+        for (character of characters){
+            if(character.tag != "player"){
+                if (character.collider !== undefined && testAABBAABB(player.collider.area, character.collider.area)) {
+                    console.log("PLAYER HIT");
+                    hit(player, character);
+                }
+            }
+        }
+    }
+}
+
+// Checks for and handles collision between swords and characters
+function sword_character_collisions(entities) {
+
+    let characters = entities.get("player").concat(entities.get("enemy"));
+
+    for (sword of entities.get("sword")) {
+        for (character of characters) {
+            if (character != sword.owner) {
+                if (character.collider !== undefined && testAABBAABB(sword.collider.area, character.collider.area)) {
+                    // Attack goes here
+                    if(character.health !== undefined){
+                        hit(character, sword);
+                    }
+                }
+            }
+        }
+    }
+}
+
+function player_prop_collisions(entities) {
+    player = entities.get("player");
+    if (player == undefined || player.collider == undefined) { return; }
+    props = entities.get("prop");
+
+    for (prop of props) {
+        if (testAABBAABB(player.collider.area, prop.collider.area)) {
+            prop.activate();
+        }
+    }
 }
 
 // Returns whether two collider areas a and b are overlapping
@@ -106,74 +189,6 @@ function prevent_overlap(a, b) {
             }
         }
     }
-}
-
-// Checks for and handles collision between characters and tiles
-function character_tile_collisions(entities) {
-
-    let characters = entities.get("player").concat(entities.get("enemy"));
-
-    for (character of characters) {
-        if (character.collider !== undefined && character.collider.block_move) {
-            for (tile of entities.get("tile")) {
-                prevent_overlap(character, tile);
-            }
-        }
-    }
-}
-
-function player_enemy_collisions(entities){
-    
-    let characters = entities.get("player").concat(entities.get("enemy"));
-
-    for (player of entities.get("player")){
-        for (character of characters){
-            if(character.tag != "player"){
-                if (character.collider !== undefined && testAABBAABB(player.collider.area, character.collider.area)) {
-                    console.log("PLAYER HIT");
-                    hit(player, character);
-                }
-            }
-        }
-    }
-}
-
-// Checks for and handles collision between swords and characters
-function sword_character_collisions(entities) {
-
-    let characters = entities.get("player").concat(entities.get("enemy"));
-
-    for (sword of entities.get("sword")) {
-        for (character of characters) {
-            if (character != sword.owner) {
-                if (character.collider !== undefined && testAABBAABB(sword.collider.area, character.collider.area)) {
-                    // Attack goes here
-                    if(character.health !== undefined){
-                        hit(character, sword);
-                    }
-                }
-            }
-        }
-    }
-}
-
-function physics(entities) {
-    character_tile_collisions(entities);
-    player_enemy_collisions(entities);
-    sword_character_collisions(entities);
-
-    
-    for (entity of gameEngine.entities) {
-        if (entity.gravity !== undefined) {
-            if (gameEngine.gravity) {
-                entity.gravity.velocity += .08;
-            }
-            else {
-                entity.gravity.velocity = 0.0;
-            }
-        }
-    }
-    
 }
 
 class Test_Block {
