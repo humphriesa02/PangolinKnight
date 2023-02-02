@@ -15,15 +15,15 @@ var levels = {
         //door states : invisable = 0, open = 1, close = 2
         rooms : [{position : [0,0], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [0,1], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
-        {position : [0,2], doors : {up : {state : 1, facing : 0}, right : {state : 2, facing : 1}, down : {state : 0, facing : 2}, left : {state : 2, facing : 3}}},
-        {position : [0,3], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
+        {position : [0,2], doors : {up : {state : 1, facing : 0}, right : {state : 2, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
+        {position : [0,3], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [1,0], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 2, facing : 3}}},
         {position : [1,1], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [1,2], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [1,3], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 0, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [2,0], doors : {up : {state : 0, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [2,1], doors : {up : {state : 2, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
-        {position : [2,2], doors : {up : {state : 2, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
+        {position : [2,2], doors : {up : {state : 2, facing : 0}, right : {state : 1, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [3,2], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [3,3], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [3,4], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 2, facing : 2}, left : {state : 0, facing : 3}}},
@@ -41,7 +41,7 @@ var levels = {
         crystals : [],
         statues : [],
         frogs : [],
-        stairs : {position : [0,0], state : 1},
+        stairs : {position : [10,9], state : 1},
         pits : [],
         rooms : []
     }
