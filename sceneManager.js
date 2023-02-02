@@ -55,8 +55,7 @@ class sceneManager{
         for(let i = 0; i < this.level.frogs.length; i++){
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
-        this.stairs = new stair(this.level.stairs);
-        gameEngine.addEntity(this.stairs);
+        gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
@@ -76,9 +75,6 @@ class sceneManager{
             this.y--;
         }
 
-        if(this.x == -1 && this.y == 3){
-            this.stairs.activate();
-        }
     }
     draw(ctx){
 

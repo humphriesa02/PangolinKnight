@@ -100,7 +100,7 @@ function sword_character_collisions(entities) {
 }
 
 function player_prop_collisions(entities) {
-    player = entities.get("player");
+    player = entities.get("player")[0];
     if (player == undefined || player.collider == undefined) { return; }
     props = entities.get("prop");
 
