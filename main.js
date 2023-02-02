@@ -22,7 +22,7 @@ ASSET_MANAGER.downloadAll(() => {
 
 	gameEngine.init(ctx);
 
-	new sceneManager(gameEngine);
+	const manager = new sceneManager(gameEngine);
 
 	gameEngine.start();
 
@@ -32,5 +32,6 @@ ASSET_MANAGER.downloadAll(() => {
 		ctx.canvas.width =  roomWidth * params.scale;
 		ctx.canvas.height = roomHeight * params.scale;
 		ctx.imageSmoothingEnabled = false;
+		manager.loadLevel(1);
 	});
 });

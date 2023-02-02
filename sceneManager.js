@@ -6,16 +6,20 @@ class sceneManager{
         this.y = 0;
 
         this.player = new Pangolin(gameEngine);
-        this.loadLevel(3);
+        this.loadLevel(1);
     }
     loadLevel(level){
-    
+        this.player.removeFromWorld = false;
+        this.removeFromWorld = false;
         this.level = levels[level];
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
         
+        gameEngine.gravity = this.level.gravity;
+        this.player.gravity = new Gravity();
+
         for(let i = 0; i < this.level.pots.length; i++){
             gameEngine.addEntity(new pot(this.level.pots[i]))
         }
@@ -51,10 +55,8 @@ class sceneManager{
         for(let i = 0; i < this.level.frogs.length; i++){
             gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
         }
-
-        for(let i = 0; i < this.level.stairs.length; i++){
-            gameEngine.addEntity(new stair(this.level.stairs[i]));
-        }
+        this.stairs = new stair(this.level.stairs);
+        gameEngine.addEntity(this.stairs);
         this.game.addEntity(this.player.shadow);
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
@@ -72,6 +74,10 @@ class sceneManager{
         }
         else if(this.y > Math.floor(this.player.transform.pos.y/roomHeight)){
             this.y--;
+        }
+
+        if(this.x == -1 && this.y == 3){
+            this.stairs.activate();
         }
     }
     draw(ctx){
