@@ -106,7 +106,7 @@ function player_prop_collisions(entities) {
 
     for (prop of props) {
         if (testAABBAABB(player.collider.area, prop.collider.area)) {
-            prop.activate();
+            prop.activate(player);
         }
     }
 }

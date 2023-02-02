@@ -69,9 +69,12 @@ class Invincible{
 
 
 class Knockback{
-    constructor(knockback_speed = 150, knockback_duration = 0.1, active = false){
-        Object.assign(this, {knockback_speed, knockback_duration, active})
-        this.current_knockback_duration = knockback_duration;
+    constructor(target, source_pos, knockback_speed = 3, knockback_duration = 0.1){
+        let vector = Vec2.diff(target.transform.pos, source_pos);
+        vector.normalize();
+        vector = Vec2.scale(vector, knockback_speed);
+        target.transform.velocity = vector;
+        this.knockback_end_time = gameEngine.timer.gameTime + knockback_duration;
     }
 }
 
@@ -93,10 +96,7 @@ function hit(entity,attacker,damage = 1){
                     entity.removeFromWorld = true;
                 }
                 entity.invincible.active = true;
-                if(entity.knockback !== undefined){
-                    entity.knockback.attacker = attacker;
-                    entity.knockback.active = true;
-                }
+                entity.knockback = new Knockback(entity, attacker.transform.pos);
             }
         }
         // No invinsibility, but we do have health
@@ -127,28 +127,4 @@ function invulnerability_active(entity){
         if (inv.current_flicker_duration > 0) {inv.current_flicker_duration -= gameEngine.clockTick;} 
     }
     
-}
-
-function knockback(entity){
-    if(entity.knockback !== undefined){
-        let knock = entity.knockback;
-        if(knock.current_knockback_duration > 0){
-            let direction = new Vec2();
-            if(entity.tag == "sword"){
-                direction = Vec2.diff(knock.attacker.owner.transform.pos, entity.transform.pos);
-            }
-            else{
-                direction = Vec2.diff(knock.attacker.transform.pos, entity.transform.pos);
-            }
-            direction.normalize();
-            direction =  Vec2.scale(direction, knock.knockback_speed * gameEngine.clockTick);
-            entity.transform.velocity = new Vec2(-direction.x, -direction.y);
-            console.log("Velocity", entity.transform.velocity);
-            knock.current_knockback_duration -= gameEngine.clockTick;
-        }
-        else{
-            knock.current_knockback_duration = knock.knockback_duration;
-            knock.active = false;
-        }
-    }
 }
