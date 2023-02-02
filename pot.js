@@ -41,14 +41,14 @@ class pot{
             if(this.picked_up){
                 console.log("throw");
                 // throw the pot
-                entity.state = state_enum.throw;
+                //entity.state = state_enum.throw;
                 this.picked_up = false;
                 this.thrown = true;
                 this.direction = entity.facing;
             }
             else{
                 // pick up the pot
-                entity.state = state_enum.holding;
+                //entity.state = state_enum.holding;
                 this.picked_up = true;
                 this.distance_remaining = this.throw_distance;
                 this.holder = entity;

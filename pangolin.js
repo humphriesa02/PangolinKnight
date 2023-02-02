@@ -232,12 +232,6 @@ class Pangolin{
         }
         else if(this.game.keys["e"] && this.game.timer.gameTime >= this.interaction_cooldown_end){
             this.interacting = !this.interacting;
-            for(let i = 0; i < gameEngine.entities.length; i++){
-                if(gameEngine.entities[i].tag == "prop"){
-                    gameEngine.entities[i].activate(this);
-                    break;
-                }
-            }
             this.interaction_cooldown_end = this.game.timer.gameTime + this.interaction_cooldown_duration;
         }
 
