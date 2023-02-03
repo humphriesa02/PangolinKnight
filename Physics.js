@@ -149,6 +149,7 @@ function player_prop_collisions(entities) {
     }
 }
 
+// Checks for overlap between two Entities a and b and returns a boolean
 function test_overlap(a, b) {
     if (a instanceof AABB && b instanceof AABB) {
         return test_AABBs(a, b).test;
@@ -231,7 +232,7 @@ function prevent_overlap(a, b) {
     }
 }
 
-// Prevents overlap between two entities a and b if both should prevent overlap
+// Prevents AABB-AABB overlap between two Entities a and b 
 function prevent_overlap_AABBs(a, b, overlap) {
     // Gets the overlap between a and b on the previous time step
     let prev_overlap = test_AABBs(a.collider.area, b.collider.area, a.transform.prev_pos, b.transform.prev_pos).overlap;
