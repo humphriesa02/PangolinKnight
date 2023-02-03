@@ -31,49 +31,80 @@ function physics_test_init() {
 }
 
 function physics(entities) {
-    character_tile_collisions(entities);
+    let movement_map = update_pos();
+    character_tile_collisions(movement_map);
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
     player_prop_collisions(entities);
+}
 
+
+// Update the position of all entities and add them to the movement map if they moved
+function update_pos() {
+    let movement_map = new Map([]);
     
     for (entity of gameEngine.entities) {
-        if (entity.gravity !== undefined) {
-            if (gameEngine.gravity) {
-                entity.gravity.velocity += _GRAVITY;
+        if (entity.transform !== undefined) {
+            entity.transform.prev_pos = entity.transform.pos.clone();
+
+            if (entity.gravity !== undefined) {
+                if (gameEngine.gravity) {
+                    entity.gravity.velocity += _GRAVITY;
+                    entity.transform.velocity.add(entity.gravity.velocity);
+                }
+                else {
+                    entity.gravity.velocity = 0.0;
+                }
             }
-            else {
-                entity.gravity.velocity = 0.0;
+
+            if (entity.transform.velocity.x != 0.0 || entity.transform.velocity.y != 0.0) {
+                entity.transform.pos.add(entity.transform.velocity);
+                
+                if (entity.tag !== undefined) {
+                    if (movement_map.get(entity.tag) === undefined) {
+                        movement_map.set(entity.tag, [entity]);
+                    }
+                    else {
+                        movement_map.get(entity.tag).push(entity);
+                    }
+                }
             }
         }
     }
-    
+
+    return movement_map;
 }
+
 
 // Checks for and handles collision between characters and tiles
 function character_tile_collisions(entities) {
 
-    let characters = entities.get("player").concat(entities.get("enemy"));
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
 
     for (character of characters) {
-        if (character.collider !== undefined && character.collider.block_move) {
-            for (tile of entities.get("tile")) {
-                prevent_overlap(character, tile);
+        if (character.collider !== undefined) {
+            for (tile of gameEngine.entity_map.get("tile")) {
+                if (tile.collider.block_move) {
+                    prevent_overlap(character, tile);
+                }
             }
         }
     }
 }
 
 function player_enemy_collisions(entities){
-    
-    let characters = entities.get("player").concat(entities.get("enemy"));
-
     for (player of entities.get("player")){
-        for (character of characters){
-            if(character.tag != "player"){
-                if (character.collider !== undefined && testAABBAABB(player.collider.area, character.collider.area)) {
+        for (enemy of entities.get("enemy")) {
+            if (enemy.collider !== undefined) {
+                if (test_overlap(player.collider.area, enemy.collider.area)) {
                     console.log("PLAYER HIT");
-                    hit(player, character);
+                    hit(player, enemy);
                 }
             }
         }
@@ -83,12 +114,18 @@ function player_enemy_collisions(entities){
 // Checks for and handles collision between swords and characters
 function sword_character_collisions(entities) {
 
-    let characters = entities.get("player").concat(entities.get("enemy"));
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
 
     for (sword of entities.get("sword")) {
         for (character of characters) {
             if (character != sword.owner) {
-                if (character.collider !== undefined && testAABBAABB(sword.collider.area, character.collider.area)) {
+                if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
                         hit(character, sword);
@@ -105,39 +142,99 @@ function player_prop_collisions(entities) {
     props = entities.get("prop");
 
     for (prop of props) {
-        if (testAABBAABB(player.collider.area, prop.collider.area)) {
+        if (test_overlap(player.collider.area, prop.collider.area)) {
+            if (prop.collider.block_move) { prevent_overlap(player, prop); }
             prop.activate(player);
         }
     }
 }
 
-// Returns whether two collider areas a and b are overlapping
-function testAABBAABB(a, b) {
-    if (Math.abs(a.center.x - b.center.x) > (a.half.x + b.half.x)) { return false; }
-    if (Math.abs(a.center.y - b.center.y) > (a.half.y + b.half.y)) { return false; }
-    return true;
+function test_overlap(a, b) {
+    if (a instanceof AABB && b instanceof AABB) {
+        return test_AABBs(a, b).test;
+    }
+    else if (a instanceof Circle && b instanceof Circle)
+    {
+        return test_Circles(a, b).test;
+    }
+    else {
+        if (a instanceof Circle && b instanceof AABB) {
+            return test_Circle_AABB(a, b).test;
+        }
+        else if (a instanceof AABB && b instanceof Circle) {
+            return test_Circle_AABB(b, a).test;
+        }
+    }
+
+    return false;
 }
 
-// Gets the overlap of two collider areas a and b
-function get_AABBAABB_overlap(a, b, ac = a.center, bc = b.center) {
+
+// Gets the overlap of two AABBs a and b
+function test_AABBs(a, b, ac = a.center, bc = b.center) {
     let ox = a.half.x + b.half.x - Math.abs(ac.x - bc.x);
     let oy = a.half.y + b.half.y - Math.abs(ac.y - bc.y);
-    return {x: ox, y: oy};
+    return {test: (ox > 0 && oy > 0), overlap: {x: ox, y: oy}};
+}
+
+// Tests for overlap and returns distance vector of two Circles a and b
+function test_Circles(a, b) {
+    let distance = Vec2.diff(a.center, b.center);
+    let distance_squared = distance.dot(distance);
+
+    let radii_sum = a.radius + b.radius;
+    return {test: distance_squared <= radii_sum * radii_sum, distance: distance};
+}
+
+// Tests for overlap and returns distance vector and square distance between a Circle c and AABB b
+function test_Circle_AABB(c, b) {
+    let distance = Vec2.diff(c.center, b.center);
+    let distance_squared = sqdist_point_AABB(c.center, b);
+
+    return {test: (distance_squared < c.radius * c.radius), 
+        distance_v: distance, 
+        sqdist: distance_squared};
+}
+
+// Prevents overlap between two Entities a and b
+function prevent_overlap(a, b) {
+    let test;
+    if (a.collider.area instanceof AABB && b.collider.area instanceof AABB) {
+        test = test_AABBs(a.collider.area, b.collider.area);
+        if(test.test) {
+            prevent_overlap_AABBs(a, b, test.overlap);
+        }
+    }
+    else if (a.collider.area instanceof Circle && b.collider.area instanceof Circle)
+    {
+        test = test_Circles(a.collider.area, b.collider.area);
+        if (test.test) {
+            prevent_overlap_circles(a, b, test.distance);
+        }
+    }
+    else {
+        let circle;
+        let box;
+        if (a.collider.area instanceof Circle && b.collider.area instanceof AABB) {
+            circle = a;
+            box = b;
+        }
+        else if (a.collider.area instanceof AABB && b.collider.area instanceof Circle) {
+            circle = b;
+            box = a;
+        }
+
+        test = test_Circle_AABB(circle.collider.area, box.collider.area);
+        if (test.test) {
+            prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
+        }
+    }
 }
 
 // Prevents overlap between two entities a and b if both should prevent overlap
-function prevent_overlap(a, b) {
-    // Checks b has colliders, blocks movement, if a or b has moved since the last frame,
-    // and if they are overlapping, if any of those conditions are false it exits early
-    if (b.collider === undefined || !b.collider.block_move) return;
-    if (a.transform.pos == a.transform.prev_pos &&
-        b.transform.pos == b.transform.prev_pos) return;
-    
-    let overlap = get_AABBAABB_overlap(a.collider.area, b.collider.area)
-    if (overlap.x <= 0 || overlap.y <= 0) return;
-
+function prevent_overlap_AABBs(a, b, overlap) {
     // Gets the overlap between a and b on the previous time step
-    let prev_overlap = get_AABBAABB_overlap(a.collider.area, b.collider.area, a.transform.prev_pos, b.transform.prev_pos);
+    let prev_overlap = test_AABBs(a.collider.area, b.collider.area, a.transform.prev_pos, b.transform.prev_pos).overlap;
 
     // If the overlap is horizontal
     if (prev_overlap.y > 0.0001) {
@@ -189,6 +286,56 @@ function prevent_overlap(a, b) {
             }
         }
     }
+}
+
+function prevent_overlap_circles(a, b, distance_vector) {
+    let circle_a = a.collider.area;
+    let circle_b = b.collider.area;
+
+    let distance = distance_vector.compute_magnitude();
+    let overlap = circle_a.radius + circle_b.radius - distance;
+
+    let speed_a = a.transform !== undefined ? a.transform.velocity.dot(a.transform.velocity) : new Vec2(0, 0);
+    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+    let ratio_a = speed_a / (speed_a + speed_b);
+    let ratio_b = speed_b / (speed_a + speed_b);
+
+    let normal = distance_vector;
+    normal.normalize();
+    circle_a.center.add(Vec2.scale(normal, overlap * ratio_a));
+    circle_b.center.minus(Vec2.scale(normal, overlap * ratio_b));
+}
+
+function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
+    let circle = c.collider.area;
+    let box = b.collider.area;
+    let overlap = circle.radius - Math.sqrt(sq_dist);
+
+    let speed_c = c.transform !== undefined ? c.transform.velocity.dot(c.transform.velocity) : new Vec2(0, 0);
+    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+    let ratio_c = speed_c / (speed_c + speed_b);
+    let ratio_b = speed_b / (speed_c + speed_b);
+
+    let normal = distance_vector;
+    normal.normalize();
+    circle.center.add(Vec2.scale(normal, overlap * ratio_c));
+    box.center.minus(Vec2.scale(normal, overlap * ratio_b));
+}
+
+// Computes the square distance between a point p and an AABB b
+function sqdist_point_AABB(p, b) {
+    // For each axis count any excess distance outside box extents
+    let b_min = new Vec2(b.center.x - b.half.x, b.center.y - b.half.y);
+    let b_max = new Vec2(b.center.x + b.half.x, b.center.y + b.half.y);
+
+    let sqdist = 0.0;
+    if (p.x < b_min.x) { sqdist += (b_min.x - p.x) * (b_min.x - p.x); }
+    if (p.x > b_max.x) { sqdist += (p.x - b_max.x) * (p.x - b_max.x); }
+
+    if (p.y < b_min.y) { sqdist += (b_min.y - p.y) * (b_min.y - p.y); }
+    if (p.y > b_max.y) { sqdist += (p.y - b_max.y) * (p.y - b_max.y); }
+
+    return sqdist;
 }
 
 class Test_Block {

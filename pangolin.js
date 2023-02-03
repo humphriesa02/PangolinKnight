@@ -6,9 +6,9 @@ class Pangolin{
         // Components
         this.tag = "player";
 
-        this.transform = new Transform(new Vec2(24, 40), new Vec2(0,0), 1, new Vec2(0,0));
+        this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
-        this.collider = new Collider(new AABB(this.transform.pos, 7.5, 7.5), true, true, false);
+        this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
@@ -248,10 +248,6 @@ class Pangolin{
     }
 
     draw(ctx){
-        if(document.getElementById("debug").checked){
-            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
-        }
-
         // Determine if we have modifiers
         if(this.rolling){
             this.animation_modifier = 1;
@@ -405,12 +401,7 @@ class Pangolin{
             }
         }
         
-        this.transform.velocity.y += this.gravity.velocity;
         // Adjust position from velocity
-        this.transform.prev_pos.x = this.transform.pos.x;
-        this.transform.prev_pos.y = this.transform.pos.y
-        this.transform.pos.x += this.transform.velocity.x;
-        this.transform.pos.y += this.transform.velocity.y; 
         
     }
 

@@ -3,7 +3,7 @@ class pot{
         this.tag = "prop";
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+        this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
         this.can_be_picked_up = false;
@@ -42,9 +42,6 @@ class pot{
         this.transform.pos.y += this.transform.velocity.y; 
     }
     draw(ctx){
-        if(document.getElementById("debug").checked){
-            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
-        }
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.z, 16, 16);
     }
 
