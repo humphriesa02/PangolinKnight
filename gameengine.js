@@ -138,7 +138,10 @@ class GameEngine {
 
         for (let i = this.entities.length - 1; i >= 0; --i) {
             if (this.entities[i].removeFromWorld) {
-                this.entity_map.set(this.entities[i].tag, []);
+                if(this.entities[i].tag != undefined){
+                    let index = this.entity_map.get(this.entities[i].tag).indexOf(this.entities[i]);
+                    this.entity_map.get(this.entities[i].tag).splice(index, 1);
+                }
                 this.entities.splice(i, 1);
             }
         }
