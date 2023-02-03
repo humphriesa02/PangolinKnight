@@ -41,16 +41,16 @@ class Sword{
         // Sword slash animations
 
         // facing right
-        this.animations[0] = new Animator(this.spritesheet, 0, 48, 16, 16, 4, 0.065, false);
+        this.animations[0] = new Animator(this.spritesheet, 0, 48, 16, 16, 4, 0.05, false);
 
         // facing left
-        this.animations[1] = new Animator(this.spritesheet, 0, 32, 16, 16, 4, 0.065, false);
+        this.animations[1] = new Animator(this.spritesheet, 0, 32, 16, 16, 4, 0.05, false);
 
         // facing up
-        this.animations[2] = new Animator(this.spritesheet, 0, 16, 16, 16, 4, 0.065, false);
+        this.animations[2] = new Animator(this.spritesheet, 0, 16, 16, 16, 4, 0.05, false);
 
         // facing down
-        this.animations[3] = new Animator(this.spritesheet, 0, 0, 16, 16, 4, 0.065, false);
+        this.animations[3] = new Animator(this.spritesheet, 0, 0, 16, 16, 4, 0.05, false);
     }
 
     update(){
