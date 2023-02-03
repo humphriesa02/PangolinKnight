@@ -245,12 +245,11 @@ class Pangolin{
     draw(ctx){
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
+        }
         let text = "Current Health: " + this.health.current.toString();
         ctx.font = "30px Arial";
         ctx.fillText(text, 550, 40);
         ctx.stroke();
-
-        }
         
         // Determine if we have modifiers
         if(this.rolling){

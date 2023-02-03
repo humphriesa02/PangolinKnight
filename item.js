@@ -3,6 +3,7 @@ class Item{
         this.tag = "prop";
         let item_pos = Object.assign({},pos);
         this.transform = new Transform(item_pos);
+        this.in_air = new In_Air(0, 60, 50, 16);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.collider = new Collider(new AABB(this.transform.pos, 4, 4), true, true, false);
         // default item is scale
@@ -29,10 +30,16 @@ class Item{
         if(this.animations[this.item].done){
             this.removeFromWorld = true;
         }
+        else{
+            in_air_jump(this);
+        }
     }
 
     draw(ctx){
-        this.animations[this.item].drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
+        if(document.getElementById("debug").checked){
+            draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 8, 8, false, true, 1);
+        }
+        this.animations[this.item].drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.in_air.z, 16, 16);
     }
 
     activate(entity){
@@ -57,11 +64,16 @@ const item_enum={
 }
 
 
-function create_item(item_type, pos, quantity = 1){
+function create_item(item_type, pos, quantity = 1, chance = 1){
     for(let i = 0; i < quantity; i++){
-        let random_modifier = (Math.random() * 2.5) - 1.5;
-        let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier, pos.y + random_modifier))
-        gameEngine.addEntity(temp_item);
+        let chance_percent = Math.random()
+        if(chance_percent <= chance){
+            let random_modifier_x = (Math.random() * 16) - 8;
+            let random_modifier_y = (Math.random() * 16) - 8;
+            let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier_x, pos.y + random_modifier_y))
+            gameEngine.addEntity(temp_item);
+        }
+        
     }
     
 }

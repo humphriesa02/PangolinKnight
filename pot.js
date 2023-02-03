@@ -29,7 +29,7 @@ class pot{
             this.removeFromWorld = true;
             this.shadow.removeFromWorld = true;
             this.break_apart(4);
-            create_item(item_enum.small_heart, this.transform.pos)
+            create_item(item_enum.small_heart, this.transform.pos, 2, 0.3);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;
