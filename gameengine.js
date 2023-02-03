@@ -109,7 +109,8 @@ class GameEngine {
 
         let fps = Math.round(1 / this.clockTick);
         let text = "fps: " + fps.toString();
-        this.ctx.fillText(text, 980, 20);
+        this.ctx.font = "30px Arial";
+        this.ctx.fillText(text, 100, 40);
         this.ctx.stroke();
     };
 

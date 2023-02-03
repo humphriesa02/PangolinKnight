@@ -57,6 +57,37 @@ class Gravity {
     }
 }
 
+class In_Air{
+    constructor(air_speed, air_time, air_distance, air_height, starting_percentage = 1){
+        Object.assign(this, {air_speed, air_time, air_distance, air_height});
+        this.z = 0;
+        this.distance_remaining = air_distance * starting_percentage;
+    }
+}
+// The entity we want to jump, the direction they are jumping
+// not entering a direction will leave jump velocity to the entity
+function in_air_jump(entity, direction = -1){
+    if(entity.in_air != undefined){
+        switch(direction){
+            case 0:
+                entity.transform.velocity.x = entity.in_air.air_speed * gameEngine.clockTick;
+                break;
+            case 1:
+                entity.transform.velocity.x = -(entity.in_air.air_speed * gameEngine.clockTick)
+                break;
+            case 2:
+                entity.transform.velocity.y = -entity.in_air.air_speed * gameEngine.clockTick;
+                break;
+            case 3:
+                entity.transform.velocity.y = (entity.in_air.air_speed * gameEngine.clockTick)
+                break;           
+        }
+        entity.in_air.distance_remaining = Math.max(0, entity.in_air.distance_remaining - entity.in_air.air_time * gameEngine.clockTick);
+        entity.in_air.z = Math.sin(((entity.in_air.distance_remaining / entity.in_air.air_distance) * Math.PI)) * entity.in_air.air_height;
+    }
+    
+}
+
 class Invincible{
     // Active = we are invincible
     constructor(invincibility_duration = 0.15, flicker_duration = 0.1, active = false, inverted = false){
