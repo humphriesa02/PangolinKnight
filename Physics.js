@@ -298,6 +298,10 @@ function prevent_overlap_circles(a, b, distance_vector) {
 
     let speed_a = a.transform !== undefined ? a.transform.velocity.dot(a.transform.velocity) : new Vec2(0, 0);
     let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+
+    if (speed_a == 0 && speed_b == 0) {
+        return;
+    }
     let ratio_a = speed_a / (speed_a + speed_b);
     let ratio_b = speed_b / (speed_a + speed_b);
 
@@ -314,6 +318,11 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
 
     let speed_c = c.transform !== undefined ? c.transform.velocity.dot(c.transform.velocity) : new Vec2(0, 0);
     let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+
+    if (speed_c == 0 && speed_b == 0) {
+        return;
+    }
+
     let ratio_c = speed_c / (speed_c + speed_b);
     let ratio_b = speed_b / (speed_c + speed_b);
 

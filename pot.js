@@ -6,7 +6,7 @@ class pot{
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
-        this.can_be_picked_up = false;
+        this.facing_correct_direction = false;
         this.picked_up = false;
         this.holder;
         this.thrown = false;
@@ -21,10 +21,21 @@ class pot{
     }
     update(){
         if(this.picked_up){
-            if(this.holder.state == state_enum.holding){
-                this.transform.pos = new Vec2(this.holder.transform.pos.x, this.holder.transform.pos.y);
+            if(this.holder.state == state_enum.holding && !this.holder.interacting){
+                this.transform.pos.x = this.holder.transform.pos.x;
+                this.transform.pos.y = this.holder.transform.pos.y;
                 this.z = 15;
-            }  
+            }
+            else if(this.holder.state == state_enum.holding && this.holder.interacting){
+                // throw the pot
+                this.picked_up = false;
+                this.holder.idle_holding = false;
+                this.holder.state = state_enum.throw;
+                gameEngine.addEntity(this.shadow);
+                this.shadow.visible = true;
+                this.thrown = true;
+                this.direction = this.holder.facing;
+            }
         }
         else if (this.thrown){
             this.in_air();
@@ -46,43 +57,31 @@ class pot{
     }
 
     activate(entity){
-        if(entity.interacting != undefined && entity.interacting){
-            
-            if(this.picked_up && entity.state == state_enum.holding){
-                // throw the pot
-                entity.idle_holding = false;
-                entity.state = state_enum.throw;
-                gameEngine.addEntity(this.shadow);
-                this.shadow.visible = true;
-                this.thrown = true;
-                this.direction = entity.facing;
-                this.picked_up = false;
-            }
-            else{
-                // Only pick up if the player is facing the pot
-                let facing = entity.facing;
-                switch(facing){
-                    // right
-                    case 0: if(this.transform.pos.x > entity.transform.pos.x) {this.can_be_picked_up = true;}
-                        break;
-                    // left
-                    case 1: if(this.transform.pos.x < entity.transform.pos.x) {this.can_be_picked_up = true;}
-                        break;
-                    // up
-                    case 2: if(this.transform.pos.y < entity.transform.pos.y) {this.can_be_picked_up = true;}
-                        break;
+        if(entity.interacting != undefined && entity.interacting && 
+            entity.state != state_enum.pickup && entity.state != state_enum.throw &&
+            entity.state != state_enum.holding && !entity.rolling){
+            // Only pick up if the player is facing the pot
+            switch(entity.facing){
+                // right
+                case 0: if(this.transform.pos.x > entity.transform.pos.x) {this.facing_correct_direction = true;}
+                    break;
+                // left
+                case 1: if(this.transform.pos.x < entity.transform.pos.x) {this.facing_correct_direction = true;}
+                    break;
+                // up
+                case 2: if(this.transform.pos.y < entity.transform.pos.y) {this.facing_correct_direction = true;}
+                    break;
                     // down
-                    case 3: if(this.transform.pos.y > entity.transform.pos.y) {this.can_be_picked_up = true;}
-                        break;
-                }
-                // pick up the pot
-                if(this.can_be_picked_up && entity.rolling != undefined && !entity.rolling && entity.state != state_enum.pickup){
-                    entity.state = state_enum.pickup;
-                    this.picked_up = true;
-                    this.distance_remaining = this.throw_distance * 0.75;
-                    this.holder = entity;
-                }
-                
+                case 3: if(this.transform.pos.y > entity.transform.pos.y) {this.facing_correct_direction = true;}
+                    break;
+            }
+            // pick up the pot
+            if(this.facing_correct_direction){
+                entity.state = state_enum.pickup;
+                this.picked_up = true;
+                this.distance_remaining = this.throw_distance * 0.75;
+                this.holder = entity;
+                this.collider.block_move = false;
             }
         }
     }
@@ -118,10 +117,9 @@ class pot{
 class Pieces{
     constructor(parent, direction){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-        let piece_pos = Object.assign({},parent.transform.pos);
-        this.transform = new Transform(piece_pos);
+        this.transform = new Transform(parent.transform.pos.clone());
         this.lifespan = new Lifespan(0.1, gameEngine.timer.gameTime);
-        this.move_speed = 15;
+        this.move_speed = 0.3;
 
         this.throw_speed = 53;
         this.throw_time = 75;
@@ -154,10 +152,6 @@ class Pieces{
             this.removeFromWorld = true;
         }
         this.in_air();
-        this.transform.prev_pos.x = this.transform.pos.x;
-        this.transform.prev_pos.y = this.transform.pos.y
-        this.transform.pos.x += this.transform.velocity.x * gameEngine.clockTick;
-        this.transform.pos.y += this.transform.velocity.y * gameEngine.clockTick;
     }
 
     draw(ctx){
