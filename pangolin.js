@@ -23,7 +23,7 @@ class Pangolin{
                                       // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = hold-idle
 
         // Some movement variables
-        this.walk_speed = 25;
+        this.walk_speed = 50;
         this.roll_speed = 75;
 
         // Jump variables
@@ -368,8 +368,8 @@ class Pangolin{
             this.transform.velocity.x = 0;
             this.transform.velocity.y = 0;
             if(this.state !== state_enum.slashing){
-                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed) *this.game.clockTick);
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed)*this.game.clockTick);
+                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
+                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
            
                 // Figure out the direction for animation
                 if(this.transform.velocity.x > 0){ // Facing right

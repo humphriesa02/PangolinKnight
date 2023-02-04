@@ -7,6 +7,7 @@ class pot{
 
         this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
         this.facing_correct_direction = false;
+        this.requires_facing = true;
         this.picked_up = false;
         this.holder;
         this.thrown = false;
@@ -60,29 +61,13 @@ class pot{
         if(entity.interacting != undefined && entity.interacting && 
             entity.state != state_enum.pickup && entity.state != state_enum.throw &&
             entity.state != state_enum.holding && !entity.rolling){
-            // Only pick up if the player is facing the pot
-            switch(entity.facing){
-                // right
-                case 0: if(this.transform.pos.x > entity.transform.pos.x) {this.facing_correct_direction = true;}
-                    break;
-                // left
-                case 1: if(this.transform.pos.x < entity.transform.pos.x) {this.facing_correct_direction = true;}
-                    break;
-                // up
-                case 2: if(this.transform.pos.y < entity.transform.pos.y) {this.facing_correct_direction = true;}
-                    break;
-                    // down
-                case 3: if(this.transform.pos.y > entity.transform.pos.y) {this.facing_correct_direction = true;}
-                    break;
-            }
-            // pick up the pot
-            if(this.facing_correct_direction){
-                entity.state = state_enum.pickup;
-                this.picked_up = true;
-                this.distance_remaining = this.throw_distance * 0.75;
-                this.holder = entity;
-                this.collider.block_move = false;
-            }
+            
+            entity.state = state_enum.pickup;
+            this.picked_up = true;
+            this.distance_remaining = this.throw_distance * 0.75;
+            this.holder = entity;
+            this.collider.block_move = false;
+            
         }
     }
 
