@@ -35,7 +35,7 @@ var levels = {
         start : [0,0],
         gravity : true,
         pots : [],
-        blocks : [{position : [0,10], state : 0},{position : [1,10], state : 0},{position : [2,10], state : 0},{position : [3,10], state : 0},{position : [4,10], state : 0},{position : [5,10], state : 0},{position : [6,10], state : 0},{position : [7,10], state : 0},{position : [8,10], state : 0},{position : [9,10], state : 0},{position : [10,10], state : 0},{position : [11,10], state : 0},{position : [12,10], state : 0},{position : [13,10], state : 0},{position : [14,10], state : 0},{position : [15,10], state : 0},{position : [16,10], state : 0}],
+        blocks : [{position : [-1,10], state : 0},{position : [-2,10], state : 0},{position : [0,10], state : 0},{position : [1,10], state : 0},{position : [2,10], state : 0},{position : [3,10], state : 0},{position : [4,10], state : 0},{position : [5,10], state : 0},{position : [6,10], state : 0},{position : [7,10], state : 0},{position : [8,10], state : 0},{position : [9,10], state : 0},{position : [10,10], state : 0},{position : [11,10], state : 0},{position : [12,10], state : 0},{position : [13,10], state : 0},{position : [14,10], state : 0},{position : [15,10], state : 0},{position : [16,10], state : 0}],
         chests : [],
         doors : [],
         crystals : [],

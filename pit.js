@@ -24,9 +24,6 @@ update(){
 
 }
 draw(ctx){
-    if(document.getElementById("debug").checked){
-        draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, false, true, 1);
-    }
     this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
 }
 }

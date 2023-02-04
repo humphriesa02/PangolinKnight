@@ -105,6 +105,18 @@ class GameEngine {
         // Draw latest things first
         for (let i =  0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx, this);
+            if(document.getElementById("debug").checked){
+                if (this.entities[i].collider !== undefined) {
+                    if (this.entities[i].collider.area instanceof AABB) {
+                        draw_rect(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y, 
+                            this.entities[i].collider.area.half.x * 2, this.entities[i].collider.area.half.y * 2, false, true, 1);
+                    }
+                    else if (this.entities[i].collider.area instanceof Circle) {
+                        draw_circle(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y,
+                             this.entities[i].collider.area.radius, false, true, 1);
+                    }
+                }
+            }
         }
 
         let fps = Math.round(1 / this.clockTick);
