@@ -160,10 +160,10 @@ function player_prop_collisions(entities) {
                 point = new Vec2(player.transform.pos.x - 12, player.transform.pos.y);
             }
             else if (player.facing == 2) {  // Up
-                point = new Vec2(player.transform.pos.x, player.transform.pos.y + 12);
+                point = new Vec2(player.transform.pos.x, player.transform.pos.y - 12);
             }
             else if (player.facing == 3) {  // Down
-                point = new Vec2(player.transform.pos.x, player.transform.pos.y - 12);
+                point = new Vec2(player.transform.pos.x, player.transform.pos.y + 12);
             }
     
             if (test_point_inside(point, prop.collider.area)) {

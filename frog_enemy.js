@@ -52,19 +52,19 @@ class Frog{
             this.transform.velocity.x = 0;
             this.transform.velocity.y = 0;
             if (this.transform.pos.x < this.player.transform.pos.x && this.move_time > 0){
-                this.transform.velocity.x += this.move_speed * gameEngine.clockTick;
+                this.transform.velocity.x += this.move_speed;
                 this.move_time -= gameEngine.clockTick;
             }
             else if (this.transform.pos.x > this.player.transform.pos.x && this.move_time > 0){
-                this.transform.velocity.x -= this.move_speed * gameEngine.clockTick;
+                this.transform.velocity.x -= this.move_speed;
                 this.move_time -= gameEngine.clockTick;
             }
             if (this.transform.pos.y < this.player.transform.pos.y && this.move_time > 0){
-                this.transform.velocity.y += this.move_speed * gameEngine.clockTick;
+                this.transform.velocity.y += this.move_speed;
                 this.move_time -= gameEngine.clockTick;
             }
             else if (this.transform.pos.y > this.player.transform.pos.y && this.move_time > 0){
-                this.transform.velocity.y -= this.move_speed * gameEngine.clockTick;
+                this.transform.velocity.y -= this.move_speed;
                 this.move_time -= gameEngine.clockTick;
             }
             else if(this.delay_time <= 0){

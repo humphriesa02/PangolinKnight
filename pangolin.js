@@ -23,7 +23,7 @@ class Pangolin{
                                       // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = hold-idle
 
         // Some movement variables
-        this.walk_speed = 50;
+        this.walk_speed = 35;
         this.roll_speed = 75;
 
         // Jump variables
@@ -399,9 +399,6 @@ class Pangolin{
                 else{ this.idle_holding = false }
             }
         }
-        
-        // Adjust position from velocity
-        
     }
 
     // Initiate jump - called once. All that's needed for platformer

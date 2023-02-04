@@ -104,7 +104,7 @@ class Pieces{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.transform = new Transform(parent.transform.pos.clone());
         this.lifespan = new Lifespan(0.1, gameEngine.timer.gameTime);
-        this.move_speed = 0.3;
+        this.move_speed = 15;
 
         this.throw_speed = 53;
         this.throw_time = 75;

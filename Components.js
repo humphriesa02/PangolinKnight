@@ -69,7 +69,7 @@ class Invincible{
 
 
 class Knockback{
-    constructor(target, source_pos, knockback_speed = 3, knockback_duration = 0.1){
+    constructor(target, source_pos, knockback_speed = 100, knockback_duration = 0.2){
         let vector = Vec2.diff(target.transform.pos, source_pos);
         vector.normalize();
         vector = Vec2.scale(vector, knockback_speed);
