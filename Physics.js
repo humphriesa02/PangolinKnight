@@ -49,7 +49,7 @@ function update_pos() {
 
             if (entity.gravity !== undefined) {
                 if (gameEngine.gravity) {
-                    entity.gravity.velocity += _GRAVITY;
+                    entity.gravity.velocity += _GRAVITY * gameEngine.clockTick;
                     entity.transform.velocity.add(entity.gravity.velocity);
                 }
                 else {
@@ -58,7 +58,8 @@ function update_pos() {
             }
 
             if (entity.transform.velocity.x != 0.0 || entity.transform.velocity.y != 0.0) {
-                entity.transform.pos.add(entity.transform.velocity);
+                let displacement = Vec2.scale(entity.transform.velocity, gameEngine.clockTick);
+                entity.transform.pos.add(displacement);
                 
                 if (entity.tag !== undefined) {
                     if (movement_map.get(entity.tag) === undefined) {
@@ -144,11 +145,35 @@ function player_prop_collisions(entities) {
     for (prop of props) {
         if (test_overlap(player.collider.area, prop.collider.area)) {
             if (prop.collider.block_move) { prevent_overlap(player, prop); }
-            prop.activate(player);
+
+            if (prop.requires_facing == undefined || prop.requires_facing == false) {
+                prop.activate(player);
+            }
+        }
+        if (prop.requires_facing) {
+            let point;
+            
+            if (player.facing == 0) {       // Right
+                point = new Vec2(player.transform.pos.x + 12, player.transform.pos.y);
+            }
+            else if (player.facing == 1) {  // Left
+                point = new Vec2(player.transform.pos.x - 12, player.transform.pos.y);
+            }
+            else if (player.facing == 2) {  // Up
+                point = new Vec2(player.transform.pos.x, player.transform.pos.y + 12);
+            }
+            else if (player.facing == 3) {  // Down
+                point = new Vec2(player.transform.pos.x, player.transform.pos.y - 12);
+            }
+    
+            if (test_point_inside(point, prop.collider.area)) {
+                prop.activate(player);
+            }
         }
     }
 }
 
+// Checks for overlap between two Entities a and b and returns a boolean
 function test_overlap(a, b) {
     if (a instanceof AABB && b instanceof AABB) {
         return test_AABBs(a, b).test;
@@ -196,6 +221,16 @@ function test_Circle_AABB(c, b) {
         sqdist: distance_squared};
 }
 
+// Tests if a point p is inside an area a
+function test_point_inside(p, a) {
+    if (a instanceof AABB) {
+        return sqdist_point_AABB(p, a) <= 0;
+    }
+    else if (a instanceof Circle) {
+        return sqdist_point_circle(p, a) <= 0;
+    }
+}
+
 // Prevents overlap between two Entities a and b
 function prevent_overlap(a, b) {
     let test;
@@ -231,7 +266,7 @@ function prevent_overlap(a, b) {
     }
 }
 
-// Prevents overlap between two entities a and b if both should prevent overlap
+// Prevents AABB-AABB overlap between two Entities a and b 
 function prevent_overlap_AABBs(a, b, overlap) {
     // Gets the overlap between a and b on the previous time step
     let prev_overlap = test_AABBs(a.collider.area, b.collider.area, a.transform.prev_pos, b.transform.prev_pos).overlap;
@@ -345,6 +380,13 @@ function sqdist_point_AABB(p, b) {
     if (p.y > b_max.y) { sqdist += (p.y - b_max.y) * (p.y - b_max.y); }
 
     return sqdist;
+}
+
+function sqdist_point_circle(p, c) {
+    let distance_vector = Vec2.diff(p, c.center);
+    let sqdist = distance_vector.dot(distance_vector);
+
+    return sqdist - (c.radius * c.radius);
 }
 
 class Test_Block {
