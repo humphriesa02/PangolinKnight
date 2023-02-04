@@ -234,7 +234,6 @@ class Pangolin{
     }
 
     update(){
-        console.log(this.state);
         if(this.invincible.active){
             invulnerability_active(this);
         }
