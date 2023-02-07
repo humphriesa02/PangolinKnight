@@ -1,8 +1,8 @@
 class Transform {
-    constructor(pos, prev_pos = pos, scale = 1, velocity = new Vec2(0, 0),
+    constructor(pos, scale = 1, velocity = new Vec2(0, 0),
      acceleration  = new Vec2(0, 0), facing = new Vec2(0, 0), angle = 0) {
         this.pos = pos;
-        this.prev_pos = prev_pos;
+        this.prev_pos = pos.clone();
         this.scale = scale;
         this.velocity = velocity;
         this.acceleration = acceleration;
@@ -69,7 +69,7 @@ class Invincible{
 
 
 class Knockback{
-    constructor(target, source_pos, knockback_speed = 3, knockback_duration = 0.1){
+    constructor(target, source_pos, knockback_speed = 100, knockback_duration = 0.2){
         let vector = Vec2.diff(target.transform.pos, source_pos);
         vector.normalize();
         vector = Vec2.scale(vector, knockback_speed);

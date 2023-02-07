@@ -45,7 +45,7 @@ class Animator {
     }
 }
 
-function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
+function draw_circle(ctx, x, y, radius, fill, stroke, strokeWidth) {
     ctx.beginPath();
     ctx.arc((x - screenX()) * params.scale, (y - screenY()) * params.scale, radius * params.scale, 0, 2 * Math.PI, false);
     if (fill) {
@@ -53,7 +53,7 @@ function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
         ctx.fill();
     }
     if (stroke) {
-        ctx.lineWidth = strokeWidth * params.scale;
+        ctx.lineWidth = strokeWidth;
         ctx.strokeStyle = stroke;
         ctx.stroke();
     }
