@@ -3,6 +3,8 @@ class pot{
         this.tag = "prop";
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
+
+        this.in_air = new In_Air(70, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
@@ -12,12 +14,6 @@ class pot{
         this.holder;
         this.thrown = false;
         this.direction;
-        this.throw_speed = 70;
-        this.throw_time = 100;
-        this.throw_distance = 90;
-        this.throw_height = 26;
-        this.z = 0; // Give us the impression of a "fake" throw when in top down
-        this.distance_remaining;
         this.shadow = new Shadow(gameEngine, this.transform.pos);
     }
     update(){
@@ -25,7 +21,7 @@ class pot{
             if(this.holder.state == state_enum.holding && !this.holder.interacting){
                 this.transform.pos.x = this.holder.transform.pos.x;
                 this.transform.pos.y = this.holder.transform.pos.y;
-                this.z = 15;
+                this.in_air.z = 15;
             }
             else if(this.holder.state == state_enum.holding && this.holder.interacting){
                 // throw the pot
@@ -39,13 +35,14 @@ class pot{
             }
         }
         else if (this.thrown){
-            this.in_air();
+            in_air_jump(this, this.direction);
         }
-        if(this.distance_remaining <= 0){ // Break the pot
+        if(this.in_air.distance_remaining <= 0){ // Break the pot
             this.thrown = false;
             this.removeFromWorld = true;
             this.shadow.removeFromWorld = true;
             this.break_apart(4);
+            create_item(item_enum.small_heart, this.transform.pos, 2, 0.3);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;
@@ -54,7 +51,7 @@ class pot{
         this.transform.pos.y += this.transform.velocity.y; 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.z, 16, 16);
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.in_air.z, 16, 16);
     }
 
     activate(entity){
@@ -71,25 +68,6 @@ class pot{
         }
     }
 
-    in_air(){
-        switch(this.direction){
-            case 0:
-                this.transform.velocity.x = this.throw_speed * gameEngine.clockTick;
-                break;
-            case 1:
-                this.transform.velocity.x = -(this.throw_speed * gameEngine.clockTick)
-                break;
-            case 2:
-                this.transform.velocity.y = -this.throw_speed * gameEngine.clockTick;
-                break;
-            case 3:
-                this.transform.velocity.y = (this.throw_speed * gameEngine.clockTick)
-                break;
-                    
-        }
-        this.distance_remaining = Math.max(0, this.distance_remaining - this.throw_time * gameEngine.clockTick);
-        this.z = Math.sin(((this.distance_remaining / this.throw_distance) * Math.PI)) * this.throw_height;
-    }
 
     break_apart(count){
         for(let i = 0; i < count; i++){
@@ -104,14 +82,9 @@ class Pieces{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.transform = new Transform(parent.transform.pos.clone());
         this.lifespan = new Lifespan(0.1, gameEngine.timer.gameTime);
+        this.in_air = new In_Air(53, 75, 50, 16);
         this.move_speed = 15;
 
-        this.throw_speed = 53;
-        this.throw_time = 75;
-        this.throw_distance = 50;
-        this.throw_height = 16;
-        this.z = 0; // Give us the impression of a "fake" throw when in top down
-        this.distance_remaining = this.throw_distance;
         switch(direction){
             case 0://upper left
                 this.animator = new Animator(this.spritesheet, 0, 96, 8, 8, 1, 0.6, false);
@@ -136,33 +109,13 @@ class Pieces{
         if(this.animator.done){
             this.removeFromWorld = true;
         }
-        this.in_air();
+        in_air_jump(this, -1);
     }
 
     draw(ctx){
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 8, 8, false, true, 1);
         }
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.z, 8, 8);
-    }
-
-    in_air(){
-        switch(this.direction){
-            case 0:
-                this.transform.velocity.x = this.throw_speed * gameEngine.clockTick;
-                break;
-            case 1:
-                this.transform.velocity.x = -(this.throw_speed * gameEngine.clockTick)
-                break;
-            case 2:
-                this.transform.velocity.y = -this.throw_speed * gameEngine.clockTick;
-                break;
-            case 3:
-                this.transform.velocity.y = (this.throw_speed * gameEngine.clockTick)
-                break;
-                    
-        }
-        this.distance_remaining = Math.max(0, this.distance_remaining - this.throw_time * gameEngine.clockTick);
-        this.z = Math.sin(((this.distance_remaining / this.throw_distance) * Math.PI)) * this.throw_height;
+        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.in_air.z, 8, 8);
     }
 }

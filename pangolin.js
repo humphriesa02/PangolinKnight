@@ -8,6 +8,7 @@ class Pangolin{
 
         this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
         this.health = new Health(10, 10);
+        this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
         this.gravity = new Gravity();
@@ -26,13 +27,7 @@ class Pangolin{
         this.walk_speed = 35;
         this.roll_speed = 75;
 
-        // Jump variables
-        this.jump_speed = 53;
-        this.jump_time = 100;
-        this.jump_distance = 60;
-        this.jump_height = 30;
-        this.z = 0; // Give us the impression of a "fake" jump when in top down
-        this.distance_remaining;
+        // Jump variable
         this.grounded = true;
 
         // State change variables
@@ -242,11 +237,16 @@ class Pangolin{
         this.movement();
         // top down jump
         if(!gameEngine.gravity && this.state == state_enum.jumping){
-            this.jump_path();
+            in_air_jump(this);
         }
     }
 
     draw(ctx){
+        let text = "Current Health: " + this.health.current.toString();
+        ctx.font = "30px Arial";
+        ctx.fillText(text, 550, 40);
+        ctx.stroke();
+        
         // Determine if we have modifiers
         if(this.rolling){
             this.animation_modifier = 1;
@@ -257,7 +257,7 @@ class Pangolin{
         else{
             this.animation_modifier = 0;
         }
-        this.animations[this.state][this.facing][this.animation_modifier].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16, this.invincible.inverted);
+        this.animations[this.state][this.facing][this.animation_modifier].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.in_air.z, 16, 16, this.invincible.inverted);
     }
 
     // Check for state end
@@ -275,12 +275,11 @@ class Pangolin{
         }
         // Check if jump end
         else if(this.state == state_enum.jumping){
-            if((!gameEngine.gravity && this.distance_remaining <= 1) || (gameEngine.gravity && this.grounded)){
+            if((!gameEngine.gravity && this.in_air.distance_remaining <= 1) || (gameEngine.gravity && this.grounded)){
                 for(let i = 0; i < 4; i++){
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
                 }
-                //this.z = 0;
                 this.shadow.visible = false;
                 this.state = state_enum.idle;
             }
@@ -321,7 +320,8 @@ class Pangolin{
         if(this.game.keys[" "] && this.game.timer.gameTime >= this.jump_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){ //Pressing space
             this.jump();
             this.shadow.visible = true;
-            this.distance_remaining = this.jump_distance;
+            // TODO, make this reset in the component
+            this.in_air.distance_remaining = this.in_air.air_distance;
             this.jump_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.jumping][0][this.rolling ? 1 : 0].totalTime;
         }
 
@@ -408,12 +408,6 @@ class Pangolin{
             this.gravity.velocity = -2;
             this.grounded = false;
         }
-    }
-
-    // Jump animation, called for top down view every frame
-    jump_path(){
-        this.distance_remaining = Math.max(0, this.distance_remaining - this.jump_time * gameEngine.clockTick);
-        this.z = Math.sin(((this.distance_remaining / this.jump_distance) * Math.PI)) * this.jump_height;
     }
 }
 
