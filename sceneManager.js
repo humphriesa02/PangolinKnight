@@ -6,6 +6,7 @@ class sceneManager{
         this.y = 0;
 
         this.player = new Pangolin(gameEngine);
+        this.hud = new HUD(this.player);
         this.loadLevel(1);
     }
     loadLevel(level){
@@ -59,6 +60,7 @@ class sceneManager{
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
+        gameEngine.addEntity(this.hud);
         this.game.addEntity(this)
     }
     update(){

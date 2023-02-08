@@ -29,7 +29,6 @@ class pot{
                 this.holder.idle_holding = false;
                 this.holder.state = state_enum.throw;
                 gameEngine.addEntity(this.shadow);
-                this.shadow.visible = true;
                 this.thrown = true;
                 this.direction = this.holder.facing;
             }
@@ -42,7 +41,7 @@ class pot{
             this.removeFromWorld = true;
             this.shadow.removeFromWorld = true;
             this.break_apart(4);
-            create_item(item_enum.small_heart, this.transform.pos, 2, 0.3);
+            create_item(item_enum.scale, this.transform.pos, 2, 0.3);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;

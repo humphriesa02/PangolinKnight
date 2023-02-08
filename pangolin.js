@@ -7,12 +7,15 @@ class Pangolin{
         this.tag = "player";
 
         this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
-        this.health = new Health(10, 10);
+        this.health = new Health(20, 20);
         this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
+
+        //Inventory
+        this.inventory = new Inventory();
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -242,11 +245,13 @@ class Pangolin{
     }
 
     draw(ctx){
-        let text = "Current Health: " + this.health.current.toString();
-        ctx.font = "30px Arial";
-        ctx.fillText(text, 550, 40);
+        /*
+        let text = "Current Health: " + this.health.current.toString() + " Current Scales: " + this.inventory.currency.toString();
+        ctx.font = "20px Arial";
+        ctx.fillText(text, 400, 40);
         ctx.stroke();
-        
+        */
+
         // Determine if we have modifiers
         if(this.rolling){
             this.animation_modifier = 1;
@@ -280,7 +285,6 @@ class Pangolin{
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
                 }
-                this.shadow.visible = false;
                 this.state = state_enum.idle;
             }
         }
@@ -319,7 +323,6 @@ class Pangolin{
         //Jump check
         if(this.game.keys[" "] && this.game.timer.gameTime >= this.jump_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){ //Pressing space
             this.jump();
-            this.shadow.visible = true;
             // TODO, make this reset in the component
             this.in_air.distance_remaining = this.in_air.air_distance;
             this.jump_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.jumping][0][this.rolling ? 1 : 0].totalTime;
@@ -409,6 +412,12 @@ class Pangolin{
             this.grounded = false;
         }
     }
+
+    die(){
+        let explosion = new Explosion(this);
+        gameEngine.addEntity(explosion);
+        this.removeFromWorld = true;
+    }
 }
 
 // simple class to draw shadow below player feet
@@ -420,15 +429,12 @@ class Shadow{
 
         this.animation = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 0.3, true);
 
-        this.visible = false;
     }
 
     update(){ }
 
     draw(ctx){
-        if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, this.size, this.size);
-        }
+        this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, this.size, this.size);
         
     }
 

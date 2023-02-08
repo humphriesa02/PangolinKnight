@@ -24,6 +24,7 @@ class Animator {
                 (x - screenX() - width / 2) * params.scale, (y - screenY() - height / 2) * params.scale, 
                 width * params.scale, height * params.scale);
 
+            ctx.filter = 'none';
         }
     }
 

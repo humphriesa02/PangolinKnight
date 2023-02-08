@@ -119,11 +119,15 @@ class GameEngine {
             }
         }
 
-        let fps = Math.round(1 / this.clockTick);
-        let text = "fps: " + fps.toString();
-        this.ctx.font = "30px Arial";
-        this.ctx.fillText(text, 100, 40);
-        this.ctx.stroke();
+        if(document.getElementById("debug").checked){
+            let fps = Math.round(1 / this.clockTick);
+            let text = "fps: " + fps.toString();
+            this.ctx.font = "15px Arial";
+            this.ctx.fillStyle = "white";
+            this.ctx.fillText(text, 600, 40);
+            this.ctx.stroke();
+        }
+        
     };
 
     update() {

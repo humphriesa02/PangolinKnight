@@ -103,4 +103,10 @@ class Frog{
         this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, this.invincible.inverted);
     }
 
+    die(){
+        let explosion = new Explosion(this);
+        gameEngine.addEntity(explosion);
+        this.removeFromWorld = true;
+        create_item(item_enum.small_heart, this.transform.pos, 2, 1);
+    }
 }
