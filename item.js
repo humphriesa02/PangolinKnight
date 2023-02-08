@@ -1,8 +1,7 @@
 class Item{
     constructor(item_type, pos){
         this.tag = "prop";
-        let item_pos = Object.assign({},pos);
-        this.transform = new Transform(item_pos);
+        this.transform = new Transform(pos.clone());
         this.in_air = new In_Air(0, 60, 50, 16);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.collider = new Collider(new AABB(this.transform.pos, 4, 4), true, true, false);
@@ -20,10 +19,10 @@ class Item{
             this.animations.push([]);
         }
         /* Item 0, scale */
-        this.animations[0] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 5, false);
+        this.animations[0] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 8, false);
 
         /* Item 1, small heart */
-        this.animations[1] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 5, false);
+        this.animations[1] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 8, false);
     }
 
     update(){

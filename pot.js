@@ -21,7 +21,7 @@ class pot{
             if(this.holder.state == state_enum.holding && !this.holder.interacting){
                 this.transform.pos.x = this.holder.transform.pos.x;
                 this.transform.pos.y = this.holder.transform.pos.y;
-                this.z = 15;
+                this.in_air.z = 15;
             }
             else if(this.holder.state == state_enum.holding && this.holder.interacting){
                 // throw the pot
