@@ -29,7 +29,7 @@ class Sword{
         // Animations
         this.animations = [];
         this.loadAnimations();
-
+        this.updatable = true;
     }
 
      // Set up our animations variable

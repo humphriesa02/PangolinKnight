@@ -2,6 +2,7 @@ class map{
     constructor(spritesheet){
         this.spriteSheet = ASSET_MANAGER.getAsset(spritesheet);
         this.animations = new Animator(this.spriteSheet, 0, 0, 1360, 1040, 1, 1, true);
+        this.updatable = false;
     }
     update(){
 

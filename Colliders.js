@@ -20,6 +20,7 @@ class Particle {
         this.v_gravity = new Vec2(0,                // Gravity force vector
             this.f_mass * _GRAVITY_ACCELERATION);
         this.b_collision = false;                   // Whether the particle has collided with something
+        this.updatable = true;
     }
 
     check_for_collisions(dt) {

@@ -7,6 +7,7 @@ class stair{
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 80, 32, 16, 16, 1, 1, true);
+        this.updatable = true;
     }
     update(){
 

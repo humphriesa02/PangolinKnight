@@ -1,6 +1,7 @@
 class pot{
     constructor(info){
         this.tag = "prop";
+        this.position = info.position;
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
 
@@ -15,6 +16,7 @@ class pot{
         this.thrown = false;
         this.direction;
         this.shadow = new Shadow(gameEngine, this.transform.pos);
+        this.updatable = false;
     }
     update(){
         if(this.picked_up){
@@ -41,6 +43,8 @@ class pot{
             this.thrown = false;
             this.removeFromWorld = true;
             this.shadow.removeFromWorld = true;
+            this.transform.velocity.x = 0;
+            this.transform.velocity.y = 0;
             this.break_apart(4);
             create_item(item_enum.small_heart, this.transform.pos, 2, 0.3);
             return;
@@ -61,7 +65,7 @@ class pot{
             
             entity.state = state_enum.pickup;
             this.picked_up = true;
-            this.distance_remaining = this.throw_distance * 0.75;
+           //this.distance_remaining = this.throw_distance * 0.75;
             this.holder = entity;
             this.collider.block_move = false;
             
@@ -73,6 +77,19 @@ class pot{
         for(let i = 0; i < count; i++){
             let temp_piece = new Pieces(this, i);
             gameEngine.addEntity(temp_piece);
+        }
+    }
+
+    reset(){
+        this.in_air.distance_remaining = this.in_air.air_distance * this.in_air.starting_percentage;
+        this.transform.pos.x = this.position[0] * 16 + 8;
+        this.transform.pos.y = this.position[1] * 16 + 8;
+        this.picked_up = false;
+        this.thrown = false;
+        this.collider.block_move = true;
+        if(this.removeFromWorld){
+            this.removeFromWorld = false;
+            gameEngine.addEntity(this);
         }
     }
 }

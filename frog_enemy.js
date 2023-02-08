@@ -1,7 +1,8 @@
 class Frog{
     constructor(info, player){
         this.tag = "enemy";
-        this.transform = new Transform(new Vec2(info.position[0] * 16, info.position[1] * 16), 1, new Vec2(0,0));
+        this.home = info.position;
+        this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8), 1, new Vec2(0,0));
         this.health = new Health(3, 3);
         this.invincible = new Invincible(0.05);
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
@@ -14,6 +15,7 @@ class Frog{
         this.player = player;
         this.animations = [];
         this.loadAnimations();
+        this.updatable = false;
     }
 
     loadAnimations(){
@@ -97,6 +99,19 @@ class Frog{
         }
 
          // Adjust position from velocity
+    }
+
+    reset(){
+        this.transform.velocity.x = 0;
+        this.transform.velocity.y = 0;
+        this.transform.pos.x = this.home[0] * 16 + 8;
+        this.transform.pos.y = this.home[1] * 16 + 8;
+        this.health.current = this.health.max;
+        this.invincible.active = false;
+        if(this.removeFromWorld){
+            this.removeFromWorld = false;
+            gameEngine.addEntity(this);
+        }
     }
 
     draw(ctx){

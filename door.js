@@ -7,6 +7,7 @@ class door{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.loadAnimations(this.facing);
+        this.updatable = true;
     }
     loadAnimations(facing){
         this.animator= [];

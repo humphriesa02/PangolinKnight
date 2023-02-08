@@ -3,6 +3,7 @@ class Explosion{
         this.parent_entity = parent_entity;
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/explosion.png");
         this.animator = new Animator(this.spritesheet, 0, 0, 16, 16, 6, 0.07, false);
+        this.updatable = true;
     }
     update(){
         if(this.animator.done){
