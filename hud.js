@@ -33,12 +33,12 @@ class HUD{
 
         // Draw hotbar
         ctx.drawImage(this.item_spritesheet, 48, 64, 16, 16, 14 * params.scale, 180 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.item_spritesheet, 48, 48, 16, 16, 16.5 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);
+        //ctx.drawImage(this.item_spritesheet, 48, 48, 16, 16, 16.5 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);
         this.player.inventory.animations[this.player.inventory.primary_item].drawHUD(gameEngine.clockTick, ctx, 16.5, 182, 20, 20, false);
 
         ctx.drawImage(this.item_spritesheet, 48, 64, 16, 16, 40 * params.scale, 180 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.item_spritesheet, 64, 48, 16, 16, 42.5 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);
-        this.player.inventory.animations[this.player.inventory.secondary_item].drawHUD(gameEngine.clockTick, ctx, 42.5, 182, 20, 20, false);
+        //ctx.drawImage(this.item_spritesheet, 64, 48, 16, 16, 42.5 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);
+        this.player.inventory.animations[this.player.inventory.secondary_item].drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
         ctx.drawImage(this.item_spritesheet, 64, 64, 16, 16, 60 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);
 
 
@@ -53,6 +53,10 @@ class HUD{
         let keys_text = keys.toString();
 
         ctx.font = '42px "VT323"';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 8;
+        ctx.strokeText(scales_text, 246 * params.scale, 200 * params.scale);
+        ctx.strokeText(keys_text, 246 * params.scale, 186 * params.scale);
         ctx.fillStyle = "white";
         ctx.fillText(scales_text, 246 * params.scale, 200 * params.scale);
         ctx.fillText(keys_text, 246 * params.scale, 186 * params.scale);

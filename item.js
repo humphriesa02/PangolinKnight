@@ -36,6 +36,7 @@ class Item{
             this.removeFromWorld = true;
         }
         else if(this.player != undefined){
+            this.in_air.z = 0;
             this.transform.pos.x = this.player.transform.pos.x;
             this.transform.pos.y = this.player.transform.pos.y - 15;
         }
