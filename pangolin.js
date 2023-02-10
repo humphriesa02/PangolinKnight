@@ -3,6 +3,9 @@ class Pangolin{
         // Game reference we pass in
         this.game = gameEngine;
 
+        //updatable
+        this.updatable = true;
+
         // Components
         this.tag = "player";
 

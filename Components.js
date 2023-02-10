@@ -59,7 +59,7 @@ class Gravity {
 
 class In_Air{
     constructor(air_speed, air_time, air_distance, air_height, starting_percentage = 1){
-        Object.assign(this, {air_speed, air_time, air_distance, air_height});
+        Object.assign(this, {air_speed, air_time, air_distance, air_height, starting_percentage});
         this.z = 0;
         this.distance_remaining = air_distance * starting_percentage;
     }

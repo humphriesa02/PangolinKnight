@@ -8,6 +8,7 @@ class sceneManager{
         this.player = new Pangolin(gameEngine);
         this.hud = new HUD(this.player);
         this.loadLevel(1);
+        this.updatable = true;
     }
     loadLevel(level){
         this.player.removeFromWorld = false;
@@ -17,33 +18,39 @@ class sceneManager{
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
+
+        this.rooms = []
+        for(let i = 0; i < this.level.rooms.length; i++){
+            if(this.rooms[this.level.rooms[i].position[0]] == undefined){
+                this.rooms[this.level.rooms[i].position[0]] = [];
+            }
+            this.rooms[this.level.rooms[i].position[0]][this.level.rooms[i].position[1]] = new room(this.level.rooms[i]);
+            gameEngine.addEntity(this.rooms[this.level.rooms[i].position[0]][this.level.rooms[i].position[1]]);
+        }
         
         gameEngine.gravity = this.level.gravity;
         this.player.gravity = new Gravity();
 
-        for(let i = 0; i < this.level.pots.length; i++){
-            gameEngine.addEntity(new pot(this.level.pots[i]))
-        }
-        
         for(let i = 0; i < this.level.pits.length; i++){
             gameEngine.addEntity(new pit(this.level.pits[i]))
         }
 
+        for(let i = 0; i < this.level.pots.length; i++){
+            let apot = new pot(this.level.pots[i]);
+            this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
+            gameEngine.addEntity(apot);
+        }
+
         for(let i = 0; i < this.level.blocks.length; i++){
-            gameEngine.addEntity(new block(this.level.blocks[i]))
+            let ablock = new block(this.level.blocks[i]);
+            this.rooms[Math.floor(ablock.transform.pos.x/roomWidth)][Math.floor(ablock.transform.pos.y/roomHeight)].addEntity(ablock)
+            gameEngine.addEntity(ablock)
         }
 
         for(let i = 0; i < this.level.chests.length; i++){
             gameEngine.addEntity(new chest(this.level.chests[i]))
         }
 
-        // for(let i = 0; i < this.level.doors.length; i++){
-        //     gameEngine.addEntity(new door(this.level.doors[i]))
-        // }
-
-        for(let i = 0; i < this.level.rooms.length; i++){
-                 gameEngine.addEntity(new room(this.level.rooms[i]))
-        }
 
         for(let i = 0; i < this.level.crystals.length; i++){
             gameEngine.addEntity(new crystal(this.level.crystals[i]))
@@ -54,7 +61,10 @@ class sceneManager{
         }
         
         for(let i = 0; i < this.level.frogs.length; i++){
-            gameEngine.addEntity(new Frog(this.level.frogs[i], this.player));
+            let enemy = new Frog(this.level.frogs[i], this.player);
+            this.rooms[Math.floor(enemy.transform.pos.x/roomWidth)][Math.floor(enemy.transform.pos.y/roomHeight)].addEntity(enemy);
+            gameEngine.addEntity(enemy);
+
         }
         gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
@@ -64,18 +74,43 @@ class sceneManager{
         this.game.addEntity(this)
     }
     update(){
+
         if(this.x < Math.floor(this.player.transform.pos.x/roomWidth)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
+            }
             this.x++;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
+            }
         }
         else if(this.x > Math.floor(this.player.transform.pos.x/roomWidth)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
+            }
             this.x--;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
+            }
         }
 
         if(this.y < Math.floor(this.player.transform.pos.y/roomHeight)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
+            }
             this.y++;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
+            }
         }
         else if(this.y > Math.floor(this.player.transform.pos.y/roomHeight)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
+            }
             this.y--;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
+            }
         }
 
     }
