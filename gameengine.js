@@ -160,6 +160,7 @@ class GameEngine {
         this.draw();
 
         this.click = null;
+        this.wheel = null;
     };
 
 };

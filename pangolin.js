@@ -16,6 +16,7 @@ class Pangolin{
 
         //Inventory
         this.inventory = new Inventory();
+        gameEngine.addEntity(this.inventory);
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -242,16 +243,12 @@ class Pangolin{
         if(!gameEngine.gravity && this.state == state_enum.jumping){
             in_air_jump(this);
         }
+        else if(this.state != state_enum.jumping){
+            this.in_air.z = 0;
+        }
     }
 
     draw(ctx){
-        /*
-        let text = "Current Health: " + this.health.current.toString() + " Current Scales: " + this.inventory.currency.toString();
-        ctx.font = "20px Arial";
-        ctx.fillText(text, 400, 40);
-        ctx.stroke();
-        */
-
         // Determine if we have modifiers
         if(this.rolling){
             this.animation_modifier = 1;

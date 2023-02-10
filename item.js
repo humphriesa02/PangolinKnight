@@ -21,13 +21,13 @@ class Item{
             this.animations.push([]);
         }
         /* Item 0, scale */
-        this.animations[0] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 8, false);
+        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 8, false);
 
         /* Item 1, small heart */
-        this.animations[1] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 8, false);
+        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 8, false);
 
         /* Item 2, small key */
-        this.animations[2] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 8, false);
+        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 8, false);
     }
 
     update(){
@@ -81,6 +81,8 @@ const item_enum={
     scale: 0,
     small_heart: 1,
     small_key: 2,
+    sword: 3,
+    health_potion: 4
 }
 
 
