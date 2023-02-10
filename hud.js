@@ -60,8 +60,8 @@ class HUD{
         ctx.fillStyle = "white";
         ctx.fillText(scales_text, 246 * params.scale, 200 * params.scale);
         ctx.fillText(keys_text, 246 * params.scale, 186 * params.scale);
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        
     }
 }
