@@ -116,6 +116,18 @@ class GameEngine {
                              this.entities[i].collider.area.radius, false, true, 1);
                     }
                 }
+                if (this.entities[i].colliders !== undefined) {
+                    for (let collider of this.entities[i].colliders) {
+                        if (collider.area instanceof AABB) {
+                            draw_rect(this.ctx, collider.area.center.x, collider.area.center.y, 
+                                collider.area.half.x * 2, collider.area.half.y * 2, false, true, 1);
+                        }
+                        else if (collider.area instanceof Circle) {
+                            draw_circle(this.ctx, collider.area.center.x, collider.area.center.y,
+                                 collider.area.radius, false, true, 1);
+                        }
+                    }
+                }
             }
         }
 

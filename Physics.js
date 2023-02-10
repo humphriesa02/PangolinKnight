@@ -33,6 +33,7 @@ function physics_test_init() {
 function physics(entities) {
     let movement_map = update_pos();
     character_tile_collisions(movement_map);
+    character_room_collisions(movement_map);
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
     player_prop_collisions(entities);
@@ -98,6 +99,29 @@ function character_tile_collisions(entities) {
         }
     }
 }
+
+
+function character_room_collisions(entities) {
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
+
+    for (character of characters) {
+        if (character.collider !== undefined) {
+            for (room of gameEngine.entity_map.get("room")) {
+                for (col of room.colliders) {
+                    c = {collider: col};
+                    prevent_overlap(character, c);
+                }
+            }
+        }
+    }
+}
+
 
 function player_enemy_collisions(entities){
     for (player of entities.get("player")){
@@ -330,8 +354,8 @@ function prevent_overlap_circles(a, b, distance_vector) {
     let distance = distance_vector.compute_magnitude();
     let overlap = circle_a.radius + circle_b.radius - distance;
 
-    let speed_a = a.transform !== undefined ? a.transform.velocity.dot(a.transform.velocity) : new Vec2(0, 0);
-    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+    let speed_a = a.transform !== undefined ? a.transform.velocity.dot(a.transform.velocity) : 0;
+    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : 0;
 
     if (speed_a == 0 && speed_b == 0) {
         return;
@@ -350,8 +374,8 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
     let box = b.collider.area;
     let overlap = circle.radius - Math.sqrt(sq_dist);
 
-    let speed_c = c.transform !== undefined ? c.transform.velocity.dot(c.transform.velocity) : new Vec2(0, 0);
-    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : new Vec2(0, 0);
+    let speed_c = c.transform !== undefined ? c.transform.velocity.dot(c.transform.velocity) : 0;
+    let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : 0;
 
     if (speed_c == 0 && speed_b == 0) {
         return;
