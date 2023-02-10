@@ -7,6 +7,7 @@ class Item{
         this.collider = new Collider(new Circle(this.transform.pos, 4), false, true, false);
         this.item = item_type;
         this.player;
+        this.updatable = true;
         this.shadow = new Shadow(gameEngine, this.transform.pos, 8);
         gameEngine.addEntity(this.shadow);
         
@@ -21,13 +22,13 @@ class Item{
             this.animations.push([]);
         }
         /* Item 0, scale */
-        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 8, false);
+        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 6, false);
 
         /* Item 1, small heart */
-        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 8, false);
+        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 6, false);
 
         /* Item 2, small key */
-        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 8, false);
+        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 6, false);
     }
 
     update(){
@@ -35,7 +36,7 @@ class Item{
             this.shadow.removeFromWorld = true;
             this.removeFromWorld = true;
         }
-        else if(this.player != undefined){
+        else if(this.player != undefined && this.picked_up){
             this.in_air.z = 0;
             this.transform.pos.x = this.player.transform.pos.x;
             this.transform.pos.y = this.player.transform.pos.y - 15;
