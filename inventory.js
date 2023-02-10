@@ -10,6 +10,7 @@ class Inventory{
             bow:false
         }
         this.displayed = false;
+        this.updatable = true;
 
         this.primary_item = item_enum.sword;
         this.hotbar = [item_enum.health_potion, item_enum.scale, item_enum.small_key];
