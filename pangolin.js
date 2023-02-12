@@ -32,7 +32,10 @@ class Pangolin{
 
         // Some movement variables
         this.walk_speed = 35;
-        this.roll_speed = 75;
+        this.roll_acceleration = 1;
+        this.rolling_friction = 0.3;
+        this.max_roll_speed_sqr = 10000;
+        this.min_roll_speed_sqr = 0.09;
 
         // Jump variable
         this.grounded = true;
@@ -368,12 +371,45 @@ class Pangolin{
         }
         else if(this.state == state_enum.pickup || this.state == state_enum.throw){this.transform.velocity.x = 0; this.transform.velocity.y = 0;}
         else{
-            this.transform.velocity.x = 0;
-            this.transform.velocity.y = 0;
+
+
+            //this.transform.velocity.x = 0;
+            //this.transform.velocity.y = 0;
             if(this.state !== state_enum.slashing){
-                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
-           
+
+                if (!this.rolling) {
+                    this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
+                    this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+                }
+                else {
+                    if (this.game.keys['a']) {
+                        this.transform.velocity.x -= this.roll_acceleration;
+                    }
+                    else if (this.game.keys["d"]) {
+                        this.transform.velocity.x += this.roll_acceleration;
+                    }
+                    else {
+                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction;
+                    }
+                    if (this.game.keys["w"]) {
+                        this.transform.velocity.y -= this.roll_acceleration;
+                    }
+                    else if (this.game.keys["s"]) {
+                        this.transform.velocity.y += this.roll_acceleration;
+                    }
+                    else {
+                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction;
+                    }
+
+                    let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
+                    if (sqr_speed > this.max_roll_speed_sqr) {
+                        this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
+                    }
+                    else if (sqr_speed < this.min_roll_speed_sqr) {
+                        this.transform.velocity.x = 0;
+                        this.transform.velocity.y = 0;
+                    }
+                }
                 // Figure out the direction for animation
                 if(this.transform.velocity.x > 0){ // Facing right
                     this.facing = 0;
