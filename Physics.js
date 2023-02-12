@@ -268,7 +268,14 @@ function prevent_overlap(a, b) {
     {
         test = test_Circles(a.collider.area, b.collider.area);
         if (test.test) {
-            prevent_overlap_circles(a, b, test.distance);
+            let normal = prevent_overlap_circles(a, b, test.distance);
+
+            if (a.tag == "player" && a.rolling) {
+                bounce_ball(a, normal);
+            }
+            else if (b.tag == "player" && b.rolling) {
+                bounce_ball(b, normal);
+            }
         }
     }
     else {
@@ -285,7 +292,11 @@ function prevent_overlap(a, b) {
 
         test = test_Circle_AABB(circle.collider.area, box.collider.area);
         if (test.test) {
-            prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
+            let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
+
+            if (circle.tag == "player" && circle.rolling) {
+                bounce_ball(circle, normal);
+            }
         }
     }
 }
@@ -367,6 +378,8 @@ function prevent_overlap_circles(a, b, distance_vector) {
     normal.normalize();
     circle_a.center.add(Vec2.scale(normal, overlap * ratio_a));
     circle_b.center.minus(Vec2.scale(normal, overlap * ratio_b));
+
+    return normal;
 }
 
 function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
@@ -388,6 +401,8 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
     normal.normalize();
     circle.center.add(Vec2.scale(normal, overlap * ratio_c));
     box.center.minus(Vec2.scale(normal, overlap * ratio_b));
+
+    return normal;
 }
 
 // Computes the square distance between a point p and an AABB b
@@ -411,6 +426,12 @@ function sqdist_point_circle(p, c) {
     let sqdist = distance_vector.dot(distance_vector);
 
     return sqdist - (c.radius * c.radius);
+}
+
+function bounce_ball(ball, normal) {
+    let dn = ball.transform.velocity.dot(normal);
+    let transformation = Vec2.scale(normal, 1.5 * dn);
+    ball.transform.velocity.minus(transformation);
 }
 
 class Test_Block {
