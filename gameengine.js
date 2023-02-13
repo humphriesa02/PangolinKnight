@@ -27,12 +27,14 @@ class GameEngine {
         };
 
         this.gravity = false;
+        this.paused = false;
     };
 
     init(ctx) {
         this.ctx = ctx;
         this.startInput();
         this.timer = new Timer();
+        this.menu = new Menu();
     };
 
     start() {
@@ -131,6 +133,10 @@ class GameEngine {
             }
         }
 
+        if(this.paused){
+            this.menu.draw(this.ctx);
+        }
+
         if(document.getElementById("debug").checked){
             let fps = Math.round(1 / this.clockTick);
             let text = "fps: " + fps.toString();
@@ -145,25 +151,30 @@ class GameEngine {
     update() {
         let entitiesCount = this.entities.length;
 
-        for (let i = 0; i < entitiesCount; i++) {
-            let entity = this.entities[i];
-
-            if (!entity.removeFromWorld && entity.updatable) {
-                entity.update();
-            }
-        }
-
-        for (let i = this.entities.length - 1; i >= 0; --i) {
-            if (this.entities[i].removeFromWorld) {
-                if(this.entities[i].tag != undefined){
-                    let index = this.entity_map.get(this.entities[i].tag).indexOf(this.entities[i]);
-                    this.entity_map.get(this.entities[i].tag).splice(index, 1);
+        if(!this.paused){
+            for (let i = 0; i < entitiesCount; i++) {
+                let entity = this.entities[i];
+    
+                if (!entity.removeFromWorld && entity.updatable) {
+                    entity.update();
                 }
-                this.entities.splice(i, 1);
             }
+    
+            for (let i = this.entities.length - 1; i >= 0; --i) {
+                if (this.entities[i].removeFromWorld) {
+                    if(this.entities[i].tag != undefined){
+                        let index = this.entity_map.get(this.entities[i].tag).indexOf(this.entities[i]);
+                        this.entity_map.get(this.entities[i].tag).splice(index, 1);
+                    }
+                    this.entities.splice(i, 1);
+                }
+            }
+    
+            physics(this.entity_map);
         }
-
-        physics(this.entity_map);
+        else{
+            this.menu.update();
+        }
     };
 
     loop() {

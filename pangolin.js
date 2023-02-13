@@ -19,7 +19,7 @@ class Pangolin{
 
         //Inventory
         this.inventory = new Inventory();
-        gameEngine.addEntity(this.inventory);
+        gameEngine.menu.inventory = this.inventory;
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -46,6 +46,7 @@ class Pangolin{
         this.jump_cooldown_end = 0;
         this.interaction_cooldown_end = 0;
         this.interaction_end = 0;
+        this.inventory_cooldown_end = 0;
 
         // Flag variables
         this.rolling = false;
@@ -55,6 +56,7 @@ class Pangolin{
         this.interacting = false; // Used for collision based interactions with other entities
         this.interaction_cooldown_duration = 0.5;
         this.interaction_duration = 0.01;
+        this.inventory_duration = 0.1;
 
         // Animations
         this.animations = [];
@@ -315,6 +317,12 @@ class Pangolin{
         }else if (this.interacting && this.game.timer.gameTime >= this.interaction_end){
             this.interacting = false;
             this.interaction_end = this.game.timer.gameTime + this.interaction_duration;
+        }
+
+        if(this.game.keys["i"] && this.game.timer.gameTime >= this.inventory_cooldown_end){
+            this.game.paused = !this.game.paused;
+            this.game.menu.current_displayed = 1;
+            this.inventory_cooldown_end = this.game.timer.gameTime + this.inventory_duration;
         }
 
         // Rolling transition check
