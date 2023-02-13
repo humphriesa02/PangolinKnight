@@ -122,9 +122,7 @@ function hit(entity,attacker,damage = 1){
             if(!entity.invincible.active){
                 entity.health.current -= damage;
                 if(entity.health.current <= 0){
-                    let explosion = new Explosion(entity);
-                    gameEngine.addEntity(explosion);
-                    entity.removeFromWorld = true;
+                    entity.die();
                 }
                 entity.invincible.active = true;
                 entity.knockback = new Knockback(entity, attacker.transform.pos);

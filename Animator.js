@@ -24,7 +24,22 @@ class Animator {
                 (x - screenX() - width / 2) * params.scale, (y - screenY() - height / 2) * params.scale, 
                 width * params.scale, height * params.scale);
 
+            ctx.filter = 'none';
         }
+    }
+
+    drawHUD(tick, ctx, x, y, width = this.width, height = this.height){
+        const frame = this.currentFrame();
+        this.elapsedTime += tick;
+        if (this.elapsedTime > this.totalTime) {
+            this.elapsedTime -= this.totalTime;
+            if (!this.repeat) { this.done = true; }
+        }
+        ctx.drawImage(this.spritesheet, 
+            this.xStart + this.width*frame, this.yStart, 
+            this.width, this.height, 
+            x * params.scale, y * params.scale, 
+            width * params.scale, height * params.scale);
     }
 
     drawRotatedFrame(tick, ctx, x, y, angle)

@@ -10,12 +10,16 @@ class Pangolin{
         this.tag = "player";
 
         this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
-        this.health = new Health(10, 10);
+        this.health = new Health(20, 20);
         this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
+
+        //Inventory
+        this.inventory = new Inventory();
+        gameEngine.addEntity(this.inventory);
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -28,7 +32,10 @@ class Pangolin{
 
         // Some movement variables
         this.walk_speed = 35;
-        this.roll_speed = 75;
+        this.roll_acceleration = 1;
+        this.rolling_friction = 0.3;
+        this.max_roll_speed_sqr = 10000;
+        this.min_roll_speed_sqr = 0.09;
 
         // Jump variable
         this.grounded = true;
@@ -242,14 +249,12 @@ class Pangolin{
         if(!gameEngine.gravity && this.state == state_enum.jumping){
             in_air_jump(this);
         }
+        else if(this.state != state_enum.jumping){
+            this.in_air.z = 0;
+        }
     }
 
     draw(ctx){
-        let text = "Current Health: " + this.health.current.toString();
-        ctx.font = "30px Arial";
-        ctx.fillText(text, 550, 40);
-        ctx.stroke();
-        
         // Determine if we have modifiers
         if(this.rolling){
             this.animation_modifier = 1;
@@ -283,7 +288,6 @@ class Pangolin{
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].elapsedTime = 0;
                     this.animations[state_enum.jumping][i][this.rolling ? 1 : 0].done = false;
                 }
-                this.shadow.visible = false;
                 this.state = state_enum.idle;
             }
         }
@@ -322,7 +326,6 @@ class Pangolin{
         //Jump check
         if(this.game.keys[" "] && this.game.timer.gameTime >= this.jump_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){ //Pressing space
             this.jump();
-            this.shadow.visible = true;
             // TODO, make this reset in the component
             this.in_air.distance_remaining = this.in_air.air_distance;
             this.jump_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.jumping][0][this.rolling ? 1 : 0].totalTime;
@@ -368,12 +371,45 @@ class Pangolin{
         }
         else if(this.state == state_enum.pickup || this.state == state_enum.throw){this.transform.velocity.x = 0; this.transform.velocity.y = 0;}
         else{
-            this.transform.velocity.x = 0;
-            this.transform.velocity.y = 0;
+
+
+            //this.transform.velocity.x = 0;
+            //this.transform.velocity.y = 0;
             if(this.state !== state_enum.slashing){
-                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * (this.rolling ? this.roll_speed : this.walk_speed));
-           
+
+                if (!this.rolling) {
+                    this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
+                    this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+                }
+                else {
+                    if (this.game.keys['a']) {
+                        this.transform.velocity.x -= this.roll_acceleration;
+                    }
+                    else if (this.game.keys["d"]) {
+                        this.transform.velocity.x += this.roll_acceleration;
+                    }
+                    else {
+                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction;
+                    }
+                    if (this.game.keys["w"]) {
+                        this.transform.velocity.y -= this.roll_acceleration;
+                    }
+                    else if (this.game.keys["s"]) {
+                        this.transform.velocity.y += this.roll_acceleration;
+                    }
+                    else {
+                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction;
+                    }
+
+                    let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
+                    if (sqr_speed > this.max_roll_speed_sqr) {
+                        this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
+                    }
+                    else if (sqr_speed < this.min_roll_speed_sqr) {
+                        this.transform.velocity.x = 0;
+                        this.transform.velocity.y = 0;
+                    }
+                }
                 // Figure out the direction for animation
                 if(this.transform.velocity.x > 0){ // Facing right
                     this.facing = 0;
@@ -412,6 +448,12 @@ class Pangolin{
             this.grounded = false;
         }
     }
+
+    die(){
+        let explosion = new Explosion(this);
+        gameEngine.addEntity(explosion);
+        this.removeFromWorld = true;
+    }
 }
 
 // simple class to draw shadow below player feet
@@ -423,15 +465,12 @@ class Shadow{
 
         this.animation = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 0.3, true);
 
-        this.visible = false;
     }
 
     update(){ }
 
     draw(ctx){
-        if(this.visible){
-            this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, this.size, this.size);
-        }
+        this.animation.drawFrame(this.game.clockTick, ctx, this.player_pos.x, this.player_pos.y, this.size, this.size);
         
     }
 

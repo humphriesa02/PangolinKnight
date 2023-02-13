@@ -4,9 +4,12 @@ class Item{
         this.transform = new Transform(pos.clone());
         this.in_air = new In_Air(0, 60, 50, 16);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
-        this.collider = new Collider(new AABB(this.transform.pos, 4, 4), true, true, false);
-        // default item is scale
+        this.collider = new Collider(new Circle(this.transform.pos, 4), false, true, false);
         this.item = item_type;
+        this.player;
+        this.updatable = true;
+        this.shadow = new Shadow(gameEngine, this.transform.pos, 8);
+        gameEngine.addEntity(this.shadow);
         
         // Animations
         this.animations = [];
@@ -15,19 +18,28 @@ class Item{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 2; i++){ // an animation for each item
+        for (let i = 0; i < 3; i++){ // an animation for each item
             this.animations.push([]);
         }
         /* Item 0, scale */
-        this.animations[0] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 8, false);
+        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 6, false);
 
         /* Item 1, small heart */
-        this.animations[1] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 8, false);
+        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 6, false);
+
+        /* Item 2, small key */
+        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 6, false);
     }
 
     update(){
         if(this.animations[this.item].done){
+            this.shadow.removeFromWorld = true;
             this.removeFromWorld = true;
+        }
+        else if(this.player != undefined && this.picked_up){
+            this.in_air.z = 0;
+            this.transform.pos.x = this.player.transform.pos.x;
+            this.transform.pos.y = this.player.transform.pos.y - 15;
         }
         else{
             in_air_jump(this);
@@ -44,22 +56,35 @@ class Item{
     activate(entity){
         switch(this.item){
             // by item_enum
-
             //scale
             case 0: 
+                entity.inventory.currency++;
                 break;
             // small heart
             case 1:
-                entity.health.current++;
+                if(entity.health.current < entity.health.max){
+                    entity.health.current++;        
+                }
+                break;
+            // small key
+            case 2:
+                entity.inventory.small_keys++;
                 break;
         }
-        this.removeFromWorld = true;
+        this.animations[this.item].elapsedTime = 0;
+        this.animations[this.item].totalTime = 0.5;
+        this.player = entity;
+        this.picked_up = true;
+        this.shadow.removeFromWorld = true;
     }
 }
 
 const item_enum={
     scale: 0,
     small_heart: 1,
+    small_key: 2,
+    sword: 3,
+    health_potion: 4
 }
 
 

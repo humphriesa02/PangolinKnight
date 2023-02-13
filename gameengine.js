@@ -116,14 +116,30 @@ class GameEngine {
                              this.entities[i].collider.area.radius, false, true, 1);
                     }
                 }
+                if (this.entities[i].colliders !== undefined) {
+                    for (let collider of this.entities[i].colliders) {
+                        if (collider.area instanceof AABB) {
+                            draw_rect(this.ctx, collider.area.center.x, collider.area.center.y, 
+                                collider.area.half.x * 2, collider.area.half.y * 2, false, true, 1);
+                        }
+                        else if (collider.area instanceof Circle) {
+                            draw_circle(this.ctx, collider.area.center.x, collider.area.center.y,
+                                 collider.area.radius, false, true, 1);
+                        }
+                    }
+                }
             }
         }
 
-        let fps = Math.round(1 / this.clockTick);
-        let text = "fps: " + fps.toString();
-        this.ctx.font = "30px Arial";
-        this.ctx.fillText(text, 100, 40);
-        this.ctx.stroke();
+        if(document.getElementById("debug").checked){
+            let fps = Math.round(1 / this.clockTick);
+            let text = "fps: " + fps.toString();
+            this.ctx.font = "15px Arial";
+            this.ctx.fillStyle = "white";
+            this.ctx.fillText(text, 600, 40);
+            this.ctx.stroke();
+        }
+        
     };
 
     update() {
@@ -156,6 +172,7 @@ class GameEngine {
         this.draw();
 
         this.click = null;
+        this.wheel = null;
     };
 
 };
