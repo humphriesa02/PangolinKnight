@@ -12,6 +12,7 @@ class Inventory{
         this.active = false;
         this.updatable = true;
 
+        this.items = [];
         this.primary_item = item_enum.sword;
         this.hotbar = [item_enum.health_potion, item_enum.scale, item_enum.small_key];
         this.selected = 0;
@@ -45,22 +46,20 @@ class Inventory{
     }
 
     update(){
-        this.secondary_item = this.hotbar[this.selected];
-        if(gameEngine.wheel && gameEngine.wheel.deltaY > 0 && this.selected > 0){
-            this.selected--;
-        }
-        else if(gameEngine.wheel && gameEngine.wheel.deltaY < 0 && this.selected < this.hotbar.length-1){
-            this.selected++;
-        }
+        
     }
 
     draw(ctx){
         // Background
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_inventory.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-
+        let k = 0;
         for(let i = 0; i < 4; i++){
             for(let j = 0; j < 4; j++){
-                ctx.drawImage(this.spritesheet, 48, 64, 16, 16, (16 * params.scale ) + i * (36 * params.scale), (8 * params.scale ) + j * (29 * params.scale), 28 * params.scale, 28 * params.scale);
+                ctx.drawImage(this.spritesheet, 48, 64, 16, 16, (16 * params.scale ) + j * (36 * params.scale), (8 * params.scale ) + i * (29 * params.scale), 28 * params.scale, 28 * params.scale);
+                if(this.items[k] != undefined){
+                    this.items[k].animations[this.items[k].item].drawHUD(gameEngine.clockTick, ctx, 18  + (j * 36), 9 + (i * 29), 25, 25, false)
+                }
+                k++;
             }
         }
 
@@ -96,7 +95,10 @@ class Inventory{
         }
     }
 
-    add_to_hotbar(){
-        
+    add_item(item){
+        this.items.push(item);
+        if(this.hotbar.length < 3){
+            this.hotbar.push(item);
+        }
     }
 }

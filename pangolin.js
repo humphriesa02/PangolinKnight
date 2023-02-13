@@ -419,18 +419,23 @@ class Pangolin{
                     }
                 }
                 // Figure out the direction for animation
-                if(this.transform.velocity.x > 0){ // Facing right
-                    this.facing = 0;
+                if(Math.abs(this.transform.velocity.x) > Math.abs(this.transform.velocity.y)){
+                    if(this.transform.velocity.x > 0){ // Facing right
+                        this.facing = 0;
+                    }
+                    else if (this.transform.velocity.x < 0){ // Facing left
+                        this.facing = 1;
+                    }
                 }
-                else if (this.transform.velocity.x < 0){ // Facing left
-                    this.facing = 1;
+                else{
+                    if (this.transform.velocity.y < 0){ // Facing up
+                        this.facing = 2;
+                    }
+                    else if (this.transform.velocity.y > 0){ // Facing down
+                        this.facing = 3;
+                    }
                 }
-                if (this.transform.velocity.y < 0){ // Facing up
-                    this.facing = 2;
-                }
-                else if (this.transform.velocity.y > 0){ // Facing down
-                    this.facing = 3;
-                }
+                
             }
           
             if(this.state != state_enum.jumping && this.state != state_enum.slashing && this.state != state_enum.holding){

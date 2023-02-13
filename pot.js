@@ -46,6 +46,7 @@ class pot{
             this.transform.velocity.y = 0;
             this.break_apart(4);
             create_item(item_enum.scale, this.transform.pos, 2, 0.3);
+            create_item(item_enum.health_potion, this.transform.pos, 1, 1);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;
@@ -97,7 +98,6 @@ class Pieces{
     constructor(parent, direction){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.transform = new Transform(parent.transform.pos.clone());
-        this.lifespan = new Lifespan(0.1, gameEngine.timer.gameTime);
         this.in_air = new In_Air(53, 75, 50, 16);
         this.move_speed = 15;
 
