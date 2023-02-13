@@ -65,7 +65,6 @@ class sceneManager{
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
-        gameEngine.addEntity(this.hud);
         this.game.addEntity(this)
 
         for(let i = 0; i < this.level.pots.length; i++){
@@ -73,6 +72,7 @@ class sceneManager{
             this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
             gameEngine.addEntity(apot);
         }
+        gameEngine.addEntity(this.hud);
     }
     update(){
 

@@ -103,19 +103,19 @@ class Pieces{
 
         switch(direction){
             case 0://upper left
-                this.animator = new Animator(this.spritesheet, 48, 0, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 0, 48, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(-this.move_speed, -this.move_speed);
                 break;
             case 1://upper right
-                this.animator = new Animator(this.spritesheet, 56, 0, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 8, 48, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(this.move_speed, -this.move_speed);
                 break;
             case 2://lower left
-                this.animator = new Animator(this.spritesheet, 48, 8, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 0, 56, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(-this.move_speed, this.move_speed);
                 break;
             case 3://lower right
-                this.animator = new Animator(this.spritesheet, 56, 8, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 8, 56, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(this.move_speed, this.move_speed);
                 break;
         }
