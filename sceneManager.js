@@ -61,7 +61,7 @@ class sceneManager{
 
         }
 
-        //gameEngine.addEntity(new stair(this.level.stairs));
+        gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
