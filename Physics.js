@@ -112,8 +112,8 @@ function character_room_collisions(entities) {
 
     for (character of characters) {
         if (character.collider !== undefined) {
-            for (room of gameEngine.entity_map.get("room")) {
-                for (col of room.colliders) {
+            for (r of gameEngine.entity_map.get("room")) {
+                for (col of r.colliders) {
                     c = {collider: col};
                     prevent_overlap(character, c);
                 }
@@ -162,9 +162,9 @@ function sword_character_collisions(entities) {
 }
 
 function player_prop_collisions(entities) {
-    player = entities.get("player")[0];
+    let player = entities.get("player")[0];
     if (player == undefined || player.collider == undefined) { return; }
-    props = entities.get("prop");
+    let props = entities.get("prop");
 
     for (prop of props) {
         if (test_overlap(player.collider.area, prop.collider.area)) {
