@@ -12,25 +12,25 @@ class door{
     loadAnimations(facing){
         this.animator= [];
         switch(facing){
-            case 0:
-                this.animator[0] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[1] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[2] = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 1, true);
+            case 0: //up
+                this.animator[0] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[1] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[2] = new Animator(this.spritesheet, 16, 16, 16, 16, 1, 1, true);
                 break;
-            case 1:
-                this.animator[0] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[1] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[2] = new Animator(this.spritesheet, 96, 0, 16, 16, 1, 1, true);
+            case 1: //right
+                this.animator[0] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[1] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[2] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 1, true);
                 break;
-            case 2:
-                this.animator[0] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[1] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[2] = new Animator(this.spritesheet, 112, 0, 16, 16, 1, 1, true);
+            case 2: //down
+                this.animator[0] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[1] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[2] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 1, true);
                 break;
-            case 3:
-                this.animator[0] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[1] = new Animator(this.spritesheet, 16, 32, 16, 16, 1, 1, true);
-                this.animator[2] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 1, true);
+            case 3: //left
+                this.animator[0] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[1] = new Animator(this.spritesheet, 0, 64, 16, 16, 1, 1, true);
+                this.animator[2] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 1, true);
                 break;
         }
     }

@@ -5,7 +5,7 @@ class statue{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
 
-        this.animator = new Animator(this.spritesheet, 96, 32, 16, 16, 1, 1, true);
+        this.animator = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 1, true);
     }
     update(){
 

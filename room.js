@@ -1,10 +1,27 @@
 class room{
     constructor(info){
         this.position = info.position;
-        gameEngine.addEntity(new door([this.position[0] * 17, this.position[1] * 13 + 6], info.doors.left));
-        gameEngine.addEntity(new door([this.position[0] * 17 + 8, this.position[1] * 13], info.doors.up));
-        gameEngine.addEntity(new door([this.position[0] * 17 + 16, this.position[1] * 13 + 6], info.doors.right));
-        gameEngine.addEntity(new door([this.position[0] * 17 + 8, this.position[1] * 13 + 12], info.doors.down));
+        this.doors = [];
+        this.doors[0] = new door([this.position[0] * 17 + 8, this.position[1] * 13], info.doors.up);
+        this.doors[1] = new door([this.position[0] * 17 + 16, this.position[1] * 13 + 6], info.doors.right);
+        this.doors[2] = new door([this.position[0] * 17 + 8, this.position[1] * 13 + 12], info.doors.down);
+        this.doors[3] = new door([this.position[0] * 17, this.position[1] * 13 + 6], info.doors.left);
+        if(info.doors.up.button){
+            gameEngine.addEntity(new button(info.doors.up.button, this.doors[0]))
+        }
+        if(info.doors.right.button){
+            gameEngine.addEntity(new button(info.doors.right.button, this.doors[1]))
+        }
+        if(info.doors.down.button){
+            gameEngine.addEntity(new button(info.doors.down.button, this.doors[2]))
+        }
+        if(info.doors.left.button){
+            gameEngine.addEntity(new button(info.doors.left.button, this.doors[3]))
+        }
+        gameEngine.addEntity(this.doors[0]);
+        gameEngine.addEntity(this.doors[1]);
+        gameEngine.addEntity(this.doors[2]);
+        gameEngine.addEntity(this.doors[3]);
         this.entities = [];
         this.updatable = true;
         this.colliders = [];

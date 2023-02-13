@@ -9,20 +9,20 @@ var levels = {
         crystals : [{position : [61, 30], state : 0},{position : [57, 30], state : 0},{position : [57, 34], state : 0},{position : [61, 34], state : 0},{position : [42, 8], state : 0},{position : [42, 9], state : 0},{position : [42, 4], state : 0},{position : [42, 3], state : 0},{position : [40, 6], state : 0},{position : [39, 6], state : 0},{position : [44, 6], state : 0},{position : [45, 6], state : 0},{position : [43, 5], state : 0},{position : [44, 4], state : 0},{position : [41, 5], state : 0},{position : [40, 4], state : 0},{position : [40, 8], state : 0},{position : [44, 8], state : 0},{position : [45, 9], state : 0},{position : [39, 9], state : 0},{position : [39, 3], state : 0},{position : [45, 3], state : 0},{position : [46, 6], state : 0},{position : [38, 6], state : 0},{position : [42, 2], state : 0},{position : [28, 6], state : 0},{position : [22, 6], state : 0}],
         pits : [{position : [46, 14], state : 0},{position : [38, 14], state : 0},{position : [46, 24], state : 2},{position : [38, 24], state : 2},{position : [46, 23], state : 1},{position : [46, 22], state : 1},{position : [46, 21], state : 1},{position : [46, 20], state : 1},{position : [46, 19], state : 1},{position : [46, 18], state : 1},{position : [46, 17], state : 1},{position : [46, 16], state : 1},{position : [46, 15], state : 1},{position : [38, 15], state : 1},{position : [38, 16], state : 1},{position : [38, 17], state : 1},{position : [38, 18], state : 1},{position : [38, 19], state : 1},{position : [38, 20], state : 1},{position : [38, 21], state : 1},{position : [38, 22], state : 1},{position : [38, 23], state : 1},{position : [15, 18], state : 0},{position : [14, 18], state : 0},{position : [13, 18], state : 0},{position : [3, 18], state : 0},{position : [2, 18], state : 0},{position : [1, 18], state : 0},{position : [1, 20], state : 2},{position : [2, 20], state : 2},{position : [3, 20], state : 2},{position : [13, 20], state : 2},{position : [14, 20], state : 2},{position : [15, 20], state : 2},{position : [15, 19], state : 1},{position : [14, 19], state : 1},{position : [13, 19], state : 1},{position : [3, 19], state : 1},{position : [2, 19], state : 1},{position : [1, 19], state : 1}],
         chests : [{position : [49, 14], state : 0},{position : [35, 14], state : 0},{position : [42, 6], state : 0},{position : [18, 14], state : 0}],
-        doors : [{position : [76, 25], state : 0},{position : [42, 26], state : 0},{position : [42, 13], state : 0},{position : [17, 45], state : 0},{position : [17, 6], state : 0},{position : [16, 32], state : 0},{position : [59, 64], state : 0}],
+        doors : [{position : [76, 25], state : 0},{position : [42, 26], state : 0},{position : [42, 13], state : 0},{position : [17, 45], state : 0},{position : [17, 6], state : 0},{position : [16, 32], state : 0},{position : [59, 64], state : 0},],
         stairs : {position : [1, 45], state : 2},
-        frogs : [{position : [58, 45], state : 0}],
+        frogs : [{position : [3, 30], state : 0},{position : [3, 36], state : 0},{position : [10, 36], state : 0},{position : [3, 16], state : 0},{position : [3, 23], state : 0},{position : [12, 16], state : 0},{position : [12, 23], state : 0},{position : [5, 5], state : 0},{position : [5, 9], state : 0},{position : [9, 5], state : 0},{position : [9, 9], state : 0},{position : [22, 16], state : 0},{position : [28, 16], state : 0},{position : [40, 35], state : 0},{position : [40, 30], state : 0},{position : [45, 30], state : 0},{position : [54, 29], state : 0},{position : [64, 29], state : 0},{position : [76, 16], state : 0},{position : [72, 16], state : 0},{position : [80, 16], state : 0}],
         //door states : invisable = 0, open = 1, close = 2
         rooms : [{position : [0,0], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [0,1], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
-        {position : [0,2], doors : {up : {state : 1, facing : 0}, right : {state : 2, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
+        {position : [0,2], doors : {up : {state : 1, facing : 0}, right : {state : 2, facing : 1, button : {position : [9,31]}}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [0,3], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [1,0], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 2, facing : 3}}},
         {position : [1,1], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [1,2], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [1,3], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 0, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [2,0], doors : {up : {state : 0, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
-        {position : [2,1], doors : {up : {state : 2, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
+        {position : [2,1], doors : {up : {state : 2, facing : 0, button : {position : [49,24]}}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [2,2], doors : {up : {state : 2, facing : 0}, right : {state : 1, facing : 1}, down : {state : 0, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [3,2], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
         {position : [3,3], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
@@ -32,10 +32,10 @@ var levels = {
     },
     2 : {
         mapSprite: './sprites/map.png',
-        start : [0,0],
-        gravity : true,
+        start : [5,0],
+        gravity : false,
         pots : [],
-        blocks : [{position : [-1,10], state : 0},{position : [-2,10], state : 0},{position : [0,10], state : 0},{position : [1,10], state : 0},{position : [2,10], state : 0},{position : [3,10], state : 0},{position : [4,10], state : 0},{position : [5,10], state : 0},{position : [6,10], state : 0},{position : [7,10], state : 0},{position : [8,10], state : 0},{position : [9,10], state : 0},{position : [10,10], state : 0},{position : [11,10], state : 0},{position : [12,10], state : 0},{position : [13,10], state : 0},{position : [14,10], state : 0},{position : [15,10], state : 0},{position : [16,10], state : 0}],
+        blocks : [{position : [0,10], state : 0},{position : [1,10], state : 0},{position : [2,10], state : 0},{position : [3,10], state : 0},{position : [4,10], state : 0},{position : [5,10], state : 0},{position : [6,10], state : 0},{position : [7,10], state : 0},{position : [8,10], state : 0},{position : [9,10], state : 0},{position : [10,10], state : 0},{position : [11,10], state : 0},{position : [12,10], state : 0},{position : [13,10], state : 0},{position : [14,10], state : 0},{position : [15,10], state : 0},{position : [16,10], state : 0}],
         chests : [],
         doors : [],
         crystals : [],
@@ -43,6 +43,7 @@ var levels = {
         frogs : [],
         stairs : {position : [10,9], state : 1},
         pits : [],
-        rooms : []
+        rooms : [{position : [0,0], doors : {up : {state : 1, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
+        {position : [0,1], doors : {up : {state : 1, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}}]
     }
 }

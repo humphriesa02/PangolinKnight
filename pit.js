@@ -10,13 +10,13 @@ class pit{
 loadAnimation(state){
     switch(state){
         case 0:
-            this.animator = new Animator(this.spritesheet, 96, 64, 16, 16, 1, 1, true);
+            this.animator = new Animator(this.spritesheet, 96, 0, 16, 16, 1, 1, true);
             break;
         case 1:
-            this.animator = new Animator(this.spritesheet, 96, 80, 16, 16, 1, 1, true);
+            this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
             break;
         case 2:
-            this.animator = new Animator(this.spritesheet, 96, 96, 16, 16, 1, 1, true);
+            this.animator = new Animator(this.spritesheet, 96, 32, 16, 16, 1, 1, true);
     }
 
 }

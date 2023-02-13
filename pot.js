@@ -8,7 +8,7 @@ class pot{
         this.in_air = new In_Air(70, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
-        this.animator = new Animator(this.spritesheet, 96, 16, 16, 16, 1, 1, true);
+        this.animator = new Animator(this.spritesheet, 48, 0, 16, 16, 1, 1, true);
         this.facing_correct_direction = false;
         this.requires_facing = true;
         this.picked_up = false;
@@ -104,19 +104,19 @@ class Pieces{
 
         switch(direction){
             case 0://upper left
-                this.animator = new Animator(this.spritesheet, 0, 96, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 48, 0, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(-this.move_speed, -this.move_speed);
                 break;
             case 1://upper right
-                this.animator = new Animator(this.spritesheet, 8, 96, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 56, 0, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(this.move_speed, -this.move_speed);
                 break;
             case 2://lower left
-                this.animator = new Animator(this.spritesheet, 0, 104, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 48, 8, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(-this.move_speed, this.move_speed);
                 break;
             case 3://lower right
-                this.animator = new Animator(this.spritesheet, 8, 104, 8, 8, 1, 0.6, false);
+                this.animator = new Animator(this.spritesheet, 56, 8, 8, 8, 1, 0.6, false);
                 this.transform.velocity = new Vec2(this.move_speed, this.move_speed);
                 break;
         }

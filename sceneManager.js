@@ -34,12 +34,6 @@ class sceneManager{
             gameEngine.addEntity(new pit(this.level.pits[i]))
         }
 
-        for(let i = 0; i < this.level.pots.length; i++){
-            let apot = new pot(this.level.pots[i]);
-            this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
-            gameEngine.addEntity(apot);
-        }
-
         for(let i = 0; i < this.level.blocks.length; i++){
             let ablock = new block(this.level.blocks[i]);
             this.rooms[Math.floor(ablock.transform.pos.x/roomWidth)][Math.floor(ablock.transform.pos.y/roomHeight)].addEntity(ablock)
@@ -65,11 +59,18 @@ class sceneManager{
             gameEngine.addEntity(enemy);
 
         }
-        gameEngine.addEntity(new stair(this.level.stairs));
+
+        //gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
         this.game.addEntity(this)
+
+        for(let i = 0; i < this.level.pots.length; i++){
+            let apot = new pot(this.level.pots[i]);
+            this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
+            gameEngine.addEntity(apot);
+        }
     }
     update(){
 
