@@ -19,7 +19,7 @@ class Pangolin{
 
         //Inventory
         this.inventory = new Inventory();
-        gameEngine.addEntity(this.inventory);
+        gameEngine.menu.inventory = this.inventory;
 
         // Reference to our spritesheet
         this.walk_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_sheet.png");
@@ -46,6 +46,7 @@ class Pangolin{
         this.jump_cooldown_end = 0;
         this.interaction_cooldown_end = 0;
         this.interaction_end = 0;
+        this.inventory_cooldown_end = 0;
 
         // Flag variables
         this.rolling = false;
@@ -55,6 +56,7 @@ class Pangolin{
         this.interacting = false; // Used for collision based interactions with other entities
         this.interaction_cooldown_duration = 0.5;
         this.interaction_duration = 0.01;
+        this.inventory_duration = 0.1;
 
         // Animations
         this.animations = [];
@@ -317,6 +319,12 @@ class Pangolin{
             this.interaction_end = this.game.timer.gameTime + this.interaction_duration;
         }
 
+        if(this.game.keys["i"] && this.game.timer.gameTime >= this.inventory_cooldown_end){
+            this.game.paused = !this.game.paused;
+            this.game.menu.current_displayed = 1;
+            this.inventory_cooldown_end = this.game.timer.gameTime + this.inventory_duration;
+        }
+
         // Rolling transition check
         if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding){
             this.rolling = !this.rolling;
@@ -411,18 +419,23 @@ class Pangolin{
                     }
                 }
                 // Figure out the direction for animation
-                if(this.transform.velocity.x > 0){ // Facing right
-                    this.facing = 0;
+                if(Math.abs(this.transform.velocity.x) > Math.abs(this.transform.velocity.y)){
+                    if(this.transform.velocity.x > 0){ // Facing right
+                        this.facing = 0;
+                    }
+                    else if (this.transform.velocity.x < 0){ // Facing left
+                        this.facing = 1;
+                    }
                 }
-                else if (this.transform.velocity.x < 0){ // Facing left
-                    this.facing = 1;
+                else{
+                    if (this.transform.velocity.y < 0){ // Facing up
+                        this.facing = 2;
+                    }
+                    else if (this.transform.velocity.y > 0){ // Facing down
+                        this.facing = 3;
+                    }
                 }
-                if (this.transform.velocity.y < 0){ // Facing up
-                    this.facing = 2;
-                }
-                else if (this.transform.velocity.y > 0){ // Facing down
-                    this.facing = 3;
-                }
+                
             }
           
             if(this.state != state_enum.jumping && this.state != state_enum.slashing && this.state != state_enum.holding){

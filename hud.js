@@ -2,10 +2,18 @@ class HUD{
     constructor(player){
         this.player = player;
         this.item_spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
+        this.updatable = true;
     }
 
 
     update(){
+        this.player.inventory.secondary_item = this.player.inventory.hotbar[this.player.inventory.selected];
+        if(gameEngine.wheel && gameEngine.wheel.deltaY > 0 && this.player.inventory.selected > 0){
+            this.player.inventory.selected--;
+        }
+        else if(gameEngine.wheel && gameEngine.wheel.deltaY < 0 && this.player.inventory.selected < this.player.inventory.hotbar.length-1){
+            this.player.inventory.selected++;
+        }
     }
 
 

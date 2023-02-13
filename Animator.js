@@ -79,7 +79,7 @@ function draw_rect(ctx, x, y, width, height, fill, stroke, strokeWidth)
     ctx.strokeRect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
     if (fill) {
         ctx.fillStyle = fill;
-        ctx.fillrect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
+        ctx.fillRect((x - screenX() - width/2) * params.scale, (y - screenY() - height/2) * params.scale, width * params.scale, height * params.scale);
     }
     if (stroke) {
         ctx.lineWidth = strokeWidth;

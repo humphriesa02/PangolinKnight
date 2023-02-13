@@ -12,6 +12,8 @@ ASSET_MANAGER.queueDownload("./sprites/frog_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/Level1map.png");
 ASSET_MANAGER.queueDownload("./sprites/explosion.png");
 ASSET_MANAGER.queueDownload("./sprites/Items.png");
+ASSET_MANAGER.queueDownload("./sprites/PangolinPauseScreen.png");
+ASSET_MANAGER.queueDownload("./sprites/pangolin_inventory.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");

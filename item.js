@@ -18,7 +18,7 @@ class Item{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 3; i++){ // an animation for each item
+        for (let i = 0; i < 5; i++){ // an animation for each item
             this.animations.push([]);
         }
         /* Item 0, scale */
@@ -29,6 +29,9 @@ class Item{
 
         /* Item 2, small key */
         this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 6, false);
+
+        /* Item 4, health potion */
+        this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 6, false);
     }
 
     update(){
@@ -69,6 +72,9 @@ class Item{
             // small key
             case 2:
                 entity.inventory.small_keys++;
+                break;
+            case 4:
+                entity.inventory.add_item(this);
                 break;
         }
         this.animations[this.item].elapsedTime = 0;
