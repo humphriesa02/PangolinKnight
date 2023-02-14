@@ -61,6 +61,12 @@ class sceneManager{
             gameEngine.addEntity(enemy);
 
         }
+        for(let i = 0; i < this.level.slimes.length; i++){
+            let enemy = new Slime(this.level.slimes[i], this.player);
+            this.rooms[Math.floor(enemy.transform.pos.x/roomWidth)][Math.floor(enemy.transform.pos.y/roomHeight)].addEntity(enemy);
+            gameEngine.addEntity(enemy);
+
+        }
 
         gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);

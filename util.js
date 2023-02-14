@@ -10,6 +10,21 @@ const params = {
 const randomInt = n => Math.floor(Math.random() * n);
 
 /**
+ * @param {Number} min
+ * @param {Number} max
+ * @returns Random Integer Between min and max - 1
+ */
+const randomRange = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+/**
+ * @param {Number} min
+ * @param {Number} max
+ * @returns Random Integer Between min and max - 1
+ */
+const randomFloatRange = (min, max) => Math.random() * (max - min + 1) + min;
+  
+
+/**
  * @param {Number} r Red Value
  * @param {Number} g Green Value
  * @param {Number} b Blue Value

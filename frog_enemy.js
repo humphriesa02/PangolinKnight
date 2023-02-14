@@ -8,7 +8,6 @@ class Frog{
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
         this.facing = 0;
-        this.dead = false;
         this.move_speed = 18.75;
         this.move_time = 3;
         this.delay_time = 3;
