@@ -38,6 +38,9 @@ class door{
         if(this.state == 1){
             this.collider.block_move = false;
         }
+        else{
+            this.collider.block_move = true;
+        }
     }
     draw(ctx){
         this.animator[this.state].drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);

@@ -17,6 +17,8 @@ class sceneManager{
         this.level = levels[level];
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
+        this.x = Math.floor(this.player.transform.pos.x / roomWidth);
+        this.y = Math.floor(this.player.transform.pos.y/roomHeight);
         this.map = new map(this.level.mapSprite);
         gameEngine.addEntity(this.map);
 
@@ -34,6 +36,10 @@ class sceneManager{
 
         for(let i = 0; i < this.level.pits.length; i++){
             gameEngine.addEntity(new pit(this.level.pits[i]))
+        }
+
+        for(let i = 0; i < this.level.locks.length; i++){
+            gameEngine.addEntity(new lock(this.level.locks[i]))
         }
 
         for(let i = 0; i < this.level.blocks.length; i++){
@@ -62,7 +68,7 @@ class sceneManager{
 
         }
 
-        gameEngine.addEntity(new stair(this.level.stairs));
+        //gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
@@ -73,6 +79,8 @@ class sceneManager{
             this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
             gameEngine.addEntity(apot);
         }
+        this.hud.removeFromWorld = false;
+        this.rooms[this.x][this.y].activate();
         gameEngine.addEntity(this.hud);
     }
     update(){
