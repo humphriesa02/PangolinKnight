@@ -122,6 +122,6 @@ class Frog{
         let explosion = new Explosion(this);
         gameEngine.addEntity(explosion);
         this.removeFromWorld = true;
-        create_item(item_enum.small_heart, this.transform.pos, 2, 1);
+        create_item(item_enum.small_heart, this.transform.pos, 1, 0.6);
     }
 }

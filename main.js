@@ -14,6 +14,7 @@ ASSET_MANAGER.queueDownload("./sprites/explosion.png");
 ASSET_MANAGER.queueDownload("./sprites/Items.png");
 ASSET_MANAGER.queueDownload("./sprites/PangolinPauseScreen.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_inventory.png");
+ASSET_MANAGER.queueDownload("./sprites/Pangolin_upclose.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");

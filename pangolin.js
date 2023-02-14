@@ -10,7 +10,7 @@ class Pangolin{
         this.tag = "player";
 
         this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
-        this.health = new Health(20, 20);
+        this.health = new Health(3, 3);
         this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
@@ -28,7 +28,7 @@ class Pangolin{
         // Some state variables
         this.facing = 0; // 0 = right, 1 = left, 2 = up, 3 = down
         this.state = state_enum.idle; // 0 = idle, 1= walking, 2 = sword slash,
-                                      // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = hold-idle
+                                      // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing,
 
         // Some movement variables
         this.walk_speed = 35;
@@ -46,7 +46,6 @@ class Pangolin{
         this.jump_cooldown_end = 0;
         this.interaction_cooldown_end = 0;
         this.interaction_end = 0;
-        this.inventory_cooldown_end = 0;
 
         // Flag variables
         this.rolling = false;
@@ -56,7 +55,6 @@ class Pangolin{
         this.interacting = false; // Used for collision based interactions with other entities
         this.interaction_cooldown_duration = 0.5;
         this.interaction_duration = 0.01;
-        this.inventory_duration = 0.1;
 
         // Animations
         this.animations = [];
@@ -237,10 +235,40 @@ class Pangolin{
 
         //facing down
         this.animations[6][3][0] = new Animator(this.slash_spritesheet, 16, 0, 16, 16, 1, 0.3, false);
+
+        /* State 7, using item */
+        //facing right
+        this.animations[7][0][0] = new Animator(this.slash_spritesheet, 16, 32, 16, 16, 1, 0.3, false);
+
+        //facing left
+        this.animations[7][1][0] = new Animator(this.slash_spritesheet, 16, 48, 16, 16, 1, 0.3, false);
+
+        //facing up
+        this.animations[7][2][0] = new Animator(this.slash_spritesheet, 16, 16, 16, 16, 1, 0.3, false);
+
+        //facing down
+        this.animations[7][3][0] = new Animator(this.slash_spritesheet, 16, 0, 16, 16, 1, 0.3, false);
+
+        // Rolling
+        //facing right
+        this.animations[7][0][1] = new Animator(this.slash_spritesheet, 16, 32, 16, 16, 1, 0.3, false);
+
+        //facing left
+        this.animations[7][1][1] = new Animator(this.slash_spritesheet, 16, 48, 16, 16, 1, 0.3, false);
+
+        //facing up
+        this.animations[7][2][1] = new Animator(this.slash_spritesheet, 16, 16, 16, 16, 1, 0.3, false);
+
+        //facing down
+        this.animations[7][3][1] = new Animator(this.slash_spritesheet, 16, 0, 16, 16, 1, 0.3, false);
         
     }
 
     update(){
+        if(document.getElementById("debug").checked){
+            this.health.max = 20;
+            this.health.current = 20;
+        }
         if(this.invincible.active){
             invulnerability_active(this);
         }
@@ -283,6 +311,17 @@ class Pangolin{
         else if(this.state == state_enum.slashing && !this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
             return;
         }
+        // check if using items is done
+        else if(this.state == state_enum.use_item && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
+            for(let i = 0; i < 4; i++){
+                this.animations[state_enum.use_item][i][this.rolling ? 1 : 0].elapsedTime = 0;
+                this.animations[state_enum.use_item][i][this.rolling ? 1 : 0].done = false;
+            }
+            this.state = state_enum.idle;
+        }
+        else if(this.state == state_enum.use_item && !this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){
+            return;
+        }
         // Check if jump end
         else if(this.state == state_enum.jumping){
             if((!gameEngine.gravity && this.in_air.distance_remaining <= 1) || (gameEngine.gravity && this.grounded)){
@@ -311,6 +350,12 @@ class Pangolin{
 
     // Get input
     input(){
+        if(gameEngine.keys["Escape"] && this.game.timer.gameTime >= this.game.menu.transition_cooldown_end){
+            this.game.paused = true;
+            this.game.menu.current_displayed = menu_enum.main;
+            this.game.menu.transition_cooldown_end = gameEngine.timer.gameTime +  this.game.menu.transition_cooldown_duration;
+        } 
+
         if(this.game.keys["e"] && !this.interacting && this.game.timer.gameTime >= this.interaction_cooldown_end){
             this.interacting = true;
             this.interaction_cooldown_end = this.game.timer.gameTime + this.interaction_cooldown_duration;
@@ -319,10 +364,10 @@ class Pangolin{
             this.interaction_end = this.game.timer.gameTime + this.interaction_duration;
         }
 
-        if(this.game.keys["i"] && this.game.timer.gameTime >= this.inventory_cooldown_end){
-            this.game.paused = !this.game.paused;
-            this.game.menu.current_displayed = 1;
-            this.inventory_cooldown_end = this.game.timer.gameTime + this.inventory_duration;
+        if(this.game.keys["i"] && this.game.timer.gameTime >= this.game.menu.transition_cooldown_end){
+            this.game.paused = true;
+            this.game.menu.current_displayed = menu_enum.inventory;
+            this.game.menu.transition_cooldown_end = gameEngine.timer.gameTime +  this.game.menu.transition_cooldown_duration;
         }
 
         // Rolling transition check
@@ -362,12 +407,38 @@ class Pangolin{
             }
 
             // Initiate the sword slash
-            this.state = state_enum.slashing;
             this.rolling = false;
+            this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this);
             this.game.addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
+
+        // Use our offhand item
+        if(this.game.rightclick && this.inventory.secondary_item != null && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){
+            if(Math.abs( this.game.rightclick.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.rightclick.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
+                if( this.game.rightclick.x > convertToScreenPos(this.transform.pos.x, 0).x){
+                    this.facing = 0;
+                }
+                else if( this.game.rightclick.x < convertToScreenPos(this.transform.pos.x, 0).x){
+                    this.facing = 1;
+                }
+            }
+            else{
+                if( this.game.rightclick.y < convertToScreenPos(0, this.transform.pos.y).y ){
+                    this.facing = 2;
+                }
+                else if( this.game.rightclick.y > convertToScreenPos(0, this.transform.pos.y).y){
+                    this.facing = 3;
+                }
+            }
+            // Initiate using item
+            this.rolling = false;
+            this.state = state_enum.use_item;
+            this.inventory.secondary_item.use(this);
+            this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.use_item][0][this.rolling ? 1 : 0].totalTime;
+        }
+        
     }
 
     // Move player
@@ -438,7 +509,7 @@ class Pangolin{
                 
             }
           
-            if(this.state != state_enum.jumping && this.state != state_enum.slashing && this.state != state_enum.holding){
+            if(this.state != state_enum.jumping && this.state != state_enum.slashing && this.state != state_enum.holding && this.state != state_enum.use_item){
                 if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
                     this.state = state_enum.idle; // idle state
                 }

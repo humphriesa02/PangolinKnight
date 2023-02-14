@@ -87,3 +87,16 @@ function draw_rect(ctx, x, y, width, height, fill, stroke, strokeWidth)
         ctx.stroke();
     }
 }
+
+function draw_hud_rect(ctx, x, y, width, height, fill, stroke, strokeWidth){
+    if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fillRect(x * params.scale, y* params.scale, width * params.scale, height * params.scale);
+    }
+    if (stroke) {
+        ctx.lineWidth = strokeWidth;
+        ctx.strokeStyle = stroke;
+        ctx.stroke();
+    }
+    ctx.strokeRect(x * params.scale, y * params.scale, width * params.scale, height * params.scale);
+}

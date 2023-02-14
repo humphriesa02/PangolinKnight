@@ -4,12 +4,24 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
         this.current_displayed = 0;
         this.inventory;
         this.settings;
+        this.transition_cooldown_end = 0;
+        this.transition_cooldown_duration = 0.5;
     }
 
     update(){
-        if(gameEngine.keys["Escape"]){
+        if(gameEngine.keys["Escape"] && gameEngine.timer.gameTime >= this.transition_cooldown_end){
             gameEngine.paused = false;
+            this.transition_cooldown_end = gameEngine.timer.gameTime + this.transition_cooldown_duration;
         }
+        else if(gameEngine.keys["i"] && gameEngine.timer.gameTime >= this.transition_cooldown_end){
+            if(this.current_displayed != menu_enum.inventory){
+                this.current_displayed = menu_enum.inventory;
+            }
+            else{
+                gameEngine.paused = false;
+            }
+            this.transition_cooldown_end = gameEngine.timer.gameTime + this.transition_cooldown_duration;
+        } 
     }
 
     draw(ctx){
