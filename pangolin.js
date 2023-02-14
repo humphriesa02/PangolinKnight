@@ -40,6 +40,9 @@ class Pangolin{
         // Jump variable
         this.grounded = true;
 
+        // If we pick up an item reference it here
+        this.held_entity;
+
         // State change variables
         this.roll_cooldown_end = 0;
         this.attack_cooldown_end = 0;
@@ -414,8 +417,9 @@ class Pangolin{
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 
+        console.log(this.held_entity);
         // Use our offhand item
-        if(this.game.rightclick && this.inventory.secondary_item != null && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){
+        if(this.game.rightclick && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping){
             if(Math.abs( this.game.rightclick.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.rightclick.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
                 if( this.game.rightclick.x > convertToScreenPos(this.transform.pos.x, 0).x){
                     this.facing = 0;
@@ -432,10 +436,19 @@ class Pangolin{
                     this.facing = 3;
                 }
             }
-            // Initiate using item
+            // Put down held item
+            if(this.state == state_enum.holding){
+                console.log("Put down");
+                this.held_entity.picked_up = false;
+                this.idle_holding = false;
+                this.state = state_enum.throw;
+            }
+            else if(this.inventory.secondary_item != null){
+                // Initiate using item
+                this.state = state_enum.use_item;
+                this.inventory.secondary_item.use(this); 
+            }
             this.rolling = false;
-            this.state = state_enum.use_item;
-            this.inventory.secondary_item.use(this);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.use_item][0][this.rolling ? 1 : 0].totalTime;
         }
         

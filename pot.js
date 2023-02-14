@@ -65,6 +65,7 @@ class pot{
             entity.state != state_enum.holding && !entity.rolling){
             
             entity.state = state_enum.pickup;
+            entity.held_entity = this;
             this.picked_up = true;
             this.holder = entity;
             this.collider.block_move = false;
