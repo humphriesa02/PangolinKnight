@@ -12,6 +12,7 @@ class sceneManager{
     }
     loadLevel(level){
         this.player.removeFromWorld = false;
+        this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
         this.level = levels[level];
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;

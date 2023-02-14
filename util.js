@@ -88,4 +88,5 @@ const state_enum={idle: 0,
     jumping: 3,
     pickup: 4,
     holding: 5,
-    throw: 6 }
+    throw: 6,
+    use_item: 7 }

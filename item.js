@@ -83,6 +83,22 @@ class Item{
         this.picked_up = true;
         this.shadow.removeFromWorld = true;
     }
+
+    use(entity){ // For items that are usable (items that have been added to inventory)
+        switch(this.item){
+            case 4:
+                if(entity.health.current < entity.health.max){
+                    entity.health.current += 3;        
+                }
+                break;
+        }
+        let inventory_item_index = entity.inventory.items.indexOf(this);
+        entity.inventory.items.splice(inventory_item_index, 1);
+        let inventory_hotbar_index = entity.inventory.hotbar.indexOf(this);
+        if(inventory_hotbar_index != -1){
+            entity.inventory.hotbar.splice(inventory_hotbar_index, 1);
+        }
+    }
 }
 
 const item_enum={

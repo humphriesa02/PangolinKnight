@@ -183,6 +183,7 @@ class GameEngine {
         this.draw();
 
         this.click = null;
+        this.rightclick = null;
         this.wheel = null;
     };
 

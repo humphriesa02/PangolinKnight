@@ -46,7 +46,7 @@ class pot{
             this.transform.velocity.y = 0;
             this.break_apart(4);
             create_item(item_enum.scale, this.transform.pos, 2, 0.3);
-            create_item(item_enum.health_potion, this.transform.pos, 1, 1);
+            create_item(item_enum.health_potion, this.transform.pos, 1, 0.25);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;
@@ -65,7 +65,6 @@ class pot{
             
             entity.state = state_enum.pickup;
             this.picked_up = true;
-           //this.distance_remaining = this.throw_distance * 0.75;
             this.holder = entity;
             this.collider.block_move = false;
             
@@ -100,6 +99,7 @@ class Pieces{
         this.transform = new Transform(parent.transform.pos.clone());
         this.in_air = new In_Air(53, 75, 50, 16);
         this.move_speed = 15;
+        this.updatable = true;
 
         switch(direction){
             case 0://upper left
@@ -125,13 +125,14 @@ class Pieces{
         if(this.animator.done){
             this.removeFromWorld = true;
         }
-        in_air_jump(this, -1);
+        in_air_jump(this);
     }
 
     draw(ctx){
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 8, 8, false, true, 1);
         }
+        console.log(this.in_air.z);
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.in_air.z, 8, 8);
     }
 }
