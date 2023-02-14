@@ -13,6 +13,7 @@ var levels = {
         stairs : {position : [1, 45], state : 2},
         locks : [{position : [42, 26], state : 0},{position : [17, 6], state : 0},{position : [17, 45], state : 0}],
         frogs : [{position : [3, 30], state : 0},{position : [3, 36], state : 0},{position : [10, 36], state : 0},{position : [3, 16], state : 0},{position : [3, 23], state : 0},{position : [12, 16], state : 0},{position : [12, 23], state : 0},{position : [5, 5], state : 0},{position : [5, 9], state : 0},{position : [9, 5], state : 0},{position : [9, 9], state : 0},{position : [22, 16], state : 0},{position : [28, 16], state : 0},{position : [40, 35], state : 0},{position : [40, 30], state : 0},{position : [45, 30], state : 0},{position : [54, 29], state : 0},{position : [64, 29], state : 0}],
+        slimes : [{position : [59, 45], state : 0}, {position : [61, 45], state : 0}, {position : [59, 49], state : 0}, {position : [55, 45], state : 0}, {position : [59, 42], state : 0}],
         //door states : invisable = 0, open = 1, close = 2
         rooms : [{position : [0,0], doors : {up : {state : 0, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},
         {position : [0,1], doors : {up : {state : 1, facing : 0}, right : {state : 0, facing : 1}, down : {state : 1, facing : 2}, left : {state : 0, facing : 3}}},

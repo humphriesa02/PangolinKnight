@@ -109,7 +109,13 @@ const item_enum={
     health_potion: 4
 }
 
-
+/**
+ * @param {Number} item_type - refer to item_enum
+ * @param {Number} pos - Place to spawn the item
+ * @param {Number} quantity - How many of the items to be spawned
+ * @param {Number} chance - The percent chance to get an item
+ * @returns Create an item in the world space
+ */
 function create_item(item_type, pos, quantity = 1, chance = 1){
     for(let i = 0; i < quantity; i++){
         let chance_percent = Math.random()

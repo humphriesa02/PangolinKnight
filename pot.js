@@ -45,8 +45,9 @@ class pot{
             this.transform.velocity.x = 0;
             this.transform.velocity.y = 0;
             this.break_apart(4);
+            create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
             create_item(item_enum.scale, this.transform.pos, 2, 0.3);
-            create_item(item_enum.health_potion, this.transform.pos, 1, 0.25);
+            create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
             return;
         }
         this.transform.prev_pos.x = this.transform.pos.x;
