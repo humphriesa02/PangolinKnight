@@ -16,6 +16,7 @@ class Pangolin{
         this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
+        this.damage = 1;
 
         //Inventory
         this.inventory = new Inventory();
@@ -49,6 +50,7 @@ class Pangolin{
         this.jump_cooldown_end = 0;
         this.interaction_cooldown_end = 0;
         this.interaction_end = 0;
+        this.extra_damage_total_time = 15;
 
         // Flag variables
         this.rolling = false;
@@ -58,6 +60,7 @@ class Pangolin{
         this.interacting = false; // Used for collision based interactions with other entities
         this.interaction_cooldown_duration = 0.5;
         this.interaction_duration = 0.01;
+        this.extra_damage_duration = this.extra_damage_total_time;
 
         // Animations
         this.animations = [];
@@ -275,6 +278,7 @@ class Pangolin{
         if(this.invincible.active){
             invulnerability_active(this);
         }
+        this.check_ability();
         this.check_state_end();
         this.input();
         this.movement();
@@ -412,12 +416,11 @@ class Pangolin{
             // Initiate the sword slash
             this.rolling = false;
             this.state = state_enum.slashing;
-            let sword = new Sword(this.game, this.facing, this.transform.pos, this);
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage);
             this.game.addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 
-        console.log(this.held_entity);
         // Use our offhand item
         if(this.game.rightclick && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping){
             if(Math.abs( this.game.rightclick.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.rightclick.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
@@ -438,7 +441,6 @@ class Pangolin{
             }
             // Put down held item
             if(this.state == state_enum.holding){
-                console.log("Put down");
                 this.held_entity.picked_up = false;
                 this.idle_holding = false;
                 this.state = state_enum.throw;
@@ -550,6 +552,19 @@ class Pangolin{
         let explosion = new Explosion(this);
         gameEngine.addEntity(explosion);
         this.removeFromWorld = true;
+    }
+
+    // Intent is to have a method that can check when we have inflated stats and reset them
+    // For now just checks sword damage
+    check_ability(){
+        console.log(this.damage);
+        if(this.damage > 1 && this.extra_damage_duration > 0){
+            this.extra_damage_duration -= this.game.clockTick;      
+        }
+        else{
+            this.damage = 1;
+            this.extra_damage_duration = this.extra_damage_total_time;
+        }
     }
 }
 
