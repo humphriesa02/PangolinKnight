@@ -16,6 +16,7 @@ class Pangolin{
         this.invincible = new Invincible();
         this.gravity = new Gravity();
         this.shadow = new Shadow(this.game, this.transform.pos);
+        this.damage = 1;
 
         //Inventory
         this.inventory = new Inventory();
@@ -41,12 +42,16 @@ class Pangolin{
         // Jump variable
         this.grounded = true;
 
+        // If we pick up an item reference it here
+        this.held_entity;
+
         // State change variables
         this.roll_cooldown_end = 0;
         this.attack_cooldown_end = 0;
         this.jump_cooldown_end = 0;
         this.interaction_cooldown_end = 0;
         this.interaction_end = 0;
+        this.extra_damage_total_time = 15;
 
         // Flag variables
         this.rolling = false;
@@ -56,6 +61,7 @@ class Pangolin{
         this.interacting = false; // Used for collision based interactions with other entities
         this.interaction_cooldown_duration = 0.5;
         this.interaction_duration = 0.01;
+        this.extra_damage_duration = this.extra_damage_total_time;
 
         // Animations
         this.animations = [];
@@ -273,6 +279,7 @@ class Pangolin{
         if(this.invincible.active){
             invulnerability_active(this);
         }
+        this.check_ability();
         this.check_state_end();
         this.input();
         this.movement();
@@ -417,13 +424,13 @@ class Pangolin{
             // Initiate the sword slash
             this.rolling = false;
             this.state = state_enum.slashing;
-            let sword = new Sword(this.game, this.facing, this.transform.pos, this);
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage);
             this.game.addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 
         // Use our offhand item
-        if(this.game.rightclick && this.inventory.secondary_item != null && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding){
+        if(this.game.rightclick && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping){
             if(Math.abs( this.game.rightclick.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.rightclick.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
                 if( this.game.rightclick.x > convertToScreenPos(this.transform.pos.x, 0).x){
                     this.facing = 0;
@@ -440,10 +447,18 @@ class Pangolin{
                     this.facing = 3;
                 }
             }
-            // Initiate using item
+            // Put down held item
+            if(this.state == state_enum.holding){
+                this.held_entity.picked_up = false;
+                this.idle_holding = false;
+                this.state = state_enum.throw;
+            }
+            else if(this.inventory.secondary_item != null){
+                // Initiate using item
+                this.state = state_enum.use_item;
+                this.inventory.secondary_item.use(this); 
+            }
             this.rolling = false;
-            this.state = state_enum.use_item;
-            this.inventory.secondary_item.use(this);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.use_item][0][this.rolling ? 1 : 0].totalTime;
         }
         
@@ -545,6 +560,19 @@ class Pangolin{
         let explosion = new Explosion(this);
         gameEngine.addEntity(explosion);
         this.removeFromWorld = true;
+    }
+
+    // Intent is to have a method that can check when we have inflated stats and reset them
+    // For now just checks sword damage
+    check_ability(){
+        console.log(this.damage);
+        if(this.damage > 1 && this.extra_damage_duration > 0){
+            this.extra_damage_duration -= this.game.clockTick;      
+        }
+        else{
+            this.damage = 1;
+            this.extra_damage_duration = this.extra_damage_total_time;
+        }
     }
 }
 

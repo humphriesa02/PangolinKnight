@@ -43,6 +43,9 @@ class Inventory{
 
         // Healing potion
         this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 1, true);
+
+        // damage potion
+        this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
     }
 
     update(){
