@@ -43,6 +43,8 @@ var levels = {
         crystals : [],
         statues : [],
         frogs : [],
+        locks : [],
+        slimes : [],
         stairs : {position : [10,9], state : 1},
         pits : [],
         rooms : [{position : [0,0], doors : {up : {state : 1, facing : 0}, right : {state : 1, facing : 1}, down : {state : 1, facing : 2}, left : {state : 1, facing : 3}}},
