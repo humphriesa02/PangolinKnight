@@ -5,6 +5,7 @@ class Sword{
         // Components
         let sword_pos = Object.assign({},player_pos);
 
+        this.damage = 1;
         this.owner = player;
         // Decide where the sword will initially start
         switch(this.facing){

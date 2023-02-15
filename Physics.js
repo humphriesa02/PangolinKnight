@@ -153,7 +153,7 @@ function sword_character_collisions(entities) {
                 if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
-                        hit(character, sword);
+                        hit(character, sword, sword.damage);
                     }
                 }
             }

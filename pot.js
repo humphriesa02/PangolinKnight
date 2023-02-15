@@ -38,18 +38,40 @@ class pot{
         else if (this.thrown){
             in_air_jump(this, this.direction);
         }
+        // set the pot down
+        else if (!this.picked_up && !this.thrown && this.holder != undefined){
+            switch(this.holder.facing){
+                case 0: // right
+                    this.transform.pos.x = this.holder.transform.pos.x + 15;
+                    break;
+                case 1: // left
+                    this.transform.pos.x = this.holder.transform.pos.x - 15;
+                    break;
+                case 2: // up
+                    this.transform.pos.y = this.holder.transform.pos.y - 15;
+                    break;
+                case 3: // down
+                    this.transform.pos.y = this.holder.transform.pos.y + 15;
+                    break;
+            }
+            this.collider.block_move = true;
+            this.in_air.z = 0;
+            this.holder = undefined;
+        }
+        
         if(this.in_air.distance_remaining <= 0){ // Break the pot
             this.thrown = false;
             this.removeFromWorld = true;
             this.shadow.removeFromWorld = true;
             this.transform.velocity.x = 0;
             this.transform.velocity.y = 0;
+            this.holder = undefined;
             this.break_apart(4);
             create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
             create_item(item_enum.scale, this.transform.pos, 2, 0.3);
             create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
             return;
-        }
+        } 
         this.transform.prev_pos.x = this.transform.pos.x;
         this.transform.prev_pos.y = this.transform.pos.y
         this.transform.pos.x += this.transform.velocity.x;
@@ -73,7 +95,7 @@ class pot{
         }
     }
 
-
+    // Used to "split" the pot into pieces
     break_apart(count){
         for(let i = 0; i < count; i++){
             let temp_piece = new Pieces(this, i);
