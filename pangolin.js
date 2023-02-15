@@ -37,6 +37,7 @@ class Pangolin{
         this.rolling_friction = 0.3;
         this.max_roll_speed_sqr = 10000;
         this.min_roll_speed_sqr = 0.09;
+        this.cr = 0;
 
         // Jump variable
         this.grounded = true;
@@ -379,7 +380,14 @@ class Pangolin{
 
         // Rolling transition check
         if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding){
-            this.rolling = !this.rolling;
+            if (this.rolling) {
+                this.rolling = false;
+                this.cr = 0;
+            }
+            else if (!this.rolling) {
+                this.rolling = true;
+                this.cr = 0.5;
+            }
             this.roll_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.walking][0][this.rolling ? 1 : 0].totalTime;
         }
 
@@ -543,7 +551,7 @@ class Pangolin{
     jump(){
         this.state = state_enum.jumping;
         if(gameEngine.gravity){
-            this.gravity.velocity = -2;
+            this.gravity.velocity = -80;
             this.grounded = false;
         }
     }
