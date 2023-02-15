@@ -305,10 +305,6 @@ function prevent_overlap(a, b) {
             let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
 
             if (normal !== undefined) {
-                if (normal.x != normal.y ) {
-                    normal.x = Math.round(normal.x);
-                    normal.y = Math.round(normal.y);
-                }
                 bounce(circle, normal, circle.cr);
                 if (gameEngine.gravity && circle.grounded !== undefined && Math.round(normal.y) == -1) {
                     circle.grounded = true;
@@ -415,6 +411,10 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
 
     let normal = distance_vector;
     normal.normalize();
+    if (normal.x != normal.y) {
+        normal.x = Math.round(normal.x);
+        normal.y = Math.round(normal.y);
+    }
     circle.center.add(Vec2.scale(normal, overlap * ratio_c));
     box.center.minus(Vec2.scale(normal, overlap * ratio_b));
 
