@@ -1,6 +1,7 @@
 class Item{
-    constructor(item_type, pos){
+    constructor(item_type, pos, removable){
         this.tag = "prop";
+        this.removable = removable;
         this.transform = new Transform(pos.clone());
         this.in_air = new In_Air(0, 60, 50, 16);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
@@ -22,16 +23,16 @@ class Item{
             this.animations.push([]);
         }
         /* Item 0, scale */
-        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 6, false);
+        this.animations[item_enum.scale] = new Animator(this.spritesheet, 0, 16, 16, 16, 1, 6, !this.removable);
 
         /* Item 1, small heart */
-        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 6, false);
+        this.animations[item_enum.small_heart] = new Animator(this.spritesheet, 64, 0, 16, 16, 1, 6, !this.removable);
 
         /* Item 2, small key */
-        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 6, false);
+        this.animations[item_enum.small_key] = new Animator(this.spritesheet, 0, 0, 16, 16, 1, 6, !this.removable);
 
         /* Item 4, health potion */
-        this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 6, false);
+        this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 6, !this.removable);
     }
 
     update(){
@@ -77,6 +78,7 @@ class Item{
                 entity.inventory.add_item(this);
                 break;
         }
+        this.animations[this.item].repeat = false;
         this.animations[this.item].elapsedTime = 0;
         this.animations[this.item].totalTime = 0.5;
         this.player = entity;
@@ -116,13 +118,13 @@ const item_enum={
  * @param {Number} chance - The percent chance to get an item
  * @returns Create an item in the world space
  */
-function create_item(item_type, pos, quantity = 1, chance = 1){
+function create_item(item_type, pos, quantity = 1, chance = 1, removable = true){
     for(let i = 0; i < quantity; i++){
         let chance_percent = Math.random()
         if(chance_percent <= chance){
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
-            let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier_x, pos.y + random_modifier_y))
+            let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier_x, pos.y + random_modifier_y), removable)
             gameEngine.addEntity(temp_item);
         }
         
