@@ -125,7 +125,7 @@ function hit(entity,attacker,damage = 1){
                     entity.die();
                 }
                 entity.invincible.active = true;
-                if(entity.knockback !== undefined && attacker !== undefined){
+                if(attacker !== undefined){
                     entity.knockback = new Knockback(entity, attacker.transform.pos);
                 }
                 
