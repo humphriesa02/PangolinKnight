@@ -70,7 +70,7 @@ class pot{
             create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
             create_item(item_enum.scale, this.transform.pos, 2, 0.3);
             create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
-            create_item(item_enum.damage_potion, this.transform.pos, 1, 1);
+            create_item(item_enum.damage_potion, this.transform.pos, 1, 0.15);
             return;
         } 
         this.transform.prev_pos.x = this.transform.pos.x;
