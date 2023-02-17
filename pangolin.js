@@ -495,6 +495,7 @@ class Pangolin{
             // Put down held item
             if(this.state == state_enum.holding){
                 this.held_entity.picked_up = false;
+                this.held_entity = undefined;
                 this.idle_holding = false;
                 this.state = state_enum.throw;
             }

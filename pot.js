@@ -29,6 +29,7 @@ class pot{
                 // throw the pot
                 this.picked_up = false;
                 this.holder.idle_holding = false;
+                this.holder.held_entity = undefined;
                 this.holder.state = state_enum.throw;
                 gameEngine.addEntity(this.shadow);
                 this.thrown = true;
