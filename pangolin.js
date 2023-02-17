@@ -33,8 +33,8 @@ class Pangolin{
 
         // Some movement variables
         this.walk_speed = 35;
-        this.roll_acceleration = 1;
-        this.rolling_friction = 0.3;
+        this.roll_acceleration = 180;
+        this.rolling_friction = 100;
         this.max_roll_speed_sqr = 10000;
         this.min_roll_speed_sqr = 0.09;
         this.cr = 0;
@@ -485,22 +485,22 @@ class Pangolin{
                 }
                 else {
                     if (this.game.keys['a']) {
-                        this.transform.velocity.x -= this.roll_acceleration;
+                        this.transform.velocity.x -= this.roll_acceleration * gameEngine.clockTick;
                     }
                     else if (this.game.keys["d"]) {
-                        this.transform.velocity.x += this.roll_acceleration;
+                        this.transform.velocity.x += this.roll_acceleration * gameEngine.clockTick;
                     }
                     else {
-                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction;
+                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction * gameEngine.clockTick;
                     }
                     if (this.game.keys["w"]) {
-                        this.transform.velocity.y -= this.roll_acceleration;
+                        this.transform.velocity.y -= this.roll_acceleration * gameEngine.clockTick;
                     }
                     else if (this.game.keys["s"]) {
-                        this.transform.velocity.y += this.roll_acceleration;
+                        this.transform.velocity.y += this.roll_acceleration * gameEngine.clockTick;
                     }
                     else {
-                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction;
+                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction * gameEngine.clockTick;
                     }
 
                     let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
