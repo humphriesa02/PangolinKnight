@@ -70,16 +70,16 @@ function in_air_jump(entity, direction = -1){
     if(entity.in_air != undefined){
         switch(direction){
             case 0:
-                entity.transform.velocity.x = entity.in_air.air_speed * gameEngine.clockTick;
+                entity.transform.velocity.x = entity.in_air.air_speed;
                 break;
             case 1:
-                entity.transform.velocity.x = -(entity.in_air.air_speed * gameEngine.clockTick)
+                entity.transform.velocity.x = -(entity.in_air.air_speed)
                 break;
             case 2:
-                entity.transform.velocity.y = -entity.in_air.air_speed * gameEngine.clockTick;
+                entity.transform.velocity.y = -entity.in_air.air_speed;
                 break;
             case 3:
-                entity.transform.velocity.y = (entity.in_air.air_speed * gameEngine.clockTick)
+                entity.transform.velocity.y = (entity.in_air.air_speed)
                 break;           
         }
         entity.in_air.distance_remaining = Math.max(0, entity.in_air.distance_remaining - entity.in_air.air_time * gameEngine.clockTick);

@@ -178,6 +178,11 @@ function character_prop_collisions(entities) {
                 if (character.tag == "player" && (prop.requires_facing == undefined || prop.requires_facing == false)) {
                     prop.activate(character);
                 }
+
+                if (prop instanceof pot && prop.thrown && character !== prop.holder) {
+                    hit(character, prop, 1);
+                    prop.shatter();
+                } 
             }
             if (character.tag == "player" && prop.requires_facing) {
                 let point;
@@ -455,6 +460,11 @@ function bounce(entity, normal, cr) {
         entity.gravity.velocity -= transformation.y;
         if (entity.gravity.velocity < 0) { entity.gravity.velocity = 0; }
     }
+}
+
+function sq_distance(a, b) {
+    let distance_v = Vec2.diff(a, b);
+    return distance_v.dot(distance_v);
 }
 
 class Test_Block {
