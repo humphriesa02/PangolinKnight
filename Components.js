@@ -125,7 +125,10 @@ function hit(entity,attacker,damage = 1){
                     entity.die();
                 }
                 entity.invincible.active = true;
-                entity.knockback = new Knockback(entity, attacker.transform.pos);
+                if(attacker !== undefined){
+                    entity.knockback = new Knockback(entity, attacker.transform.pos);
+                }
+                
             }
         }
         // No invinsibility, but we do have health
