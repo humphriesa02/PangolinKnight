@@ -3,7 +3,7 @@ class pit{
     this.tag = "prop"
     this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
     this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-    this.collider = new Collider(new AABB(this.transform.pos, 4, 4), false, true, true);
+    this.collider = new Collider(new AABB(this.transform.pos, 2, 2), false, true, true);
 
     this.loadAnimation(info.state)
 }
