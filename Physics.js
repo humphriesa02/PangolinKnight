@@ -1,10 +1,10 @@
-const _GRAVITY = 0.08;
+const _GRAVITY = 109;
 
 function physics_test_init() {
     let units = [];
     let pos_x = 0.0;
     let pos_y = 0.0;
-    for (i = 0; i < 1500; i++) {
+    for (let i = 0; i < 1500; i++) {
         pos_x = (Math.random() * 256) + 256;
         pos_y = (Math.random() * 25) + 25;
 
@@ -13,7 +13,7 @@ function physics_test_init() {
         particle.f_radius = Math.random() * 10;
         units.push(particle);
     }
-    for (i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++)
     {
         pos_x = (Math.random() * 512) + 256;
         pos_y = (Math.random() * 384) + 192;
@@ -36,7 +36,7 @@ function physics(entities) {
     character_room_collisions(movement_map);
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
-    player_prop_collisions(entities);
+    character_prop_collisions(entities);
 }
 
 
@@ -44,17 +44,14 @@ function physics(entities) {
 function update_pos() {
     let movement_map = new Map([]);
     
-    for (entity of gameEngine.entities) {
+    for (let entity of gameEngine.entities) {
         if (entity.transform !== undefined) {
             entity.transform.prev_pos = entity.transform.pos.clone();
 
             if (entity.gravity !== undefined) {
                 if (gameEngine.gravity) {
                     entity.gravity.velocity += _GRAVITY * gameEngine.clockTick;
-                    entity.transform.velocity.add(entity.gravity.velocity);
-                }
-                else {
-                    entity.gravity.velocity = 0.0;
+                    entity.transform.velocity.y = entity.gravity.velocity;
                 }
             }
 
@@ -89,9 +86,9 @@ function character_tile_collisions(entities) {
         characters = characters.concat(entities.get("enemy"));
     }
 
-    for (character of characters) {
+    for (let character of characters) {
         if (character.collider !== undefined) {
-            for (tile of gameEngine.entity_map.get("tile")) {
+            for (let tile of gameEngine.entity_map.get("tile")) {
                 if (tile.collider.block_move) {
                     prevent_overlap(character, tile);
                 }
@@ -110,10 +107,10 @@ function character_room_collisions(entities) {
         characters = characters.concat(entities.get("enemy"));
     }
 
-    for (character of characters) {
+    for (let character of characters) {
         if (character.collider !== undefined) {
-            for (r of gameEngine.entity_map.get("room")) {
-                for (col of r.colliders) {
+            for (let room of gameEngine.entity_map.get("room")) {
+                for (let col of room.colliders) {
                     c = {collider: col};
                     prevent_overlap(character, c);
                 }
@@ -124,8 +121,8 @@ function character_room_collisions(entities) {
 
 
 function player_enemy_collisions(entities){
-    for (player of entities.get("player")){
-        for (enemy of entities.get("enemy")) {
+    for (let player of entities.get("player")){
+        for (let enemy of entities.get("enemy")) {
             if (enemy.collider !== undefined) {
                 if (test_overlap(player.collider.area, enemy.collider.area)) {
                     console.log("PLAYER HIT");
@@ -147,13 +144,13 @@ function sword_character_collisions(entities) {
         characters = characters.concat(entities.get("enemy"));
     }
 
-    for (sword of entities.get("sword")) {
-        for (character of characters) {
+    for (let sword of entities.get("sword")) {
+        for (let character of characters) {
             if (character != sword.owner) {
                 if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
-                        hit(character, sword);
+                        hit(character, sword, sword.owner.damage);
                     }
                 }
             }
@@ -161,40 +158,49 @@ function sword_character_collisions(entities) {
     }
 }
 
-function player_prop_collisions(entities) {
-    let player = entities.get("player")[0];
-    if (player == undefined || player.collider == undefined) { return; }
+function character_prop_collisions(entities) {
+
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
+
     let props = entities.get("prop");
 
-    for (prop of props) {
-        if (test_overlap(player.collider.area, prop.collider.area)) {
-            if (prop.collider.block_move) { prevent_overlap(player, prop); }
+    for (let character of characters) {
+        for (let prop of props) {
+            if (test_overlap(character.collider.area, prop.collider.area)) {
+                if (prop.collider.block_move) { prevent_overlap(character, prop); }
 
-            if (prop.requires_facing == undefined || prop.requires_facing == false) {
-                prop.activate(player);
+                if (character.tag == "player" && (prop.requires_facing == undefined || prop.requires_facing == false)) {
+                    prop.activate(character);
+                }
+            }
+            if (character.tag == "player" && prop.requires_facing) {
+                let point;
+                
+                if (character.facing == 0) {       // Right
+                    point = new Vec2(character.transform.pos.x + 12, character.transform.pos.y);
+                }
+                else if (character.facing == 1) {  // Left
+                    point = new Vec2(character.transform.pos.x - 12, character.transform.pos.y);
+                }
+                else if (character.facing == 2) {  // Up
+                    point = new Vec2(character.transform.pos.x, character.transform.pos.y - 12);
+                }
+                else if (character.facing == 3) {  // Down
+                    point = new Vec2(character.transform.pos.x, character.transform.pos.y + 12);
+                }
+        
+                if (test_point_inside(point, prop.collider.area)) {
+                    prop.activate(character);
+                }
             }
         }
-        if (prop.requires_facing) {
-            let point;
-            
-            if (player.facing == 0) {       // Right
-                point = new Vec2(player.transform.pos.x + 12, player.transform.pos.y);
-            }
-            else if (player.facing == 1) {  // Left
-                point = new Vec2(player.transform.pos.x - 12, player.transform.pos.y);
-            }
-            else if (player.facing == 2) {  // Up
-                point = new Vec2(player.transform.pos.x, player.transform.pos.y - 12);
-            }
-            else if (player.facing == 3) {  // Down
-                point = new Vec2(player.transform.pos.x, player.transform.pos.y + 12);
-            }
-    
-            if (test_point_inside(point, prop.collider.area)) {
-                prop.activate(player);
-            }
-        }
-    }
+}
 }
 
 // Checks for overlap between two Entities a and b and returns a boolean
@@ -270,11 +276,15 @@ function prevent_overlap(a, b) {
         if (test.test) {
             let normal = prevent_overlap_circles(a, b, test.distance);
 
-            if (a.tag == "player" && a.rolling) {
-                bounce_ball(a, normal);
-            }
-            else if (b.tag == "player" && b.rolling) {
-                bounce_ball(b, normal);
+            if (normal !== undefined) {
+                bounce(a, normal, a.cr);
+                if (gameEngine.gravity && a.grounded !== undefined && Math.round(normal.y) == -1) {
+                    a.grounded = true;
+                }
+                bounce(b, Vec2.scale(normal, -1), b.cr);
+                if (gameEngine.gravity && b.grounded !== undefined && Math.round(normal.y) == 1) {
+                    b.grounded = true;
+                }
             }
         }
     }
@@ -294,8 +304,11 @@ function prevent_overlap(a, b) {
         if (test.test) {
             let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
 
-            if (circle.tag == "player" && circle.rolling) {
-                bounce_ball(circle, normal);
+            if (normal !== undefined) {
+                bounce(circle, normal, circle.cr);
+                if (gameEngine.gravity && circle.grounded !== undefined && Math.round(normal.y) == -1) {
+                    circle.grounded = true;
+                }
             }
         }
     }
@@ -325,7 +338,6 @@ function prevent_overlap_AABBs(a, b, overlap) {
             if (gameEngine.gravity && a.gravity !== undefined) {
                 a.gravity.velocity = 0.0;
                 a.grounded = true;
-                a.jumping = false;
             }
         }
         // If a below, push a down and b up
@@ -399,6 +411,10 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
 
     let normal = distance_vector;
     normal.normalize();
+    if (normal.x != normal.y) {
+        normal.x = Math.round(normal.x);
+        normal.y = Math.round(normal.y);
+    }
     circle.center.add(Vec2.scale(normal, overlap * ratio_c));
     box.center.minus(Vec2.scale(normal, overlap * ratio_b));
 
@@ -421,6 +437,7 @@ function sqdist_point_AABB(p, b) {
     return sqdist;
 }
 
+
 function sqdist_point_circle(p, c) {
     let distance_vector = Vec2.diff(p, c.center);
     let sqdist = distance_vector.dot(distance_vector);
@@ -428,10 +445,16 @@ function sqdist_point_circle(p, c) {
     return sqdist - (c.radius * c.radius);
 }
 
-function bounce_ball(ball, normal) {
-    let dn = ball.transform.velocity.dot(normal);
-    let transformation = Vec2.scale(normal, 1.5 * dn);
-    ball.transform.velocity.minus(transformation);
+function bounce(entity, normal, cr) {
+    cr = cr == undefined ? 0 : cr;
+    let dn = entity.transform.velocity.dot(normal);
+    let transformation = Vec2.scale(normal, (1 + cr) * dn);
+    entity.transform.velocity.minus(transformation);
+
+    if (entity.gravity !== undefined) {
+        entity.gravity.velocity -= transformation.y;
+        if (entity.gravity.velocity < 0) { entity.gravity.velocity = 0; }
+    }
 }
 
 class Test_Block {

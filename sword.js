@@ -1,5 +1,5 @@
 class Sword{
-    constructor(game, facing, player_pos, player){
+    constructor(game, facing, player_pos, player, damage){
         this.tag = "sword";
         Object.assign(this, {game, facing, player_pos});
         // Components
@@ -35,11 +35,12 @@ class Sword{
      // Set up our animations variable
      loadAnimations(){
         for (let i = 0; i < 4; i++){ // 4 directions, right, left, up, down
-        this.animations.push([]);
+            this.animations.push([]);
         }
 
         // Sword slash animations
 
+        // Damage = 1
         // facing right
         this.animations[0] = new Animator(this.spritesheet, 0, 48, 16, 16, 4, 0.05, false);
 
@@ -51,11 +52,11 @@ class Sword{
 
         // facing down
         this.animations[3] = new Animator(this.spritesheet, 0, 0, 16, 16, 4, 0.05, false);
+
     }
 
     update(){
         switch(this.facing){
-            
             case 0: // facing right
                 if(this.animations[0].currentFrame() == 0){
                     this.transform.pos.y = this.player_pos.y - (16);
@@ -114,8 +115,6 @@ class Sword{
         if(this.animations[this.facing].done == true){
             this.removeFromWorld = true;
         }
-      
-
     }
 
     draw(ctx){
