@@ -272,8 +272,8 @@ function prevent_overlap(a, b) {
     if (a.collider.area instanceof AABB && b.collider.area instanceof AABB) {
         test = test_AABBs(a.collider.area, b.collider.area);
         if(test.test) {
-            if (a.tag == "player" && !a.rolling) { a.state = state_enum.pushing; }
-            if (b.tag == "player" && !b.rolling) {b.state = state_enum.pushing; }
+            if (a.tag == "player" && !a.rolling && a.state == state_enum.walking) { a.state = state_enum.pushing; }
+            if (b.tag == "player" && !b.rolling && b.state == state_enum.walking) {b.state = state_enum.pushing; }
             prevent_overlap_AABBs(a, b, test.overlap);
         }
     }
@@ -281,8 +281,8 @@ function prevent_overlap(a, b) {
     {
         test = test_Circles(a.collider.area, b.collider.area);
         if (test.test) {
-            if (a.tag == "player" && !a.rolling) { a.state = state_enum.pushing; }
-            if (b.tag == "player" && !b.rolling) {b.state = state_enum.pushing; }
+            if (a.tag == "player" && !a.rolling && a.state == state_enum.walking) { a.state = state_enum.pushing; }
+            if (b.tag == "player" && !b.rolling && b.state == state_enum.walking) {b.state = state_enum.pushing; }
             let normal = prevent_overlap_circles(a, b, test.distance);
 
             if (normal !== undefined) {
@@ -311,8 +311,8 @@ function prevent_overlap(a, b) {
 
         test = test_Circle_AABB(circle.collider.area, box.collider.area);
         if (test.test) {
-            if (circle.tag == "player" && !circle.rolling) { circle.state = state_enum.pushing; }
-            if (box.tag == "player" && !box.rolling) {box.state = state_enum.pushing; }
+            if (circle.tag == "player" && !circle.rolling && circle.state == state_enum.walking) { circle.state = state_enum.pushing; }
+            if (box.tag == "player" && !box.rolling && box.state == state_enum.walking) {box.state = state_enum.pushing; }
             let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
 
             if (normal !== undefined) {
