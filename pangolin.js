@@ -77,7 +77,7 @@ class Pangolin{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 9; i++){ 
+        for (let i = 0; i < 10; i++){ 
             this.animations.push([]);
             for (let j = 0; j < 4; j++){ // 4 directions
                 this.animations[i].push([]);
@@ -289,11 +289,24 @@ class Pangolin{
 
         //facing down
         this.animations[8][3][0] = new Animator(this.walk_spritesheet, 0, 192, 16, 16, 3, 0.3, false);
+
+        /* State 9, pushing */
+        //facing right
+        this.animations[9][0][0] = new Animator(this.walk_spritesheet, 0, 272, 16, 16, 2, 0.3,true);
+
+        //facing left
+        this.animations[9][1][0] = new Animator(this.walk_spritesheet, 0, 288, 16, 16, 2, 0.3, true);
+
+        //facing up
+        this.animations[9][2][0] = new Animator(this.walk_spritesheet, 0, 304, 16, 16, 2, 0.3, true);
+
+        //facing down
+        this.animations[9][3][0] = new Animator(this.walk_spritesheet, 0, 320, 16, 16, 2, 0.3, true);
         
     }
 
     update(){
-        console.log(this.collider.area.center);
+        console.log(this.state);
         if(document.getElementById("debug").checked){
             this.health.max = 20;
             this.health.current = 20;
@@ -576,10 +589,9 @@ class Pangolin{
                 }
                 
             }
-          
-            // If we are idle or walking
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
-                this.state != state_enum.holding && this.state != state_enum.use_item && this.state != state_enum.falling){
+                this.state != state_enum.holding && this.state != state_enum.use_item &&
+                 this.state != state_enum.falling){
                 if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
                     this.state = state_enum.idle; // idle state
                 }
@@ -612,7 +624,6 @@ class Pangolin{
     // Intent is to have a method that can check when we have inflated stats and reset them
     // For now just checks sword damage
     check_ability(){
-        console.log(this.damage);
         if(this.damage > 1 && this.extra_damage_duration > 0){
             this.extra_damage_duration -= this.game.clockTick;      
         }
