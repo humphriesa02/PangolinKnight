@@ -77,7 +77,7 @@ class Pangolin{
 
     // Set up our animations variable
     loadAnimations(){
-        for (let i = 0; i < 10; i++){ 
+        for (let i = 0; i < 11; i++){ 
             this.animations.push([]);
             for (let j = 0; j < 4; j++){ // 4 directions
                 this.animations[i].push([]);
@@ -302,28 +302,43 @@ class Pangolin{
 
         //facing down
         this.animations[9][3][0] = new Animator(this.walk_spritesheet, 0, 320, 16, 16, 2, 0.3, true);
+
+        /* State 10, dead */
+        //facing right
+        this.animations[10][0][0] = new Animator(this.walk_spritesheet, 0, 336, 16, 16, 5, 0.3, false);
+
+        //facing left
+        this.animations[10][1][0] = new Animator(this.walk_spritesheet, 0, 336, 16, 16, 5, 0.3, false);
+
+        //facing up
+        this.animations[10][2][0] = new Animator(this.walk_spritesheet, 0, 336, 16, 16, 5, 0.3, false);
+
+        //facing down
+        this.animations[10][3][0] = new Animator(this.walk_spritesheet, 0, 336, 16, 16, 5, 0.3, false);
         
     }
 
     update(){
-        console.log(this.state);
         if(document.getElementById("debug").checked){
             this.health.max = 20;
             this.health.current = 20;
         }
-        if(this.invincible.active){
-            invulnerability_active(this);
-        }
-        this.check_ability();
-        this.check_state_end();
-        this.input();
-        this.movement();
-        // top down jump
-        if(!gameEngine.gravity && this.state == state_enum.jumping){
-            in_air_jump(this);
-        }
-        else if(this.state != state_enum.jumping){
-            this.in_air.z = 0;
+        
+            if(this.invincible.active){
+                invulnerability_active(this);
+            }
+            this.check_ability();
+            this.check_state_end();
+        if(this.state != state_enum.dead){
+            this.input();
+            this.movement();
+            // top down jump
+            if(!gameEngine.gravity && this.state == state_enum.jumping){
+                in_air_jump(this);
+            }
+            else if(this.state != state_enum.jumping){
+                this.in_air.z = 0;
+            }
         }
     }
 
@@ -397,7 +412,12 @@ class Pangolin{
             this.transform.pos.y = this.fall_reset_pos.y;
             this.shadow.active = true;
             this.fall_reset_pos = undefined;
-            this.state = state_enum.idle;
+            if(this.health.current <= 0){
+                this.die();
+            }else{
+                this.state = state_enum.idle;
+            }
+            
             for(let i = 0; i < 4; i++){
                 this.animations[state_enum.falling][i][this.rolling ? 1 : 0].elapsedTime = 0;
                 this.animations[state_enum.falling][i][this.rolling ? 1 : 0].done = false;
@@ -411,6 +431,13 @@ class Pangolin{
                 this.can_activate_pit = true;
                 this.leave_pit_buffer_duration = this.leave_pit_buffer_time;
             }
+        }
+        else if(this.state == state_enum.dead && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){ // end the game
+            let explosion = new Explosion(this);
+            gameEngine.addEntity(explosion);
+            this.removeFromWorld = true;
+            this.game.paused = true;
+            this.game.menu.current_displayed = menu_enum.lose;
         }
     }
 
@@ -437,7 +464,7 @@ class Pangolin{
         }
 
         // Rolling transition check
-        if(this.game.keys["Control"] && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
+        if((this.game.keys["Control"] || this.game.keys["r"])&& this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
             if (this.rolling) {
                 this.collider.area.radius = 7.5;
                 this.rolling = false;
@@ -618,9 +645,9 @@ class Pangolin{
     }
 
     die(){
-        let explosion = new Explosion(this);
-        gameEngine.addEntity(explosion);
-        this.removeFromWorld = true;
+        this.rolling = false;
+        this.idle_holding = false;
+        this.state = state_enum.dead;
     }
 
     // Intent is to have a method that can check when we have inflated stats and reset them
