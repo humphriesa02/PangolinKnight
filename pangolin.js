@@ -10,7 +10,7 @@ class Pangolin{
         this.tag = "player";
 
         this.transform = new Transform(new Vec2(24, 40), 1, new Vec2(0,0));
-        this.health = new Health(3, 3);
+        this.health = new Health(5, 5);
         this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
