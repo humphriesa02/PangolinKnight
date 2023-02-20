@@ -1,5 +1,5 @@
 class Sword{
-    constructor(game, facing, player_pos, player, damage){
+    constructor(game, facing, player_pos, player, damage, render = false, duration = 0.2){
         this.tag = "sword";
         Object.assign(this, {game, facing, player_pos});
         // Components
@@ -30,6 +30,9 @@ class Sword{
         this.animations = [];
         this.loadAnimations();
         this.updatable = true;
+        this.render = render;
+        this.starttime = gameEngine.timer.gameTime;
+        this.endtime = gameEngine.timer.gameTime + duration;
     }
 
      // Set up our animations variable
@@ -112,12 +115,92 @@ class Sword{
                 break;
         }
 
-        if(this.animations[this.facing].done == true){
+        if(this.animations[this.facing].done == true || gameEngine.timer.gameTime >= this.endtime){
             this.removeFromWorld = true;
         }
     }
 
     draw(ctx){
-        this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16)
+        if (this.render) {
+            this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16)
+        }
     }
+}
+
+class Skelly_Sword{
+    constructor(game, facing, skelly_pos, skelly, damage, duration = 0.2){
+        this.tag = "sword";
+        Object.assign(this, {game, facing, skelly_pos: skelly_pos});
+        // Components
+        let sword_pos = Object.assign({},skelly_pos);
+
+        this.owner = skelly;
+        // Decide where the sword will initially start
+        switch(this.facing){
+            case 0:
+                this.transform = new Transform(new Vec2(sword_pos.x - 8, sword_pos.y - 16));
+                break;
+            case 1:
+                this.transform = new Transform(new Vec2(sword_pos.x + 8, sword_pos.y - 16));
+                break;
+        }
+        
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
+
+        this.updatable = true;
+
+        this.starttime = gameEngine.timer.gameTime;
+        this.endtime = gameEngine.timer.gameTime + duration;
+        this.interval = duration / 3;
+    }
+
+    update(){
+        switch(this.facing){
+            case 0: // facing right
+                if(gameEngine.timer.gameTime < this.starttime + this.interval){
+                    this.collider.area.half.x = 12;
+                    this.transform.pos.y = this.skelly_pos.y - 24;
+                    this.transform.pos.x = this.skelly_pos.x + 16;
+                } 
+                else if(gameEngine.timer.gameTime < this.starttime + this.interval * 2){
+                    this.collider.area.half.x = 8;
+                    this.collider.area.half.y = 20;
+                    this.transform.pos.y = this.skelly_pos.y;
+                    this.transform.pos.x = this.skelly_pos.x + 24;
+                }
+                else if(gameEngine.timer.gameTime < this.starttime + this.interval * 3){
+                    this.collider.area.half.x = 20;
+                    this.collider.area.half.y = 8;
+                    this.transform.pos.y = this.skelly_pos.y + 28;
+                    this.transform.pos.x = this.skelly_pos.x;
+                }
+                break;
+
+            case 1: // facing left
+                if(gameEngine.timer.gameTime < this.starttime + this.interval){
+                    this.collider.area.half.x = 12;
+                    this.transform.pos.y = this.skelly_pos.y - 24;
+                    this.transform.pos.x = this.skelly_pos.x - 16;
+                } 
+                else if(gameEngine.timer.gameTime < this.starttime + this.interval * 2){
+                    this.collider.area.half.x = 8;
+                    this.collider.area.half.y = 20;
+                    this.transform.pos.y = this.skelly_pos.y;
+                    this.transform.pos.x = this.skelly_pos.x - 24;
+                }
+                else if(gameEngine.timer.gameTime < this.starttime + this.interval * 3){
+                    this.collider.area.half.x = 20;
+                    this.collider.area.half.y = 8;
+                    this.transform.pos.y = this.skelly_pos.y + 28;
+                    this.transform.pos.x = this.skelly_pos.x;
+                }
+                break;
+        }
+
+        if(gameEngine.timer.gameTime >= this.endtime){
+            this.removeFromWorld = true;
+        }
+    }
+
+    draw(ctx) {}
 }

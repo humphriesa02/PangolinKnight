@@ -424,12 +424,14 @@ class Pangolin{
         }
 
         // Rolling transition check
-        if(this.game.keys["r"] && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
+        if(this.game.keys["Control"] && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
             if (this.rolling) {
+                this.collider.area.radius = 7.5;
                 this.rolling = false;
                 this.cr = 0;
             }
             else if (!this.rolling) {
+                this.collider.area.radius = 5.5;
                 this.rolling = true;
                 this.cr = 0.5;
             }
@@ -469,7 +471,7 @@ class Pangolin{
             // Initiate the sword slash
             this.rolling = false;
             this.state = state_enum.slashing;
-            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage);
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
             this.game.addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }

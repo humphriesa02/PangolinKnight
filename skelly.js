@@ -1,12 +1,12 @@
-class Sword_Enemy{
+class Skelly{
     constructor(info, player){
         this.tag = "enemy";
         this.home = info.position;
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8), 1, new Vec2(0,0));
-        this.health = new Health(3, 3);
+        this.health = new Health(8, 8);
         this.invincible = new Invincible(0.05);
-        this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
-        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/frog_enemy.png");
+        this.collider = new Collider(new AABB(this.transform.pos, 16, 16), true, true, false);
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/skelly.png");
         this.facing = 0;
         this.move_speed = 18.75;
         this.move_time = 3;
@@ -16,7 +16,8 @@ class Sword_Enemy{
         this.loadAnimations();
         this.updatable = false;
 
-        this.damage = 1;
+        this.state = 0
+        this.damage = 2;
         this.attack_start;
         this.attack_on_cooldown = false;
         this.attacking = false;
@@ -27,68 +28,71 @@ class Sword_Enemy{
             this.animations.push([]);
         }
 
-        // facing right
-        this.animations[0] = new Animator(this.spritesheet, 0, 0, 16, 16, 2, 0.33, true);
+        // Walking right
+        this.animations[0][0] = new Animator(this.spritesheet, 0, 0, 48, 78, 2, 0.33, true);
+        // Walking left
+        this.animations[0][1] = new Animator(this.spritesheet, 96, 0, 48, 78, 2, 0.33, true);
 
-        // facing left
-        this.animations[1] = new Animator(this.spritesheet, 0, 16, 16, 16, 2, 0.33, true);
+        // Wind up right
+        this.animations[1][0] = new Animator(this.spritesheet, 192, 0, 48, 78, 1, 1, true);
+        // Wind up left
+        this.animations[1][1] = new Animator(this.spritesheet, 240, 0, 48, 78, 1, 1, true);
 
-        // facing up
-        this.animations[2] = new Animator(this.spritesheet, 0, 32, 16, 16, 2, 0.33, true);
-
-        // facing down
-        this.animations[3] = new Animator(this.spritesheet, 0, 48, 16, 16, 2, 0.33, true);
+        // Attack right
+        this.animations[2][0] = new Animator(this.spritesheet, 288, 0, 48, 78, 3, .16, true);
+        // Attack left
+        this.animations[2][1] = new Animator(this.spritesheet, 432, 0, 48, 78, 3, .16, true);
     }
     
 
     update(){
-
-
+        this.transform.velocity.x = 0;
+        this.transform.velocity.y = 0;
+        
         if(this.invincible.active){
             invulnerability_active(this);  
         }
         
-        if (this.knockback != undefined){
-            if(gameEngine.timer.gameTime >= this.knockback.knockback_end_time){
-                this.knockback = undefined;
-            }
+        if (this.winding) {
+            this.wind_up();
         }
-        else if (sq_distance(this.transform.pos, player.transform.pos) <= 256) {
+        else if (this.attacking) {
+            this.slash();
+        }
+        else if (sq_distance(this.transform.pos, this.player.transform.pos) <= 1600) {
             if (!this.attack_on_cooldown) {
                 this.attack_start = gameEngine.timer.gameTime;
                 this.attack_on_cooldown = true;
                 this.winding = true;
                 this.transform.velocity = new Vec2();   
+                this.animations[2][0].elapsedTime = 0;
+                this.animations[2][0].done = false;
+                this.animations[2][1].elapsedTime = 0;
+                this.animations[2][1].done = false;
             }
-            else if (gameEngine.timer.gameTime >= this.attack_start + 5) {
+            else if (gameEngine.timer.gameTime >= this.attack_start + 2.5) {
                 this.attack_on_cooldown = false;
             }
-        }
-        else if (this.winding) {
-            this.wind_up();
-        }
-        else if (this.attacking) {
-            slash();
         }
         else {
             this.movement();
         }
-        
+
         this.animation();
     }
 
     wind_up() {
-        if (gameEngine.timer.gameTime >= this.attack_start + 1) {
+        if (gameEngine.timer.gameTime >= this.attack_start + 0.5) {
             this.winding = false;
             this.attacking = true;
 
-            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage);
-            this.game.addEntity(sword);
+            let sword = new Skelly_Sword(gameEngine, this.facing, this.transform.pos, this, this.damage, .48);
+            gameEngine.addEntity(sword);
         }
     }
 
     slash() {
-        if (gameEngine.timer.gameTime >= this.attack_start + 3) {
+        if (gameEngine.timer.gameTime >= this.attack_start + .98) {
             this.attacking = false;
         }
     }
@@ -114,8 +118,8 @@ class Sword_Enemy{
             this.move_time -= gameEngine.clockTick;
         }
         else if(this.delay_time <= 0){
-            this.move_time = Math.random() * 3;
-            this.delay_time = Math.random() * 3;
+            this.move_time = Math.random() * 4;
+            this.delay_time = Math.random() * 2;
         }
         else{
             this.delay_time-=gameEngine.clockTick;
@@ -124,21 +128,28 @@ class Sword_Enemy{
 
     animation() {
         // Figure out the direction for animation
-        if(Math.abs(this.player.transform.pos.x-(this.transform.pos.x)) > Math.abs(this.player.transform.pos.y-(this.transform.pos.y))){// X is farther
-            if(this.transform.velocity.x > 0){
+        if (Math.abs(this.player.transform.pos.x - this.transform.pos.x) > 8) {
+            if( this.player.transform.pos.x > this.transform.pos.x ) {
                 this.facing = 0;
             }
-            else if(this.transform.velocity.x < 0){
+            else {
                 this.facing = 1;
             }
         }
-        else{
-            if(this.transform.velocity.y < 0){
-                this.facing = 2;
-            }
-            else if(this.transform.velocity.y > 0){
-                this.facing = 3;
-            }
+
+        this.state = 0;
+        this.idle = false;
+        if (this.transform.velocity.x > 0 || this.transform.velocity.y > 0) {
+            this.state = 0;
+        }
+        else {
+            this.idle = true;
+        }
+        if (this.winding) {
+            this.state = 1;
+        }
+        else if (this.attacking) {
+            this.state = 2;
         }
     }
 
@@ -156,7 +167,12 @@ class Sword_Enemy{
     }
 
     draw(ctx){
-        this.animations[this.facing].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16, this.invincible.inverted);
+        let animation = this.animations[this.state][this.facing];
+        animation.drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, animation.width, animation.height, this.invincible.inverted);
+        if (this.state == 0 && this.idle)
+        {
+            animation.elapsedTime -= gameEngine.clockTick;
+        }
     }
 
     die(){

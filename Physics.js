@@ -125,8 +125,13 @@ function player_enemy_collisions(entities){
         for (let enemy of entities.get("enemy")) {
             if (enemy.collider !== undefined) {
                 if (test_overlap(player.collider.area, enemy.collider.area)) {
-                    console.log("PLAYER HIT");
-                    hit(player, enemy);
+                    if (enemy.collider.block_move) {
+                        //prevent_overlap(player, enemy);
+                    }
+                    if (enemy instanceof Frog || enemy instanceof Slime) {
+                        console.log("PLAYER HIT");
+                        hit(player, enemy);
+                    }
                 }
             }
         }
@@ -146,7 +151,7 @@ function sword_character_collisions(entities) {
 
     for (let sword of entities.get("sword")) {
         for (let character of characters) {
-            if (character != sword.owner) {
+            if (character.tag != sword.owner.tag) {
                 if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
