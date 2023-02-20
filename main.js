@@ -17,6 +17,7 @@ ASSET_MANAGER.queueDownload("./sprites/pangolin_inventory.png");
 ASSET_MANAGER.queueDownload("./sprites/Pangolin_upclose.png");
 ASSET_MANAGER.queueDownload("./sprites/slime_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/slime_child_enemy.png");
+ASSET_MANAGER.queueDownload("./sprites/skelly.png");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
