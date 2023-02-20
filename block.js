@@ -29,7 +29,8 @@ class block{
     update(){
         if (this.moving) {
             if (this.distance_traveled + (12 * gameEngine.clockTick) >= 16) {
-                this.transform.pos = this.destination.clone();
+                this.transform.pos.x = this.destination.x;
+                this.transform.pos.y = this.destination.y;
                 this.transform.velocity = new Vec2(0, 0);
                 this.moving = false;
             }
@@ -75,9 +76,17 @@ class block{
     draw(ctx){
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
     }
+
     reset(){
         this.transform.pos.x = this.home[0] * 16 + 8;
         this.transform.pos.y = this.home[1] * 16 + 8;
-        this.pushable = this.pushable_base;
+        this.pushable = true;
+        this.last_push = undefined;
+        this.pushed_start = undefined;
+        this.moving = false;
+        this.destination = undefined;
+        this.distance_traveled = 0;
+        this.collider.area.center = this.transform.pos;
+        this.transform.velocity = new Vec2();
     }
 }

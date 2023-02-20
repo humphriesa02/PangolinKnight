@@ -37,6 +37,7 @@ function physics(entities) {
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
     character_prop_collisions(entities);
+    prop_room_collisions(movement_map);
 }
 
 
@@ -213,6 +214,31 @@ function character_prop_collisions(entities) {
 }
 }
 
+
+function prop_room_collisions(entities) {
+    let props = entities.get("prop");
+    if (props == undefined) { return; }
+
+    for (let prop of props) {
+        if (prop.collider !== undefined) {
+            for (let room of gameEngine.entity_map.get("room")) {
+                for (let col of room.colliders) {
+                    c = {collider: col};
+                    let overlap = prevent_overlap(prop, c);
+                    if (overlap) {
+                        if (prop instanceof pot) {
+                            prop.shatter();
+                        }
+                        else if (prop instanceof block) {
+                            prop.reset();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // Checks for overlap between two Entities a and b and returns a boolean
 function test_overlap(a, b) {
     if (a instanceof AABB && b instanceof AABB) {
@@ -253,12 +279,16 @@ function test_Circles(a, b) {
 
 // Tests for overlap and returns distance vector and square distance between a Circle c and AABB b
 function test_Circle_AABB(c, b) {
-    let distance = Vec2.diff(c.center, b.center);
-    let distance_squared = sqdist_point_AABB(c.center, b);
+
+    // Find point p on AABB closest to sphere center
+    let point = closest_point_on_AABB_to_point(b, c.center);
+    let distance = Vec2.diff(c.center, point);
+    let distance_squared = distance.dot(distance);
 
     return {test: (distance_squared < c.radius * c.radius), 
         distance_v: distance, 
-        sqdist: distance_squared};
+        sqdist: distance_squared,
+        point: point};
 }
 
 // Tests if a point p is inside an area a
@@ -318,7 +348,7 @@ function prevent_overlap(a, b) {
         if (test.test) {
             if (circle.tag == "player" && !circle.rolling && circle.state == state_enum.walking) { circle.state = state_enum.pushing; }
             if (box.tag == "player" && !box.rolling && box.state == state_enum.walking) {box.state = state_enum.pushing; }
-            let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist);
+            let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist, test.point);
 
             if (normal !== undefined) {
                 bounce(circle, normal, circle.cr);
@@ -328,29 +358,36 @@ function prevent_overlap(a, b) {
             }
         }
     }
+
+    return test.test;
 }
 
 // Prevents AABB-AABB overlap between two Entities a and b 
 function prevent_overlap_AABBs(a, b, overlap) {
     // Gets the overlap between a and b on the previous time step
-    let prev_overlap = test_AABBs(a.collider.area, b.collider.area, a.transform.prev_pos, b.transform.prev_pos).overlap;
+    let a_pos = a.collider.area.center;
+    let b_pos = b.collider.area.center;
+    let a_prev_pos = a.transform !== undefined ? a.transform.prev_pos : a.collider.area.center;
+    let b_prev_pos = b.transform !== undefined ? b.transform.prev_pos : b.collider.area.center;
+
+    let prev_overlap = test_AABBs(a.collider.area, b.collider.area, a_prev_pos, b_prev_pos).overlap;
 
     // If the overlap is horizontal
     if (prev_overlap.y > 0.0001) {
         // If a is on the left push a to the left and b to the right
-        if (a.transform.pos.x < b.transform.pos.x) {
-            a.transform.pos.x -= overlap.x;
+        if (a_pos.x < b_pos.x) {
+            a_pos.x -= overlap.x;
         }
         // If a is on the right push a to the right and b to the left
         else {
-            a.transform.pos.x += overlap.x;
+            a_pos.x += overlap.x;
         }
     }
     // If the overlap is vertical
     else if (prev_overlap.x > 0.0001) {
         // If a is above, push a up and b down
-        if (a.transform.pos.y < b.transform.pos.y) {
-            a.transform.pos.y -= overlap.y;
+        if (a_pos.y < b_pos.y) {
+            a_pos.y -= overlap.y;
             if (gameEngine.gravity && a.gravity !== undefined) {
                 a.gravity.velocity = 0.0;
                 a.grounded = true;
@@ -358,7 +395,7 @@ function prevent_overlap_AABBs(a, b, overlap) {
         }
         // If a below, push a down and b up
         else {
-            a.transform.pos.y += overlap.y;
+            a_pos.y += overlap.y;
         }
     }
     // If the overlap is perfectly diagonal
@@ -410,13 +447,18 @@ function prevent_overlap_circles(a, b, distance_vector) {
     return normal;
 }
 
-function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
+function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist, point) {
     let circle = c.collider.area;
     let box = b.collider.area;
     let overlap = circle.radius - Math.sqrt(sq_dist);
 
     let speed_c = c.transform !== undefined ? c.transform.velocity.dot(c.transform.velocity) : 0;
     let speed_b = b.transform !== undefined ? b.transform.velocity.dot(b.transform.velocity) : 0;
+
+    if (b instanceof block && (c.tag == "enemy" || c.tag == "player")) { 
+        speed_b = 0; 
+        speed_c = 1;
+    }
 
     if (speed_c == 0 && speed_b == 0) {
         return;
@@ -427,10 +469,7 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist) {
 
     let normal = distance_vector;
     normal.normalize();
-    if (normal.x != normal.y) {
-        normal.x = Math.round(normal.x);
-        normal.y = Math.round(normal.y);
-    }
+    
     circle.center.add(Vec2.scale(normal, overlap * ratio_c));
     box.center.minus(Vec2.scale(normal, overlap * ratio_b));
 
@@ -459,6 +498,24 @@ function sqdist_point_circle(p, c) {
     let sqdist = distance_vector.dot(distance_vector);
 
     return sqdist - (c.radius * c.radius);
+}
+
+
+// Given point p, return the poin q on AABB b that is closest to p
+function closest_point_on_AABB_to_point(b, p) {
+    let min = new Vec2(b.center.x - b.half.x, b.center.y - b.half.y);
+    let max = new Vec2(b.center.x + b.half.x, b.center.y + b.half.y);
+
+    // For each coordinate axis, if the point cooordinate value
+    // outside the box, clamp it to the box
+    let q = p.clone();
+    q.x = Math.max(q.x, min.x);
+    q.x = Math.min(q.x, max.x);
+
+    q.y = Math.max(q.y, min.y);
+    q.y = Math.min(q.y, max.y);
+
+    return q;
 }
 
 function bounce(entity, normal, cr) {
