@@ -67,14 +67,20 @@ class sceneManager{
             gameEngine.addEntity(enemy);
 
         }
+        for(let i = 0; i < this.level.skellys.length; i++){
+            let enemy = new Skelly(this.level.skellys[i], this.player);
+            this.rooms[Math.floor(enemy.transform.pos.x/roomWidth)][Math.floor(enemy.transform.pos.y/roomHeight)].addEntity(enemy);
+            gameEngine.addEntity(enemy);
+
+        }
         for(let i = 0; i < this.level.slimes.length; i++){
             let enemy = new Slime(this.level.slimes[i], this.player);
             this.rooms[Math.floor(enemy.transform.pos.x/roomWidth)][Math.floor(enemy.transform.pos.y/roomHeight)].addEntity(enemy);
             gameEngine.addEntity(enemy);
 
-        }
+        } 
 
-        //gameEngine.addEntity(new stair(this.level.stairs));
+        gameEngine.addEntity(new stair(this.level.stairs));
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
