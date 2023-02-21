@@ -118,8 +118,7 @@ class trigger{
             this.removeFromWorld = true;
         }
     }
-    draw(ctx){
-        ctx.strokeRect((this.transform.pos.x - screenX() - 8) * params.scale, (this.transform.pos.y - screenY() - 8) * params.scale, 16 * params.scale, 16 * params.scale);    }
+    draw(ctx){}
     activate(){
         if(!this.activated){
             for(let i = 0; i < this.doors.length; i++){
