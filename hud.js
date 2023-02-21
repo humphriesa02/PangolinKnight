@@ -44,7 +44,10 @@ class HUD{
         this.player.inventory.animations[this.player.inventory.primary_item].drawHUD(gameEngine.clockTick, ctx, 16.5, 182, 20, 20, false);
 
         ctx.drawImage(this.item_spritesheet, 48, 64, 16, 16, 40 * params.scale, 180 * params.scale, 24 * params.scale, 24 * params.scale);
-        if(this.player.inventory.secondary_item != undefined){
+        if(this.player.held_entity != undefined){
+            this.player.held_entity.animator.drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
+        }
+        else if(this.player.inventory.secondary_item != undefined){
             this.player.inventory.animations[this.player.inventory.secondary_item.item].drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
         }
         

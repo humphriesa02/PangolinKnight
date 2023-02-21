@@ -5,7 +5,7 @@ class pot{
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
 
-        this.in_air = new In_Air(70, 100, 90, 26, 0.75);
+        this.in_air = new In_Air(120, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 48, 0, 16, 16, 1, 1, true);
@@ -29,6 +29,7 @@ class pot{
                 // throw the pot
                 this.picked_up = false;
                 this.holder.idle_holding = false;
+                this.holder.held_entity = undefined;
                 this.holder.state = state_enum.throw;
                 gameEngine.addEntity(this.shadow);
                 this.thrown = true;
@@ -40,43 +41,16 @@ class pot{
         }
         // set the pot down
         else if (!this.picked_up && !this.thrown && this.holder != undefined){
-            switch(this.holder.facing){
-                case 0: // right
-                    this.transform.pos.x = this.holder.transform.pos.x + 15;
-                    break;
-                case 1: // left
-                    this.transform.pos.x = this.holder.transform.pos.x - 15;
-                    break;
-                case 2: // up
-                    this.transform.pos.y = this.holder.transform.pos.y - 15;
-                    break;
-                case 3: // down
-                    this.transform.pos.y = this.holder.transform.pos.y + 15;
-                    break;
-            }
+            this.move_off_holder();
             this.collider.block_move = true;
             this.in_air.z = 0;
             this.holder = undefined;
         }
         
         if(this.in_air.distance_remaining <= 0){ // Break the pot
-            this.thrown = false;
-            this.removeFromWorld = true;
-            this.shadow.removeFromWorld = true;
-            this.transform.velocity.x = 0;
-            this.transform.velocity.y = 0;
-            this.holder = undefined;
-            this.break_apart(4);
-            create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
-            create_item(item_enum.scale, this.transform.pos, 2, 0.3);
-            create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
-            create_item(item_enum.damage_potion, this.transform.pos, 1, 1);
+            this.shatter();
             return;
-        } 
-        this.transform.prev_pos.x = this.transform.pos.x;
-        this.transform.prev_pos.y = this.transform.pos.y
-        this.transform.pos.x += this.transform.velocity.x;
-        this.transform.pos.y += this.transform.velocity.y; 
+        }  
     }
     draw(ctx){
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.in_air.z, 16, 16);
@@ -96,11 +70,42 @@ class pot{
         }
     }
 
+    shatter() {
+        this.thrown = false;
+        this.removeFromWorld = true;
+        this.shadow.removeFromWorld = true;
+        this.transform.velocity.x = 0;
+        this.transform.velocity.y = 0;
+        this.holder = undefined;
+        this.break_apart(4);
+        create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
+        create_item(item_enum.scale, this.transform.pos, 2, 0.3);
+        create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
+        create_item(item_enum.damage_potion, this.transform.pos, 1, 0.1);
+    }
+
     // Used to "split" the pot into pieces
     break_apart(count){
         for(let i = 0; i < count; i++){
             let temp_piece = new Pieces(this, i);
             gameEngine.addEntity(temp_piece);
+        }
+    }
+
+    move_off_holder() {
+        switch(this.holder.facing){
+            case 0: // right
+                this.transform.pos.x = this.holder.transform.pos.x + 15;
+                break;
+            case 1: // left
+                this.transform.pos.x = this.holder.transform.pos.x - 15;
+                break;
+            case 2: // up
+                this.transform.pos.y = this.holder.transform.pos.y - 15;
+                break;
+            case 3: // down
+                this.transform.pos.y = this.holder.transform.pos.y + 15;
+                break;
         }
     }
 

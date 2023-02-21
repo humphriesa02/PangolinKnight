@@ -18,5 +18,7 @@ class stair{
     activate(){
         clearEntities();
         gameEngine.camera.loadLevel(this.state);
+        gameEngine.paused = true;
+        gameEngine.menu.current_displayed = menu_enum.win;
     }
 }
