@@ -108,6 +108,7 @@ class Slime{
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
             let slime_child = new SlimeChild(new Vec2(this.transform.pos.x + random_modifier_x, this.transform.pos.y + random_modifier_y), this.player);
+            gameEngine.camera.rooms[Math.floor(slime_child.transform.pos.x/roomWidth)][Math.floor(slime_child.transform.pos.y/roomHeight)].addEntity(slime_child);
             gameEngine.addEntity(slime_child);
         }
     }
@@ -214,11 +215,17 @@ class SlimeChild{
         this.animations[this.jumping].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 12, 12, this.invincible.inverted);
     }
 
-    die(){
+    die(drop = true){
         let explosion = new Explosion(this);
         gameEngine.addEntity(explosion);
         this.removeFromWorld = true;
-        create_item(item_enum.small_heart, this.transform.pos, 1, 0.2);
-        create_item(item_enum.scale, this.transform.pos, 1, 0.15);
+        if(drop){
+            create_item(item_enum.small_heart, this.transform.pos, 1, 0.2);
+            create_item(item_enum.scale, this.transform.pos, 1, 0.15);
+        }
+    }
+
+    reset(){
+        this.die(false);
     }
 }

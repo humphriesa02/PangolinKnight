@@ -114,7 +114,10 @@ class trigger{
             for(let i = 0; i < this.doors.length; i++){
                 this.doors[i].state = 1;
             }
-            create_item(this.rewardItem, this.rewardPosition.pos, 1, 1, false);
+            if(this.rewardItem){
+                create_item(this.rewardItem, this.rewardPosition.pos, 1, 1, false);
+            }
+            
             this.removeFromWorld = true;
         }
     }

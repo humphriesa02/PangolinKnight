@@ -7,7 +7,7 @@ class sceneManager{
 
         this.player = new Pangolin(gameEngine);
         this.hud = new HUD(this.player);
-        this.loadLevel(1);
+        //this.loadLevel(1);
         this.updatable = true;
     }
     loadLevel(level){

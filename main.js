@@ -19,6 +19,7 @@ ASSET_MANAGER.queueDownload("./sprites/slime_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/title_screen.png");
 ASSET_MANAGER.queueDownload("./sprites/slime_child_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/skelly.png");
+ASSET_MANAGER.queueDownload("./sprites/pangolin_play.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_lose_screen.png");
 
 ASSET_MANAGER.downloadAll(() => {
@@ -32,7 +33,10 @@ ASSET_MANAGER.downloadAll(() => {
 	gameEngine.init(ctx);
 
 	const manager = new sceneManager(gameEngine);
-
+	let menu = new mainmenu()
+	gameEngine.addEntity(menu);
+	gameEngine.addEntity(menu.startbutton);
+	gameEngine.addEntity(menu.levelselect);
 	gameEngine.start();
 
 	setScale.addEventListener('click', function(e) {
