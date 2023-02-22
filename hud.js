@@ -8,11 +8,13 @@ class HUD{
 
     update(){
         this.player.inventory.secondary_item = this.player.inventory.hotbar[this.player.inventory.selected];
-        if(gameEngine.wheel && gameEngine.wheel.deltaY > 0 && this.player.inventory.selected > 0){
+        if(((gameEngine.wheel && gameEngine.wheel.deltaY > 0) || gameEngine.keys["ArrowUp"]) && this.player.inventory.selected > 0){
             this.player.inventory.selected--;
+            gameEngine.keys["ArrowUp"] = false;
         }
-        else if(gameEngine.wheel && gameEngine.wheel.deltaY < 0 && this.player.inventory.selected < this.player.inventory.hotbar.length-1){
+        else if(((gameEngine.wheel && gameEngine.wheel.deltaY < 0) || gameEngine.keys["ArrowDown"]) && this.player.inventory.selected < this.player.inventory.hotbar.length-1){
             this.player.inventory.selected++;
+            gameEngine.keys["ArrowDown"] = false;
         }
     }
 
