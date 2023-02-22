@@ -15,6 +15,7 @@ class Frog{
         this.animations = [];
         this.loadAnimations();
         this.updatable = false;
+        this.overlap_damage = true;
     }
 
     loadAnimations(){

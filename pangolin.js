@@ -19,7 +19,7 @@ class Pangolin{
         this.damage = 1;
 
         //Inventory
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(this);
         gameEngine.menu.inventory = this.inventory;
 
         // Reference to our spritesheet
@@ -464,7 +464,7 @@ class Pangolin{
         }
 
         // Rolling transition check
-        if((this.game.keys["Control"] || this.game.keys["r"])&& this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
+        if((this.game.rightclick || this.game.keys["r"] || this.game.keys["ArrowRight"]) && this.game.timer.gameTime >= this.roll_cooldown_end && (this.state == state_enum.idle || this.state == state_enum.walking)){
             if (this.rolling) {
                 this.collider.area.radius = 7.5;
                 this.rolling = false;
@@ -486,7 +486,6 @@ class Pangolin{
             this.jump_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.jumping][0][this.rolling ? 1 : 0].totalTime;
         }
 
-        
 
         // Sword slash check
         if(this.game.click && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
@@ -515,25 +514,17 @@ class Pangolin{
             this.game.addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
+        else if (this.game.keys["ArrowLeft"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
+             // Initiate the sword slash
+             this.rolling = false;
+             this.state = state_enum.slashing;
+             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
+             this.game.addEntity(sword);
+             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
+        }
 
         // Use our offhand item
-        if(this.game.rightclick && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.falling){
-            if(Math.abs( this.game.rightclick.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.rightclick.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
-                if( this.game.rightclick.x > convertToScreenPos(this.transform.pos.x, 0).x){
-                    this.facing = 0;
-                }
-                else if( this.game.rightclick.x < convertToScreenPos(this.transform.pos.x, 0).x){
-                    this.facing = 1;
-                }
-            }
-            else{
-                if( this.game.rightclick.y < convertToScreenPos(0, this.transform.pos.y).y ){
-                    this.facing = 2;
-                }
-                else if( this.game.rightclick.y > convertToScreenPos(0, this.transform.pos.y).y){
-                    this.facing = 3;
-                }
-            }
+        if(this.game.keys["f"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.falling){
             // Put down held item
             if(this.state == state_enum.holding){
                 this.held_entity.picked_up = false;
@@ -564,42 +555,41 @@ class Pangolin{
         else{
             //this.transform.velocity.x = 0;
             //this.transform.velocity.y = 0;
-            if(this.state !== state_enum.slashing){
 
-                if (!this.rolling) {
-                    this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
-                    this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+            if (!this.rolling) {
+                this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
+                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+            }
+            else {
+                if (this.game.keys['a']) {
+                    this.transform.velocity.x -= this.roll_acceleration * gameEngine.clockTick;
+                }
+                else if (this.game.keys["d"]) {
+                    this.transform.velocity.x += this.roll_acceleration * gameEngine.clockTick;
                 }
                 else {
-                    if (this.game.keys['a']) {
-                        this.transform.velocity.x -= this.roll_acceleration * gameEngine.clockTick;
-                    }
-                    else if (this.game.keys["d"]) {
-                        this.transform.velocity.x += this.roll_acceleration * gameEngine.clockTick;
-                    }
-                    else {
-                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction * gameEngine.clockTick;
-                    }
-                    if (this.game.keys["w"]) {
-                        this.transform.velocity.y -= this.roll_acceleration * gameEngine.clockTick;
-                    }
-                    else if (this.game.keys["s"]) {
-                        this.transform.velocity.y += this.roll_acceleration * gameEngine.clockTick;
-                    }
-                    else {
-                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction * gameEngine.clockTick;
-                    }
-
-                    let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
-                    if (sqr_speed > this.max_roll_speed_sqr) {
-                        this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
-                    }
-                    else if (sqr_speed < this.min_roll_speed_sqr) {
-                        this.transform.velocity.x = 0;
-                        this.transform.velocity.y = 0;
-                    }
+                    this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction * gameEngine.clockTick;
                 }
-                // Figure out the direction for animation
+                if (this.game.keys["w"]) {
+                    this.transform.velocity.y -= this.roll_acceleration * gameEngine.clockTick;
+                }
+                else if (this.game.keys["s"]) {
+                    this.transform.velocity.y += this.roll_acceleration * gameEngine.clockTick;
+                }
+                else {
+                    this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction * gameEngine.clockTick;
+                }
+
+                let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
+                if (sqr_speed > this.max_roll_speed_sqr) {
+                    this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
+                }
+                else if (sqr_speed < this.min_roll_speed_sqr) {
+                    this.transform.velocity.x = 0;
+                    this.transform.velocity.y = 0;
+                }
+            }
+            if(this.state != state_enum.slashing){
                 if(Math.abs(this.transform.velocity.x) > Math.abs(this.transform.velocity.y)){
                     if(this.transform.velocity.x > 0){ // Facing right
                         this.facing = 0;
@@ -616,8 +606,9 @@ class Pangolin{
                         this.facing = 3;
                     }
                 }
-                
             }
+            // Figure out the direction for animation
+            
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
                 this.state != state_enum.holding && this.state != state_enum.use_item &&
                  this.state != state_enum.falling){
