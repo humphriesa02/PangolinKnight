@@ -1,5 +1,5 @@
 class Inventory{
-    constructor(){
+    constructor(player){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.currency = 0;
         this.small_keys = 0;
@@ -11,6 +11,7 @@ class Inventory{
         }
         this.active = false;
         this.updatable = true;
+        this.player = player;
 
         this.items = [];
         this.primary_item = item_enum.sword;
@@ -108,12 +109,27 @@ class Inventory{
         // Draw mouse items and hotbar
         ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 195 * params.scale, 132 * params.scale, 24 * params.scale, 24 * params.scale);
         this.animations[this.primary_item].drawHUD(gameEngine.clockTick, ctx, 197, 135, 20, 20, false);
-
+        // Roll image
         ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 227 * params.scale, 132 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 227 * params.scale, 156 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 227 * params.scale, 180 * params.scale, 24 * params.scale, 24 * params.scale);
+
+        ctx.drawImage(this.spritesheet, 0, 32, 16, 32, 217.5 * params.scale, 151 * params.scale, 12 * params.scale, 24 * params.scale);
+        // Horizontal hotbar
+        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         for(let i = 0; i < this.hotbar.length; i++){
-            this.animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 229, 134 + (i * 24), 20, 20, false)
+            this.animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
+            if(i == this.selected){
+                draw_hud_rect(ctx, 190 + (i * 23), 177, 20, 20, false, "yellow", 2);
+            }
+        }
+
+        // Draw current usable item
+        if(this.player.held_entity != undefined){
+            this.player.held_entity.animator.drawHUD(gameEngine.clockTick, ctx, 65, 168, 8, 8, false);
+        }
+        else if(this.player.inventory.secondary_item != undefined){
+            this.animations[this.secondary_item.item].drawHUD(gameEngine.clockTick, ctx, 65.5, 168, 8, 8, false);
         }
     }
 

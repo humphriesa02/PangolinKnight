@@ -129,7 +129,7 @@ function player_enemy_collisions(entities){
                     if (enemy.collider.block_move) {
                         //prevent_overlap(player, enemy);
                     }
-                    if (enemy instanceof Frog || enemy instanceof Slime) {
+                    if (enemy.overlap_damage) {
                         console.log("PLAYER HIT");
                         hit(player, enemy);
                     }

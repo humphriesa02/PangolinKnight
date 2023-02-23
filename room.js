@@ -114,12 +114,14 @@ class trigger{
             for(let i = 0; i < this.doors.length; i++){
                 this.doors[i].state = 1;
             }
-            create_item(this.rewardItem, this.rewardPosition.pos, 1, 1, false);
+            if(this.rewardItem){
+                create_item(this.rewardItem, this.rewardPosition.pos, 1, 1, false);
+            }
+            
             this.removeFromWorld = true;
         }
     }
-    draw(ctx){
-        ctx.strokeRect((this.transform.pos.x - screenX() - 8) * params.scale, (this.transform.pos.y - screenY() - 8) * params.scale, 16 * params.scale, 16 * params.scale);    }
+    draw(ctx){}
     activate(){
         if(!this.activated){
             for(let i = 0; i < this.doors.length; i++){
