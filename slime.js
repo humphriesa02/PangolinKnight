@@ -14,6 +14,7 @@ class Slime{
         this.player = player;
         this.animation = new Animator(this.spritesheet, 0, 0, 16, 16, 4, 0.33, true);;
         this.updatable = false;
+        this.overlap_damage = true;
     }
     
 
@@ -132,6 +133,7 @@ class SlimeChild{
         this.animations = [];
         this.loadAnimations();
         this.updatable = true;
+        this.overlap_damage = true;
     }
 
     loadAnimations(){
