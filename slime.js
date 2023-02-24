@@ -120,9 +120,9 @@ class SlimeChild{
         this.tag = "enemy";
         this.transform = new Transform(pos.clone(), 1, new Vec2(0,0));
         this.health = new Health(1, 1);
-        this.invincible = new Invincible(0.05);
+        this.invincible = new Invincible(0.1);
         this.invincible.active = true;
-        this.in_air = new In_Air(70, 100, 90, 26, 0.75);
+        this.in_air = new In_Air(90, 100, 70, 26);
         this.collider = new Collider(new Circle(this.transform.pos, 6), true, true, false);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/slime_child_enemy.png");
         this.move_speed = randomRange(15, 25);
@@ -130,10 +130,15 @@ class SlimeChild{
         this.delay_time = 3;
         this.jumping = 0;
         this.player = player;
+        this.player_distance_threshhold = 32;
         this.animations = [];
         this.loadAnimations();
         this.updatable = true;
+        this.direction;
         this.overlap_damage = true;
+        this.shadow = new Shadow(gameEngine, this.transform.pos, 12);
+        this.shadow.active = false;
+        gameEngine.addEntity(this.shadow);
     }
 
     loadAnimations(){
@@ -145,24 +150,49 @@ class SlimeChild{
         this.animations[0] = new Animator(this.spritesheet, 0, 0, 12, 12, 2, 0.33, true);
 
         // Jumping
-        this.animations[1] = new Animator(this.spritesheet, 0, 0, 16, 16, 2, 0.33, true);
+        this.animations[1] = new Animator(this.spritesheet, 0, 0, 12, 12, 5, 0.33, true);
     }
     
 
     update(){
-
-
         if(this.invincible.active){
             invulnerability_active(this);  
         }
-        
-        if (this.knockback != undefined){
-            if(gameEngine.timer.gameTime >= this.knockback.knockback_end_time){
-                this.knockback = undefined;
+        console.log(this.transform.pos.compute_distance(this.player.transform.pos));
+        if(this.transform.pos.compute_distance(this.player.transform.pos) < this.player_distance_threshhold && !this.jumping && !this.invincible.active){
+            console.log("close");
+            this.jumping = true;
+            this.shadow.active = true;
+            if(Math.abs( this.player.transform.pos.x - this.transform.pos.x) > Math.abs(this.player.transform.pos.y - this.transform.pos.y)){// X is closer
+                if( this.player.transform.pos.x > this.transform.pos.x){
+                    this.direction = 0;
+                }
+                else if( this.player.transform.pos.x < this.transform.pos.x){
+                    this.direction = 1;
+                }
+            }
+            else{
+                if( this.player.transform.pos.y < this.transform.pos.y){
+                    this.direction = 2;
+                }
+                else if( this.player.transform.pos.y > this.transform.pos.y){
+                    this.direction = 3;
+                }
             }
         }
+        // Reset velocity
+        if(this.jumping){
+            if (this.in_air.distance_remaining <= 0){
+                this.in_air.distance_remaining = this.in_air.air_distance * this.in_air.starting_percentage;
+                this.jumping = false;
+                this.shadow.active = false;
+            }
+            else{
+                in_air_jump(this, this.direction);
+            }
+            
+        }
         else{
-            // Reset velocity
             this.transform.velocity.x = 0;
             this.transform.velocity.y = 0;
             if (this.transform.pos.x < this.player.transform.pos.x && this.move_time > 0){
@@ -190,35 +220,15 @@ class SlimeChild{
             }
         }
         
-
-
-        // Figure out the direction for animation
-        if(Math.abs(this.player.transform.pos.x-(this.transform.pos.x)) > Math.abs(this.player.transform.pos.y-(this.transform.pos.y))){// X is farther
-            if(this.transform.velocity.x > 0){
-                this.facing = 0;
-            }
-            else if(this.transform.velocity.x < 0){
-                this.facing = 1;
-            }
-        }
-        else{
-            if(this.transform.velocity.y < 0){
-                this.facing = 2;
-            }
-            else if(this.transform.velocity.y > 0){
-                this.facing = 3;
-            }
-        }
-
-         // Adjust position from velocity
     }
 
     draw(ctx){
-        this.animations[this.jumping].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 12, 12, this.invincible.inverted);
+        this.animations[this.jumping ? 1 : 0].drawFrame(gameEngine.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.in_air.z, 12, 12, this.invincible.inverted);
     }
 
     die(drop = true){
         let explosion = new Explosion(this);
+        this.shadow.active = false;
         gameEngine.addEntity(explosion);
         this.removeFromWorld = true;
         if(drop){
