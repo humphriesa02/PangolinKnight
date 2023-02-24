@@ -93,7 +93,7 @@ class sceneManager{
         }
         this.hud.removeFromWorld = false;
         this.rooms[this.x][this.y].activate();
-        gameEngine.addEntity(this.hud);
+        gameEngine.hud = this.hud;
     }
     update(){
 

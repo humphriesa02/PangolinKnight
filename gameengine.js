@@ -28,6 +28,7 @@ class GameEngine {
 
         this.gravity = false;
         this.paused = false;
+        this.hud = null;
     };
 
     init(ctx) {
@@ -132,6 +133,10 @@ class GameEngine {
                 }
             }
         }
+        if(this.hud !== null){
+            this.hud.draw(this.ctx);
+        }
+        
 
         if(this.paused){
             this.menu.draw(this.ctx);
