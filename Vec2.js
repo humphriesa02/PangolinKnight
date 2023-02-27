@@ -58,14 +58,18 @@ class Vec2 {
 
     normalize() {
         let magnitude_squared = this.get_magnitude_squared();
+        let magnitude = 0;
         if (magnitude_squared == 0) 
         {
             this.x = 0;
             this.y = 0;
         }
         else{
-            this.multiply(1 / Math.sqrt(magnitude_squared));
+            magnitude = Math.sqrt(magnitude_squared);
+            this.multiply(1 / magnitude);
         }
+
+        return magnitude;
     }
 
     dot(other) {
