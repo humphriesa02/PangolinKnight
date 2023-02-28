@@ -61,7 +61,6 @@ class Inventory{
                 let button = new InventoryButton(k, new Vec2((16 * params.scale ) + col * (36 * params.scale), (8 * params.scale ) + row * (29 * params.scale)),
                 new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue);
                 this.item_buttons.push(button);
-                //gameEngine.addEntity(button);
                 k++;
             }
         }
@@ -69,7 +68,11 @@ class Inventory{
 
     update(){
         for(let i = 0; i < this.item_buttons.length; i++){
+            this.item_buttons[i].item_held = this.items[i];
             this.item_buttons[i].update();
+        }
+        for(let i = 0; i < 3; i++){
+            this.hotbar[i] = this.item_buttons[i].item_held;
         }
     }
 
@@ -123,9 +126,11 @@ class Inventory{
         ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         for(let i = 0; i < this.hotbar.length; i++){
-            this.animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
-            if(i == this.selected){
-                draw_hud_rect(ctx, 190 + (i * 23), 177, 20, 20, false, "yellow", 2);
+            if(this.hotbar[i] != undefined){
+                this.hotbar[i].animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
+                if(i == this.selected){
+                    draw_hud_rect(ctx, 190 + (i * 23), 177, 20, 20, false, "yellow", 2);
+                }
             }
         }
 
@@ -140,7 +145,7 @@ class Inventory{
 
     add_item(item){
         this.items.push(item);
-        this.item_buttons[this.items.length-1].item_held = item;
+        this.item_buttons[this.items.length-1].item_held = this.items[this.items.length - 1];
         if(this.hotbar.length < 3){
             this.hotbar.push(item);
         }
@@ -162,15 +167,6 @@ class InventoryButton{
         this.count = count;
     }
     update(){
-        if(gameEngine.click != null){
-            console.log("I am:", this.count);
-            console.log(gameEngine.click);
-            console.log(this.screen_pos);
-            console.log(this.screen_pos.x + this.half_width);
-            console.log(this.screen_pos.x - this.half_width);
-            console.log("\n");
-        }
-        
         if(gameEngine.click){
             if(gameEngine.click.x > this.screen_pos.x && gameEngine.click.x < this.screen_pos.x + this.half_width &&
                 gameEngine.click.y > this.screen_pos.y && gameEngine.click.y < this.screen_pos.y + this.half_height){
@@ -179,15 +175,12 @@ class InventoryButton{
                             this.swap_queue_ref.push(this);
                             this.highlighted = true;
                         }
-                        else{
-                            this.highlighted = true;
-                        }
                     }
                     else if (this.swap_queue_ref.length == 1){ // swap
                         if(this.item_held != undefined){
-                            let temp_item = this.swap_queue_ref[0].item_held
+                            let temp_button_item = this.swap_queue_ref[0].item_held;
                             this.swap_queue_ref[0].item_held = this.item_held;
-                            this.item_held = temp_item;
+                            this.item_held = temp_button_item;
                             this.highlighted = false;
                             this.swap_queue_ref[0].highlighted = false;
                             this.swap_queue_ref.splice(0, this.swap_queue_ref.length);
