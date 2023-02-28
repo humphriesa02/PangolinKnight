@@ -13,7 +13,6 @@ class Inventory{
         this.updatable = true;
         this.player = player;
 
-        //this.items = [];
         this.item_buttons = [];
         this.total_item_count = 0;
         this.primary_item = item_enum.sword;
@@ -69,7 +68,6 @@ class Inventory{
 
     update(){
         for(let i = 0; i < this.item_buttons.length; i++){
-            //this.item_buttons[i].item_held = this.items[i];
             this.item_buttons[i].update();
         }
         for(let i = 0; i < 3; i++){
@@ -143,7 +141,6 @@ class Inventory{
     }
 
     add_item(item){
-        //this.items.push(item);
         if(this.item_buttons[this.total_item_count].item_held == undefined){
             this.item_buttons[this.total_item_count].item_held = item;
         }
