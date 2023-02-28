@@ -103,12 +103,13 @@ class Item{
                 entity.damage = 3;
                 break;
         }
-        let inventory_item_index = entity.inventory.items.indexOf(this);
-        entity.inventory.items.splice(inventory_item_index, 1);
+       // let inventory_item_index = entity.inventory.items.indexOf(this);
+       entity.inventory.remove_item(this);
+       /*
         let inventory_hotbar_index = entity.inventory.hotbar.indexOf(this);
         if(inventory_hotbar_index != -1){
             entity.inventory.hotbar.splice(inventory_hotbar_index, 1);
-        }
+        }*/
     }
 }
 

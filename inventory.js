@@ -13,8 +13,9 @@ class Inventory{
         this.updatable = true;
         this.player = player;
 
-        this.items = [];
+        //this.items = [];
         this.item_buttons = [];
+        this.total_item_count = 0;
         this.primary_item = item_enum.sword;
         this.hotbar = [];
         this.selected = 0;
@@ -68,7 +69,7 @@ class Inventory{
 
     update(){
         for(let i = 0; i < this.item_buttons.length; i++){
-            this.item_buttons[i].item_held = this.items[i];
+            //this.item_buttons[i].item_held = this.items[i];
             this.item_buttons[i].update();
         }
         for(let i = 0; i < 3; i++){
@@ -119,18 +120,16 @@ class Inventory{
         this.animations[this.primary_item].drawHUD(gameEngine.clockTick, ctx, 197, 135, 20, 20, false);
         // Roll image
         ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 227 * params.scale, 132 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 32, 16, 16, 227 * params.scale, 132 * params.scale, 24 * params.scale, 24 * params.scale);
 
         ctx.drawImage(this.spritesheet, 0, 32, 16, 32, 217.5 * params.scale, 151 * params.scale, 12 * params.scale, 24 * params.scale);
         // Horizontal hotbar
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         for(let i = 0; i < this.hotbar.length; i++){
             if(this.hotbar[i] != undefined){
                 this.hotbar[i].animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
-                if(i == this.selected){
-                    draw_hud_rect(ctx, 190 + (i * 23), 177, 20, 20, false, "yellow", 2);
-                }
             }
         }
 
@@ -144,10 +143,35 @@ class Inventory{
     }
 
     add_item(item){
-        this.items.push(item);
-        this.item_buttons[this.items.length-1].item_held = this.items[this.items.length - 1];
+        //this.items.push(item);
+        if(this.item_buttons[this.total_item_count].item_held == undefined){
+            this.item_buttons[this.total_item_count].item_held = item;
+        }
+        else{
+            while(this.item_buttons[this.total_item_count].item_held != undefined){
+                this.total_item_count++;
+            }
+            this.item_buttons[this.total_item_count].item_held = item;
+        }
+        
+        
         if(this.hotbar.length < 3){
             this.hotbar.push(item);
+        }
+        for(let i = 0; i < this.hotbar.length; i++){
+            if(this.hotbar[i] == undefined){
+                this.hotbar[i] = item;
+            }
+        }
+    }
+
+    remove_item(item){
+        for(let i = 0; i < this.item_buttons.length; i++){
+            if(this.item_buttons[i].item_held == item){
+                this.item_buttons[i].item_held = undefined;
+                this.total_item_count = 0;
+                this.update();
+            }
         }
     }
 }
@@ -198,7 +222,12 @@ class InventoryButton{
     }
 
     draw(ctx){
-        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+        if(this.count == 0 || this.count == 1 || this.count == 2){
+            ctx.drawImage(this.spritesheet, 32, 48, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+        }
+        else{
+            ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+        }
         if(this.item_held != undefined){this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);}
         if(this.highlighted){
             draw_hud_rect(ctx, this.item_pos.x-1, this.item_pos.y-1, 24, 24, false, "yellow", 2);
