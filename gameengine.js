@@ -174,7 +174,10 @@ class GameEngine {
                     this.entities.splice(i, 1);
                 }
             }
-    
+            if(this.hud !== null){
+                this.hud.update();
+            }
+            
             physics(this.entity_map);
         }
         else{

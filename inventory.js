@@ -14,14 +14,19 @@ class Inventory{
         this.player = player;
 
         this.items = [];
+        this.item_buttons = [];
         this.primary_item = item_enum.sword;
         this.hotbar = [];
         this.selected = 0;
         this.secondary_item = this.hotbar[this.selected];
+        this.swap_queue = []; // for swapping items
+
+        
 
         // must have an image for each item
         this.animations = [];
         this.loadAnimations();
+        this.init_buttons();
     }
 
     // Set up our animations variable
@@ -49,32 +54,32 @@ class Inventory{
         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
     }
 
+    init_buttons(){
+        let k = 0;
+        for(let row = 0; row < 4; row++){
+            for(let col = 0; col < 4; col++){
+                let button = new InventoryButton(k, new Vec2((16 * params.scale ) + col * (36 * params.scale), (8 * params.scale ) + row * (29 * params.scale)),
+                new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue);
+                this.item_buttons.push(button);
+                //gameEngine.addEntity(button);
+                k++;
+            }
+        }
+    }
+
     update(){
-        
+        for(let i = 0; i < this.item_buttons.length; i++){
+            this.item_buttons[i].update();
+        }
     }
 
     draw(ctx){
         // Background
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_inventory.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
 
-        // Inventory items area
-        let k = 0;
-        for(let i = 0; i < 4; i++){
-            for(let j = 0; j < 4; j++){
-                ctx.drawImage(this.spritesheet, 48, 64, 16, 16, (16 * params.scale ) + j * (36 * params.scale), (8 * params.scale ) + i * (29 * params.scale), 28 * params.scale, 28 * params.scale);
-                if(this.items[k] != undefined){
-                    this.items[k].animations[this.items[k].item].drawHUD(gameEngine.clockTick, ctx, 19  + (j * 36), 11 + (i * 29), 22, 22, false)
-                    for(let l = 0; l < this.hotbar.length; l++){
-                        if(this.hotbar[l] === this.items[k]){
-                            draw_hud_rect(ctx, 18 + (j * 36), 10 + (i * 29), 24, 24, false, "yellow", 2);
-                        }
-                    }
-                    
-                }
-                k++;
-            }
+        for(let i = 0; i < this.item_buttons.length; i++){
+            this.item_buttons[i].draw(ctx);
         }
-
         // Map area
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/Pangolin_upclose.png"), 187 * params.scale, 8 * params.scale, 65 * params.scale, 65 * params.scale);
         ctx.font = '30px "VT323"';
@@ -135,8 +140,75 @@ class Inventory{
 
     add_item(item){
         this.items.push(item);
+        this.item_buttons[this.items.length-1].item_held = item;
         if(this.hotbar.length < 3){
             this.hotbar.push(item);
+        }
+    }
+}
+
+class InventoryButton{
+    constructor(count, screen_pos, item_pos, swap_queue){
+        this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png"); // Just need this for the box image
+        this.item_held;
+        this.screen_pos = screen_pos;
+        this.aabb = new AABB(this.screen_pos, 8, 8);
+        this.updatable = true;
+        this.item_pos = item_pos;
+        this.half_height = 28 * params.scale;
+        this.half_width = 28 * params.scale;
+        this.swap_queue_ref = swap_queue;
+        this.highlighted = false;
+        this.count = count;
+    }
+    update(){
+        if(gameEngine.click != null){
+            console.log("I am:", this.count);
+            console.log(gameEngine.click);
+            console.log(this.screen_pos);
+            console.log(this.screen_pos.x + this.half_width);
+            console.log(this.screen_pos.x - this.half_width);
+            console.log("\n");
+        }
+        
+        if(gameEngine.click){
+            if(gameEngine.click.x > this.screen_pos.x && gameEngine.click.x < this.screen_pos.x + this.half_width &&
+                gameEngine.click.y > this.screen_pos.y && gameEngine.click.y < this.screen_pos.y + this.half_height){
+                    if(this.swap_queue_ref.length == 0){ // add to queue
+                        if(this.item_held != undefined){
+                            this.swap_queue_ref.push(this);
+                            this.highlighted = true;
+                        }
+                        else{
+                            this.highlighted = true;
+                        }
+                    }
+                    else if (this.swap_queue_ref.length == 1){ // swap
+                        if(this.item_held != undefined){
+                            let temp_item = this.swap_queue_ref[0].item_held
+                            this.swap_queue_ref[0].item_held = this.item_held;
+                            this.item_held = temp_item;
+                            this.highlighted = false;
+                            this.swap_queue_ref[0].highlighted = false;
+                            this.swap_queue_ref.splice(0, this.swap_queue_ref.length);
+                        }
+                        else{
+                            this.swap_queue_ref[0].highlighted = false;
+                            this.swap_queue_ref.splice(0, this.swap_queue_ref.length);
+                        }
+                    }
+                    else{
+                        // error
+                    }
+                }
+        } 
+    }
+
+    draw(ctx){
+        ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+        if(this.item_held != undefined){this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);}
+        if(this.highlighted){
+            draw_hud_rect(ctx, this.item_pos.x-1, this.item_pos.y-1, 24, 24, false, "yellow", 2);
         }
     }
 }
