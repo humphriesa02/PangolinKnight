@@ -3,6 +3,7 @@ class Inventory{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.currency = 0;
         this.small_keys = 0;
+        this.bomb_count = 0;
         this.key_items = {
             sword: true,
             bomb:false,
@@ -52,6 +53,9 @@ class Inventory{
 
         // damage potion
         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
+
+         // bombs
+         this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 1, true);
     }
 
     init_buttons(){
@@ -59,7 +63,7 @@ class Inventory{
         for(let row = 0; row < 4; row++){
             for(let col = 0; col < 4; col++){
                 let button = new InventoryButton(k, new Vec2((16 * params.scale ) + col * (36 * params.scale), (8 * params.scale ) + row * (29 * params.scale)),
-                new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue);
+                new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue, this);
                 this.item_buttons.push(button);
                 k++;
             }
@@ -174,7 +178,7 @@ class Inventory{
 }
 
 class InventoryButton{
-    constructor(count, screen_pos, item_pos, swap_queue){
+    constructor(count, screen_pos, item_pos, swap_queue, inventory){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png"); // Just need this for the box image
         this.item_held;
         this.screen_pos = screen_pos;
@@ -186,6 +190,7 @@ class InventoryButton{
         this.swap_queue_ref = swap_queue;
         this.highlighted = false;
         this.count = count;
+        this.inventory = inventory;
     }
     update(){
         if(gameEngine.click){
@@ -225,7 +230,25 @@ class InventoryButton{
         else{
             ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
         }
-        if(this.item_held != undefined){this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);}
+        if(this.item_held != undefined){
+            this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);
+            if(this.item_held.item == item_enum.bomb){
+                ctx.font = '32px "VT323"';
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 6;
+                ctx.strokeText(this.inventory.bomb_count, (this.screen_pos.x + this.half_width) - 6 * params.scale, (this.screen_pos.y + this.half_height) - 3 * params.scale);
+                if(this.inventory.bomb_count == 20){
+                    ctx.fillStyle = 'green'
+                }
+                else{
+                    ctx.fillStyle = "white";
+                }
+                ctx.fillText(this.inventory.bomb_count, (this.screen_pos.x + this.half_width) - 6 * params.scale, (this.screen_pos.y + this.half_height) - 3 * params.scale);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+        
         if(this.highlighted){
             draw_hud_rect(ctx, this.item_pos.x-1, this.item_pos.y-1, 24, 24, false, "yellow", 2);
         }
