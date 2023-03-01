@@ -318,6 +318,11 @@ function prop_tile_collisions(entities) {
                 }
             }
         }
+        if(prop instanceof Boomerang){
+            for (let tile of tiles){
+                prevent_overlap(prop, tile)
+            }
+        }
     }
 }
 
