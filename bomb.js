@@ -59,7 +59,6 @@ class Bomb{
         // set the pot down
         else if (!this.picked_up && !this.thrown && this.holder != undefined){
             this.move_off_holder();
-            this.collider.block_move = true;
             this.in_air.z = 0;
             this.holder = undefined;
         } 

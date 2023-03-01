@@ -112,7 +112,10 @@ class Item{
         switch(this.item){
             case item_enum.health_potion:
                 if(entity.health.current < entity.health.max){
-                    entity.health.current += 3;        
+                    entity.health.current += 3;
+                    if(entity.health.current > entity.health.max){
+                        entity.health.current = entity.health.max;
+                    }
                 }
                 break;
             case item_enum.damage_potion:

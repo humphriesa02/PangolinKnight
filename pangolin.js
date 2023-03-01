@@ -535,11 +535,13 @@ class Pangolin{
             else if(this.inventory.secondary_item != null){
                 // Initiate using item
                 if(this.inventory.secondary_item.item == item_enum.bomb){
-                    this.state = state_enum.holding;
-                    let bomb = new Bomb();
-                    gameEngine.addEntity(bomb);
-                    this.held_entity = bomb;
-                    bomb.holder = this;
+                    if(this.inventory.bomb_count > 0){
+                        this.state = state_enum.holding;
+                        let bomb = new Bomb();
+                        gameEngine.addEntity(bomb);
+                        this.held_entity = bomb;
+                        bomb.holder = this;
+                    }
                 }
                 else{
                     this.state = state_enum.use_item;
