@@ -27,7 +27,7 @@ class Pangolin{
         this.slash_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_slash_sheet.png");
 
         // Some state variables
-        this.facing = 0; // 0 = right, 1 = left, 2 = up, 3 = down
+        this.facing = 2; // 0 = right, 1 = left, 2 = up, 3 = down
         this.state = state_enum.idle; // 0 = idle, 1= walking, 2 = sword slash,
                                       // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = use_item
                                       // 8 = falling
@@ -537,13 +537,16 @@ class Pangolin{
                 if(this.inventory.secondary_item.item == item_enum.bomb){
                     if(this.inventory.bomb_count > 0){
                         this.state = state_enum.holding;
-                        let bomb = new Bomb();
+                        let bomb = new Bomb(this);
                         gameEngine.addEntity(bomb);
                         this.held_entity = bomb;
-                        bomb.holder = this;
                     }
                 }
                 else{
+                    if(this.inventory.secondary_item.item == item_enum.boomerang){
+                        let boomerang = new Boomerang(this);
+                        gameEngine.addEntity(boomerang);
+                    }
                     this.state = state_enum.use_item;
                 }
                 this.inventory.secondary_item.use(this); 
@@ -623,7 +626,7 @@ class Pangolin{
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
                 this.state != state_enum.holding && this.state != state_enum.use_item &&
                  this.state != state_enum.falling){
-                if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
+                if (Math.abs(this.transform.velocity.x) <= 3 && Math.abs(this.transform.velocity.y) <= 3){
                     this.state = state_enum.idle; // idle state
                 }
                 else{ // moving

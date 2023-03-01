@@ -54,8 +54,11 @@ class Inventory{
         // damage potion
         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
 
-         // bombs
-         this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 1, true);
+        // bombs
+        this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 1, true);
+
+        // booomerang
+        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 1, true);
     }
 
     init_buttons(){
@@ -126,9 +129,9 @@ class Inventory{
 
         ctx.drawImage(this.spritesheet, 0, 32, 16, 32, 217.5 * params.scale, 151 * params.scale, 12 * params.scale, 24 * params.scale);
         // Horizontal hotbar
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         for(let i = 0; i < this.hotbar.length; i++){
             if(this.hotbar[i] != undefined){
                 this.hotbar[i].animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
@@ -225,7 +228,7 @@ class InventoryButton{
 
     draw(ctx){
         if(this.count == 0 || this.count == 1 || this.count == 2){
-            ctx.drawImage(this.spritesheet, 32, 48, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+            ctx.drawImage(this.spritesheet, 16, 48, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
         }
         else{
             ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);

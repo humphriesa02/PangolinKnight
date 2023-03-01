@@ -1,5 +1,5 @@
 class Bomb{
-    constructor(){
+    constructor(holder){
         this.tag = "prop";
         this.transform = new Transform(new Vec2(0, 0), 1, new Vec2(0,0));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
@@ -11,7 +11,7 @@ class Bomb{
         this.animations = [];
         this.loadAnimations();
         this.picked_up = true;
-        this.holder;
+        this.holder = holder;
         this.thrown = false;
         this.direction;
         this.shadow = new Shadow(gameEngine, this.transform.pos);

@@ -219,6 +219,9 @@ function character_prop_collisions(entities) {
                     hit(character, prop, 1);
                     prop.shatter();
                 } 
+                if (prop instanceof Boomerang && character !== prop.holder){
+                    hit(character, prop, 1);
+                }
             }
             if (character.tag == "player" && prop.requires_facing) {
                 let point;
@@ -284,6 +287,15 @@ function prop_prop_collisions(entities) {
                         if (b.moving) {
                             b.reset();
                         }
+                    }
+                }
+            }
+        }
+        if(a instanceof Boomerang){
+            for(let b of props){
+                if(b instanceof Item){
+                    if(test_overlap(a.collider.area, b.collider.area)){
+                        a.stick(b);
                     }
                 }
             }

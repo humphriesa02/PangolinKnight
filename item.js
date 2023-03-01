@@ -35,11 +35,14 @@ class Item{
         /* Item 4, health potion */
         this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 6, !this.removable);
 
-         /* Item 5, damage larvae */
-         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 6, !this.removable);
+        /* Item 5, damage larvae */
+        this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 6, !this.removable);
 
-         /* Item 6, bomb icon*/
-         this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 6, !this.removable);
+        /* Item 6, bomb icon*/
+        this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 6, !this.removable);
+
+        /* Item 7, boomerang icon*/
+        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 6, this.removable);
     }
 
     update(){
@@ -99,6 +102,12 @@ class Item{
                     entity.inventory.bomb_count++;
                 }
                 break;
+            case item_enum.boomerang:
+                if(!entity.inventory.key_items.boomerang){
+                    entity.inventory.key_items.boomerang = true;
+                }
+                entity.inventory.add_item(this);
+                break;
         }
         this.animations[this.item].repeat = false;
         this.animations[this.item].elapsedTime = 0;
@@ -141,7 +150,8 @@ const item_enum={
     sword: 3,
     health_potion: 4,
     damage_potion: 5,
-    bomb: 6
+    bomb: 6,
+    boomerang: 7
 }
 
 /**
