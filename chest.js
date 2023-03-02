@@ -20,7 +20,7 @@ class chest{
         this.animator[this.state].drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
     }
     activate(entity){
-        if(entity.interacting != undefined && entity.interacting){
+        if(entity.interacting != undefined && entity.interacting && this.state != 1){
             this.state = 1;
             if(this.item == item_enum.scale){create_item(this.item, gameEngine.camera.player.transform.pos, 50, 1);}
             else{create_item(this.item, gameEngine.camera.player.transform.pos, 1, 1);}
