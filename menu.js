@@ -57,7 +57,7 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
 
     draw_main_menu(ctx){
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/PangolinPauseScreen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-        console.log(roomWidth, roomHeight);
+        //console.log(roomWidth, roomHeight);
         ctx.font = '80px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 8;
@@ -71,7 +71,7 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
 
     draw_lose_menu(ctx){
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_lose_screen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-        console.log(roomWidth, roomHeight);
+        //console.log(roomWidth, roomHeight);
         ctx.font = '100px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 8;
@@ -90,7 +90,7 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
 
     draw_win_menu(ctx){
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/PangolinPauseScreen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-        console.log(roomWidth, roomHeight);
+        //console.log(roomWidth, roomHeight);
         ctx.font = '70px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.fillStyle = "white";
