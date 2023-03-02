@@ -9,7 +9,6 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
     }
 
     update(){
-        console.log(this.current_displayed);
         if(this.current_displayed == menu_enum.win || this.current_displayed == menu_enum.lose){
             if(gameEngine.keys["r"]){
                 clearEntities();
@@ -20,6 +19,9 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
             }
         }
         else{
+            if(this.current_displayed == menu_enum.inventory){
+                this.inventory.update();
+            }
             if(gameEngine.keys["Escape"] && gameEngine.timer.gameTime >= this.transition_cooldown_end){
                 gameEngine.paused = false;
                 this.transition_cooldown_end = gameEngine.timer.gameTime + this.transition_cooldown_duration;

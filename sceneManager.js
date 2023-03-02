@@ -108,8 +108,9 @@ class sceneManager{
         }
         this.hud.removeFromWorld = false;
         this.rooms[this.x][this.y].activate();
-        gameEngine.addEntity(this.hud);
-        //ASSET_MANAGER.playAsset(this.level.soundtrack);
+       
+        gameEngine.hud = this.hud;
+         //ASSET_MANAGER.playAsset(this.level.soundtrack);
     }
     update(){
 

@@ -113,6 +113,7 @@ class pot{
         this.in_air.distance_remaining = this.in_air.air_distance * this.in_air.starting_percentage;
         this.transform.pos.x = this.position[0] * 16 + 8;
         this.transform.pos.y = this.position[1] * 16 + 8;
+        this.in_air.z = 0;
         this.picked_up = false;
         this.thrown = false;
         this.collider.block_move = true;
