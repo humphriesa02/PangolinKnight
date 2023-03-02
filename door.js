@@ -1,9 +1,9 @@
 class door{
-    constructor(position, info){
+    constructor(info){
         this.tag = "tile"
         this.state = info.state; // invisable = 0, open = 1, close = 2
         this.facing = info.facing; // 0 = up, 1 = right, 2 = down, 3 = left
-        this.transform = new Transform(new Vec2(position[0] * 16 + 8, position[1] * 16 + 8));
+        this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
         this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, false);
         this.loadAnimations(this.facing);

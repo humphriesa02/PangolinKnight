@@ -110,11 +110,8 @@ function character_room_collisions(entities) {
 
     for (let character of characters) {
         if (character.collider !== undefined) {
-            for (let room of gameEngine.entity_map.get("room")) {
-                for (let col of room.colliders) {
-                    c = {collider: col};
-                    prevent_overlap(character, c);
-                }
+            for (let wall of gameEngine.entity_map.get("wall")) {
+                prevent_overlap(character, wall);
             }
         }
     }
@@ -254,17 +251,14 @@ function prop_room_collisions(entities) {
 
     for (let prop of props) {
         if (prop.collider !== undefined) {
-            for (let room of gameEngine.entity_map.get("room")) {
-                for (let col of room.colliders) {
-                    c = {collider: col};
-                    let overlap = prevent_overlap(prop, c);
-                    if (overlap) {
-                        if (prop instanceof pot && !prop.picked_up) {
-                            prop.shatter();
-                        }
-                        else if (prop instanceof block) {
-                            prop.reset();
-                        }
+            for (let wall of gameEngine.entity_map.get("wall")) {
+                let overlap = prevent_overlap(prop, wall);
+                if (overlap) {
+                    if (prop instanceof pot) {
+                        prop.shatter();
+                    }
+                    else if (prop instanceof block) {
+                        prop.reset();
                     }
                 }
             }

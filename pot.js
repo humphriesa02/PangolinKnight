@@ -169,7 +169,6 @@ class Pieces{
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 8, 8, false, true, 1);
         }
-        console.log(this.in_air.z);
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.in_air.z, 8, 8);
     }
 }
