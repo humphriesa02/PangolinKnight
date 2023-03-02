@@ -22,7 +22,7 @@ class chest{
     activate(entity){
         if(entity.interacting != undefined && entity.interacting){
             this.state = 1;
-            if(item == item_enum.scale){create_item(this.item, gameEngine.camera.player.transform.pos, 50, 1);}
+            if(this.item == item_enum.scale){create_item(this.item, gameEngine.camera.player.transform.pos, 50, 1);}
             else{create_item(this.item, gameEngine.camera.player.transform.pos, 1, 1);}
         } 
     }
