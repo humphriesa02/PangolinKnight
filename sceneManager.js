@@ -11,6 +11,7 @@ class sceneManager{
         this.updatable = true;
     }
     loadLevel(level){
+        //ASSET_MANAGER.pauseBackgroundMusic();
         this.player.removeFromWorld = false;
         this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
@@ -108,6 +109,7 @@ class sceneManager{
         this.hud.removeFromWorld = false;
         this.rooms[this.x][this.y].activate();
         gameEngine.addEntity(this.hud);
+        //ASSET_MANAGER.playAsset(this.level.soundtrack);
     }
     update(){
 
@@ -148,9 +150,16 @@ class sceneManager{
                 this.rooms[this.x][this.y].activate();
             }
         }
-
+        //this.updateAuidio();
     }
     draw(ctx){
 
+    }
+    updateAuidio() {
+        var mute = document.getElementById("mute").Checked;
+        var volume = document.getElementById("volume").value;
+
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
     }
 }
