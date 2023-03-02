@@ -25,6 +25,7 @@ var levels = {
     },
     2 : {
         mapSprite: './sprites/leveltwo.png',
+        soundtrack : './sounds/Memoraphile.mp3',
         start : [59,37],
         gravity : false,
         frogs : [],

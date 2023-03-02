@@ -74,11 +74,17 @@ class AssetManager {
     getAsset(path) {
         return this.cache[path];
     };
-    /*
+    
     playAsset(path) {
-        let audio = this.cache[path];
-        audio.currentTime = 0;
-        audio.play();
+        let aud = this.cache[path];
+        aud.currentTime = 0;
+        aud.play();
+    }
+
+    pauseAsset(path) {
+        var aud = this.cache[path];
+        aud.currentTime = 0;
+        aud.pause();
     }
 
     muteAudio(mute){
@@ -114,6 +120,6 @@ class AssetManager {
         aud.addEventListener("ended", function () {
             aud.play();
         });
-    }*/
+    }
 };
 

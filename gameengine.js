@@ -155,7 +155,7 @@ class GameEngine {
 
     update() {
         let entitiesCount = this.entities.length;
-
+        this.updateAuidio();
         if(!this.paused){
             for (let i = 0; i < entitiesCount; i++) {
                 let entity = this.entities[i];
@@ -194,7 +194,13 @@ class GameEngine {
         this.rightclick = null;
         this.wheel = null;
     };
+    updateAuidio() {
+        var mute = document.getElementById("mute").checked;
+        var volume = document.getElementById("volume").value;
 
+        ASSET_MANAGER.muteAudio(mute);
+        ASSET_MANAGER.adjustVolume(volume);
+    }
 };
 
 // KV Le was here :)
