@@ -27,7 +27,7 @@ class AssetManager {
             switch(ext) {
                 case 'png' :
                 case 'jpg' :
-                    var img = new Image();
+                    const img = new Image();
                     img.addEventListener("load", () => {
                         console.log("Loaded " + this.src);
                         this.successCount++;
@@ -45,7 +45,7 @@ class AssetManager {
                     break;
                 case 'wav' :
                 case 'mp3' :
-                    var aud = new Audio();
+                    const aud = new Audio();
                     aud.addEventListener("loadeddata", () => {
                         console.log("Loaded " + this.src);
                         this.successCount++;

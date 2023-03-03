@@ -16,13 +16,13 @@ class sceneManager{
         this.removeFromWorld = false;
         this.num = num;
         this.level = levels[num];
-        this.start = level.start;
+        this.start = this.level.start;
 
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
-        this.x = Math.floor(this.player.transform.pos.x / roomWidth);
+        this.x = Math.floor(this.player.transform.pos.x /roomWidth);
         this.y = Math.floor(this.player.transform.pos.y/roomHeight);
-        this.map = new map(this.level.mapSprite, level);
+        this.map = new map(this.level.mapSprite, num);
         gameEngine.addEntity(this.map);
         ASSET_MANAGER.autoRepead(this.level.soundtrack);
 
