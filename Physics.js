@@ -337,6 +337,13 @@ function prop_explosion_collisions(entities){
                 }
             }
         }
+        if(prop instanceof breakable){
+            for(let explosion of explosions){
+                if (test_overlap(prop.collider.area, explosion.collider.area)) {
+                    prop.removeFromWorld = true;
+                }
+            }
+        }
     }
 }
 

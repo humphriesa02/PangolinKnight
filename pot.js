@@ -77,7 +77,7 @@ class pot{
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
         if(this.holder && this.holder.inventory.key_items.bomb){
-            create_item(item_enum.bomb, this.transform.pos, 20, 0.3);
+            create_item(item_enum.bomb, this.transform.pos, 15, 0.1);
         }
         this.holder = undefined;
         this.break_apart(4);

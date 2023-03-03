@@ -43,6 +43,12 @@ class Item{
 
         /* Item 7, boomerang icon*/
         this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 13, !this.removable);
+
+        /* Item 8, boomerang icon*/
+        this.animations[item_enum.boss_key] = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 13, !this.removable);
+
+        /* Item 9, heart upgrade icon*/
+        this.animations[item_enum.heart_upgrade] = new Animator(this.spritesheet, 64, 16, 16, 16, 1, 13, !this.removable);
     }
 
     update(){
@@ -108,6 +114,16 @@ class Item{
                 }
                 entity.inventory.add_item(this);
                 break;
+            case item_enum.boss_key:
+                if(!entity.inventory.key_items.boss_key){
+                    entity.inventory.key_items.boss_key = true;
+                }
+                entity.inventory.add_item(this);
+                break;
+            case item_enum.heart_upgrade:
+                entity.health.max += 5;
+                entity.health.current = entity.health.max;
+                break;
         }
         this.animations[this.item].repeat = false;
         this.animations[this.item].elapsedTime = 0;
@@ -151,7 +167,9 @@ const item_enum={
     health_potion: 4,
     damage_potion: 5,
     bomb: 6,
-    boomerang: 7
+    boomerang: 7,
+    boss_key: 8,
+    heart_upgrade: 9
 }
 
 /**

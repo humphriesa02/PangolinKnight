@@ -39,11 +39,22 @@ class sceneManager{
         this.player.gravity = new Gravity();
 
         for(let i = 0; i < this.level.pits.length; i++){
-            gameEngine.addEntity(new pit(this.level.pits[i]))
+            let apit = new pit(this.level.pits[i])
+            this.rooms[Math.floor(apit.transform.pos.x/roomWidth)][Math.floor(apit.transform.pos.y/roomHeight)].addEntity(apit);
+            gameEngine.addEntity(apit)
+        }
+
+        for(let i = 0; i < this.level.water.length; i++){
+            let awater = new  water(this.level.water[i]);
+            this.rooms[Math.floor(awater.transform.pos.x/roomWidth)][Math.floor(awater.transform.pos.y/roomHeight)].addEntity(awater);
+            gameEngine.addEntity(awater);
         }
 
         for(let i = 0; i < this.level.locks.length; i++){
             gameEngine.addEntity(new lock(this.level.locks[i]))
+        }
+        for(let i = 0; i < this.level.bossdoor.length; i++){
+            gameEngine.addEntity(new boss_door(this.level.bossdoor[i]))
         }
 
         for(let i = 0; i < this.level.blocks.length; i++){
@@ -63,6 +74,10 @@ class sceneManager{
 
         for(let i = 0; i < this.level.statues.length; i++){
             gameEngine.addEntity(new statue(this.level.statues[i]))
+        }
+
+        for(let i = 0; i < this.level.breakable.length; i++){
+            gameEngine.addEntity(new breakable(this.level.breakable[i]))
         }
         
         for(let i = 0; i < this.level.frogs.length; i++){
@@ -90,6 +105,12 @@ class sceneManager{
             }
             this.rooms[Math.floor(adoor.transform.pos.x/roomWidth)][Math.floor(adoor.transform.pos.y/roomHeight)].addDoor(adoor);
             gameEngine.addEntity(adoor);
+        }
+
+        for(let i = 0; i < this.level.falsewall.length; i++){
+            let afalsewall = new falsewall(this.level.falsewall[i]);
+            this.rooms[Math.floor(afalsewall.transform.pos.x/roomWidth)][Math.floor(afalsewall.transform.pos.y/roomHeight)].addEntity(afalsewall);
+            gameEngine.addEntity(afalsewall);
         }
         for(let i = 0; i < this.level.triggers.length; i++){
             gameEngine.addEntity(new trigger(this.level.triggers[i],this.rooms[Math.floor(this.level.triggers[i].position[0]/17)][Math.floor(this.level.triggers[i].position[1]/13)]));
