@@ -76,12 +76,15 @@ class pot{
         this.shadow.removeFromWorld = true;
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
+        if(this.holder && this.holder.inventory.key_items.bomb){
+            create_item(item_enum.bomb, this.transform.pos, 20, 0.3);
+        }
         this.holder = undefined;
         this.break_apart(4);
         create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
         create_item(item_enum.scale, this.transform.pos, 2, 0.3);
         create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
-        create_item(item_enum.damage_potion, this.transform.pos, 1, 0.1);
+        create_item(item_enum.damage_potion, this.transform.pos, 1, 0.1);  
     }
 
     // Used to "split" the pot into pieces

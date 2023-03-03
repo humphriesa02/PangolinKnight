@@ -34,6 +34,7 @@ function physics(entities) {
     let movement_map = update_pos();
     character_tile_collisions(movement_map);
     character_room_collisions(movement_map);
+    character_explosion_collisions(entities)
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
     prop_collisions(entities);
@@ -116,6 +117,28 @@ function character_room_collisions(entities) {
     }
 }
 
+function character_explosion_collisions(entities){
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
+    let explosions = gameEngine.entity_map.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for (let character of characters) {
+        if (character.collider !== undefined) {
+            for (let explosion of explosions) {
+                if (test_overlap(character.collider.area, explosion.collider.area)) {
+                    hit(character, explosion, 3);
+                }
+            }
+        }
+    }
+}
+
 
 function player_enemy_collisions(entities){
     for (let player of entities.get("player")){
@@ -165,6 +188,7 @@ function prop_collisions(entities) {
     prop_room_collisions(entities);
     prop_prop_collisions(entities);
     prop_tile_collisions(entities);
+    prop_explosion_collisions(entities);
 }
 
 function character_prop_collisions(entities) {
@@ -192,6 +216,9 @@ function character_prop_collisions(entities) {
                     hit(character, prop, 1);
                     prop.shatter();
                 } 
+                if (prop instanceof Boomerang && character !== prop.holder){
+                    hit(character, prop, 1);
+                }
             }
             if (character.tag == "player" && prop.requires_facing) {
                 let point;
@@ -228,7 +255,9 @@ function prop_room_collisions(entities) {
                 let overlap = prevent_overlap(prop, wall);
                 if (overlap) {
                     if (prop instanceof pot) {
-                        prop.shatter();
+                        if(!prop.picked_up){
+                            prop.shatter();
+                        }
                     }
                     else if (prop instanceof block) {
                         prop.reset();
@@ -258,6 +287,15 @@ function prop_prop_collisions(entities) {
                 }
             }
         }
+        if(a instanceof Boomerang){
+            for(let b of props){
+                if(b instanceof Item){
+                    if(test_overlap(a.collider.area, b.collider.area)){
+                        a.stick(b);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -273,6 +311,29 @@ function prop_tile_collisions(entities) {
             for (let tile of tiles) {
                 if (test_overlap(prop.collider.area, tile.collider.area)) {
                     prop.reset();
+                }
+            }
+        }
+        if(prop instanceof Boomerang){
+            for (let tile of tiles){
+                prevent_overlap(prop, tile)
+            }
+        }
+    }
+}
+
+function prop_explosion_collisions(entities){
+    let props = entities.get("prop");
+    if (props == undefined) {return; }
+
+    let explosions = entities.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for(let prop of props){
+        if(prop instanceof pot){
+            for(let explosion of explosions){
+                if (test_overlap(prop.collider.area, explosion.collider.area)) {
+                    prop.shatter();
                 }
             }
         }
