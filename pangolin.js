@@ -435,9 +435,17 @@ class Pangolin{
         else if(this.state == state_enum.dead && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){ // end the game
             let explosion = new Explosion(this);
             gameEngine.addEntity(explosion);
-            this.removeFromWorld = true;
             this.game.paused = true;
             this.game.menu.current_displayed = menu_enum.lose;
+            this.health.current = this.health.max;
+            this.inventory.reset();
+            this.transform.pos.x = gameEngine.camera.level.start[0] * tileSize + 8;
+            this.transform.pos.y = gameEngine.camera.level.start[1] * tileSize + 8;
+            for(let i = 0; i < 4; i++){
+                this.animations[state_enum.dead][i][0].elapsedTime = 0;
+                this.animations[state_enum.dead][i][0].done = false;
+            }
+            this.state = state_enum.idle;
         }
     }
 

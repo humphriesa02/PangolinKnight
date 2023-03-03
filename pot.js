@@ -79,9 +79,6 @@ class pot{
         if(this.holder && this.holder.inventory.key_items.bomb){
             create_item(item_enum.bomb, this.transform.pos, 20, 0.3);
         }
-        if(this.holder && !this.holder.inventory.key_items.boomerang){
-            create_item(item_enum.boomerang, this.transform.pos, 1, 1);
-        }
         this.holder = undefined;
         this.break_apart(4);
         create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);

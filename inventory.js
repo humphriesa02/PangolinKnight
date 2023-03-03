@@ -178,6 +178,24 @@ class Inventory{
             }
         }
     }
+
+    reset(){
+        if(this.currency - 20 > 0){
+            this.currency -= 20;
+        }
+        else{
+            this.currency = 0;
+        }
+        this.bomb_count = 0;
+        
+        for(let i = 0; i < this.item_buttons.length; i++){
+            if(this.item_buttons[i].item_held != undefined && this.item_buttons[i].item_held.item != 3 && 
+                this.item_buttons[i].item_held.item != 6 &&
+                this.item_buttons[i].item_held.item != 7){
+                    this.item_buttons[i].item_held = undefined;
+                }
+        }
+    }
 }
 
 class InventoryButton{

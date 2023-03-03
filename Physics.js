@@ -255,7 +255,9 @@ function prop_room_collisions(entities) {
                 let overlap = prevent_overlap(prop, wall);
                 if (overlap) {
                     if (prop instanceof pot) {
-                        prop.shatter();
+                        if(!prop.picked_up){
+                            prop.shatter();
+                        }
                     }
                     else if (prop instanceof block) {
                         prop.reset();
