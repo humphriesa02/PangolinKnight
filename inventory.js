@@ -2,7 +2,7 @@ class Inventory{
     constructor(player){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.currency = 0;
-        this.small_keys = 1;
+        this.small_keys = 0;
         this.bomb_count = 0;
         this.key_items = {
             sword: true,
