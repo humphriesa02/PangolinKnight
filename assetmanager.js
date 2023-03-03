@@ -27,7 +27,7 @@ class AssetManager {
             switch(ext) {
                 case 'png' :
                 case 'jpg' :
-                    var img = new Image();
+                    const img = new Image();
                     img.addEventListener("load", () => {
                         console.log("Loaded " + this.src);
                         this.successCount++;
@@ -45,7 +45,7 @@ class AssetManager {
                     break;
                 case 'wav' :
                 case 'mp3' :
-                    var aud = new Audio();
+                    const aud = new Audio();
                     aud.addEventListener("loadeddata", () => {
                         console.log("Loaded " + this.src);
                         this.successCount++;
@@ -74,11 +74,17 @@ class AssetManager {
     getAsset(path) {
         return this.cache[path];
     };
-    /*
+    
     playAsset(path) {
-        let audio = this.cache[path];
-        audio.currentTime = 0;
-        audio.play();
+        let aud = this.cache[path];
+        aud.currentTime = 0;
+        aud.play();
+    }
+
+    pauseAsset(path) {
+        var aud = this.cache[path];
+        aud.currentTime = 0;
+        aud.pause();
     }
 
     muteAudio(mute){
@@ -114,6 +120,6 @@ class AssetManager {
         aud.addEventListener("ended", function () {
             aud.play();
         });
-    }*/
+    }
 };
 

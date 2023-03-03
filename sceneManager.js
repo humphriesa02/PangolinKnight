@@ -7,22 +7,24 @@ class sceneManager{
 
         this.player = new Pangolin(gameEngine);
         this.hud = new HUD(this.player);
-        //this.loadLevel(1);
         this.updatable = true;
     }
-    loadLevel(level){
-        //ASSET_MANAGER.pauseBackgroundMusic();
+    loadLevel(num){
+        ASSET_MANAGER.pauseBackgroundMusic();
         this.player.removeFromWorld = false;
         this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
-        this.num = level;
-        this.level = levels[level];
+        this.num = num;
+        this.level = levels[num];
+        this.start = this.level.start;
+
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
-        this.x = Math.floor(this.player.transform.pos.x / roomWidth);
+        this.x = Math.floor(this.player.transform.pos.x /roomWidth);
         this.y = Math.floor(this.player.transform.pos.y/roomHeight);
-        this.map = new map(this.level.mapSprite, level);
+        this.map = new map(this.level.mapSprite, num);
         gameEngine.addEntity(this.map);
+        ASSET_MANAGER.autoRepead(this.level.soundtrack);
 
         this.rooms = []
         for(let i = 0; i < this.level.rooms.length; i++){
@@ -90,7 +92,7 @@ class sceneManager{
             gameEngine.addEntity(adoor);
         }
         for(let i = 0; i < this.level.triggers.length; i++){
-            gameEngine.addEntity(new trigger(this.level.triggers[i],this.rooms[Math.floor(this.level.triggers[i].position[0]/16)][Math.floor(this.level.triggers[i].position[1]/16)]));
+            gameEngine.addEntity(new trigger(this.level.triggers[i],this.rooms[Math.floor(this.level.triggers[i].position[0]/17)][Math.floor(this.level.triggers[i].position[1]/13)]));
         }
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
@@ -110,7 +112,7 @@ class sceneManager{
         this.rooms[this.x][this.y].activate();
        
         gameEngine.hud = this.hud;
-         //ASSET_MANAGER.playAsset(this.level.soundtrack);
+        ASSET_MANAGER.playAsset(this.level.soundtrack);
     }
     update(){
 
@@ -151,16 +153,8 @@ class sceneManager{
                 this.rooms[this.x][this.y].activate();
             }
         }
-        //this.updateAuidio();
     }
     draw(ctx){
 
-    }
-    updateAuidio() {
-        var mute = document.getElementById("mute").Checked;
-        var volume = document.getElementById("volume").value;
-
-        ASSET_MANAGER.muteAudio(mute);
-        ASSET_MANAGER.adjustVolume(volume);
     }
 }

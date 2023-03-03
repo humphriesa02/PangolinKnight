@@ -23,6 +23,27 @@ ASSET_MANAGER.queueDownload("./sprites/skelly.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_play.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_lose_screen.png");
 ASSET_MANAGER.queueDownload("./sounds/Memoraphile.mp3");
+ASSET_MANAGER.queueDownload("./sounds/Bomb_explode.wav");
+ASSET_MANAGER.queueDownload("./sounds/Boomerang.wav");
+ASSET_MANAGER.queueDownload("./sounds/Boss_Hit.wav");
+ASSET_MANAGER.queueDownload("./sounds/Bounce.wav");
+ASSET_MANAGER.queueDownload("./sounds/Death.wav");
+ASSET_MANAGER.queueDownload("./sounds/Enemy_Die.wav");
+ASSET_MANAGER.queueDownload("./sounds/Enemy_Hit.wav");
+ASSET_MANAGER.queueDownload("./sounds/Fall.wav");
+ASSET_MANAGER.queueDownload("./sounds/Hurt.wav");
+ASSET_MANAGER.queueDownload("./sounds/Jump.wav");
+ASSET_MANAGER.queueDownload("./sounds/Key_get.wav");
+ASSET_MANAGER.queueDownload("./sounds/Land.wav");
+ASSET_MANAGER.queueDownload("./sounds/PickUp.wav");
+ASSET_MANAGER.queueDownload("./sounds/Push.wav");
+ASSET_MANAGER.queueDownload("./sounds/Scale_pick_up.wav");
+ASSET_MANAGER.queueDownload("./sounds/Shatter.wav");
+ASSET_MANAGER.queueDownload("./sounds/Slash1.wav");
+ASSET_MANAGER.queueDownload("./sounds/Slash2.wav");
+ASSET_MANAGER.queueDownload("./sounds/Slash3.wav");
+ASSET_MANAGER.queueDownload("./sounds/Slash4.wav");
+ASSET_MANAGER.queueDownload("./sounds/Throw.wav");
 
 ASSET_MANAGER.downloadAll(() => {
 	const canvas = document.getElementById("gameWorld");
