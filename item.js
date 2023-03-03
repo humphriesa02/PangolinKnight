@@ -42,7 +42,7 @@ class Item{
         this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 6, !this.removable);
 
         /* Item 7, boomerang icon*/
-        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 6, this.removable);
+        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 13, !this.removable);
     }
 
     update(){

@@ -40,6 +40,10 @@ class Pangolin{
         this.min_roll_speed_sqr = 0.09;
         this.cr = 0;
 
+        // To reset boomerang
+        this.boomerang_respawn_delay = 15;
+        this.boomerang_respawn_time;
+
         // Jump variable
         this.grounded = true;
 
@@ -447,6 +451,11 @@ class Pangolin{
             }
             this.state = state_enum.idle;
         }
+
+        if(this.boomerang_respawn_time && gameEngine.timer.gameTime >= this.boomerang_respawn_time){
+            this.boomerang_respawn_time = undefined;
+            create_item(item_enum.boomerang, this.transform.pos, 1, 1, false);
+        }
     }
 
     // Get input
@@ -554,6 +563,7 @@ class Pangolin{
                     if(this.inventory.secondary_item.item == item_enum.boomerang){
                         let boomerang = new Boomerang(this);
                         gameEngine.addEntity(boomerang);
+                        this.boomerang_respawn_time = this.game.timer.gameTime + this.boomerang_respawn_delay;
                     }
                     this.state = state_enum.use_item;
                 }
