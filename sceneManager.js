@@ -36,7 +36,6 @@ class sceneManager{
         }
         
         gameEngine.gravity = this.level.gravity;
-        this.player.gravity = new Gravity();
 
         for(let i = 0; i < this.level.pits.length; i++){
             gameEngine.addEntity(new pit(this.level.pits[i]))
