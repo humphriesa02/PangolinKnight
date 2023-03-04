@@ -3,6 +3,7 @@ class Inventory{
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
         this.currency = 0;
         this.small_keys = 0;
+        this.bomb_count = 0;
         this.key_items = {
             sword: true,
             bomb:false,
@@ -52,6 +53,12 @@ class Inventory{
 
         // damage potion
         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 1, true);
+
+        // bombs
+        this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 1, true);
+
+        // booomerang
+        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 1, true);
     }
 
     init_buttons(){
@@ -59,7 +66,7 @@ class Inventory{
         for(let row = 0; row < 4; row++){
             for(let col = 0; col < 4; col++){
                 let button = new InventoryButton(k, new Vec2((16 * params.scale ) + col * (36 * params.scale), (8 * params.scale ) + row * (29 * params.scale)),
-                new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue);
+                new Vec2(19  + (col * 36), 11 + (row * 29)), this.swap_queue, this);
                 this.item_buttons.push(button);
                 k++;
             }
@@ -122,9 +129,9 @@ class Inventory{
 
         ctx.drawImage(this.spritesheet, 0, 32, 16, 32, 217.5 * params.scale, 151 * params.scale, 12 * params.scale, 24 * params.scale);
         // Horizontal hotbar
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
-        ctx.drawImage(this.spritesheet, 32, 48, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 188 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 211 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
+        ctx.drawImage(this.spritesheet, 16, 48, 16, 16, 234 * params.scale, 175 * params.scale, 24 * params.scale, 24 * params.scale);
         for(let i = 0; i < this.hotbar.length; i++){
             if(this.hotbar[i] != undefined){
                 this.hotbar[i].animations[this.hotbar[i].item].drawHUD(gameEngine.clockTick, ctx, 190 + (i * 23), 177, 20, 20, false);
@@ -171,10 +178,28 @@ class Inventory{
             }
         }
     }
+
+    reset(){
+        if(this.currency - 20 > 0){
+            this.currency -= 20;
+        }
+        else{
+            this.currency = 0;
+        }
+        this.bomb_count = 0;
+        
+        for(let i = 0; i < this.item_buttons.length; i++){
+            if(this.item_buttons[i].item_held != undefined && this.item_buttons[i].item_held.item != 3 && 
+                this.item_buttons[i].item_held.item != 6 &&
+                this.item_buttons[i].item_held.item != 7){
+                    this.item_buttons[i].item_held = undefined;
+                }
+        }
+    }
 }
 
 class InventoryButton{
-    constructor(count, screen_pos, item_pos, swap_queue){
+    constructor(count, screen_pos, item_pos, swap_queue, inventory){
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png"); // Just need this for the box image
         this.item_held;
         this.screen_pos = screen_pos;
@@ -186,6 +211,7 @@ class InventoryButton{
         this.swap_queue_ref = swap_queue;
         this.highlighted = false;
         this.count = count;
+        this.inventory = inventory;
     }
     update(){
         if(gameEngine.click){
@@ -220,12 +246,30 @@ class InventoryButton{
 
     draw(ctx){
         if(this.count == 0 || this.count == 1 || this.count == 2){
-            ctx.drawImage(this.spritesheet, 32, 48, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
+            ctx.drawImage(this.spritesheet, 16, 48, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
         }
         else{
             ctx.drawImage(this.spritesheet, 48, 64, 16, 16, this.screen_pos.x, this.screen_pos.y, 28 * params.scale, 28 * params.scale);
         }
-        if(this.item_held != undefined){this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);}
+        if(this.item_held != undefined){
+            this.item_held.animations[this.item_held.item].drawHUD(gameEngine.clockTick, ctx, this.item_pos.x, this.item_pos.y, 22, 22, false);
+            if(this.item_held.item == item_enum.bomb){
+                ctx.font = '32px "VT323"';
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 6;
+                ctx.strokeText(this.inventory.bomb_count, (this.screen_pos.x + this.half_width) - 6 * params.scale, (this.screen_pos.y + this.half_height) - 3 * params.scale);
+                if(this.inventory.bomb_count == 20){
+                    ctx.fillStyle = 'green'
+                }
+                else{
+                    ctx.fillStyle = "white";
+                }
+                ctx.fillText(this.inventory.bomb_count, (this.screen_pos.x + this.half_width) - 6 * params.scale, (this.screen_pos.y + this.half_height) - 3 * params.scale);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+        
         if(this.highlighted){
             draw_hud_rect(ctx, this.item_pos.x-1, this.item_pos.y-1, 24, 24, false, "yellow", 2);
         }

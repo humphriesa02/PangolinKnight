@@ -6,6 +6,7 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
         this.settings;
         this.transition_cooldown_end = 0;
         this.transition_cooldown_duration = 0.5;
+        this.reset_button = new menuButton(3, false, undefined);
     }
 
     update(){
@@ -36,7 +37,10 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
                 this.transition_cooldown_end = gameEngine.timer.gameTime + this.transition_cooldown_duration;
             } 
         }
-        
+        if(this.reset_button.updatable != true && this.current_displayed == menu_enum.lose){
+            this.reset_button.updatable = true;
+        }
+        this.reset_button.update();        
     }
 
     draw(ctx){
@@ -73,26 +77,28 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
 
     draw_lose_menu(ctx){
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_lose_screen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-        //console.log(roomWidth, roomHeight);
         ctx.font = '100px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 8;
         ctx.textAlign = "center";
         ctx.fillStyle = "white";
-        ctx.strokeText("Game", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 65 * params.scale);
-        ctx.fillText("Game", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 - 65 * params.scale);
-        ctx.strokeText("Over", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 + 75 * params.scale);
-        ctx.fillText("Over", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 + 75 * params.scale);
+        ctx.strokeText("Game", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 75 * params.scale);
+        ctx.fillText("Game", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 - 75 * params.scale);
+        ctx.strokeText("Over", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 55 * params.scale);
+        ctx.fillText("Over", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 - 55 * params.scale);
         ctx.font = '30px "VT323"';
-        ctx.strokeText("Try again!", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 + 85 * params.scale);
-        ctx.fillText("Try again!", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 + 85 * params.scale);
+        ctx.strokeText("Continue?", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 + 60 * params.scale);
+        ctx.fillText("Continue?", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 + 60 * params.scale);
+        ctx.font = '100px "VT323"';
+        ctx.strokeText("Continue?", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 * params.scale);
+        ctx.fillText("Continue?", (roomWidth * params.scale) / 2, (roomHeight * params.scale) / 2 * params.scale);
         ctx.lineWidth = 2;
         ctx.stroke();
+        ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_play.png"), (this.reset_button.pos.x * params.scale) - ((64 * params.scale)/2), (this.reset_button.pos.y * params.scale)-((32 * params.scale)/2), 64 * params.scale, 32 * params.scale);
     }
 
     draw_win_menu(ctx){
         ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/PangolinPauseScreen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
-        //console.log(roomWidth, roomHeight);
         ctx.font = '70px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.fillStyle = "white";
