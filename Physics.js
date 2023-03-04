@@ -34,10 +34,10 @@ function physics(entities) {
     let movement_map = update_pos();
     character_tile_collisions(movement_map);
     character_room_collisions(movement_map);
+    character_explosion_collisions(entities)
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
-    character_prop_collisions(entities);
-    prop_room_collisions(movement_map);
+    prop_collisions(entities);
 }
 
 
@@ -110,10 +110,29 @@ function character_room_collisions(entities) {
 
     for (let character of characters) {
         if (character.collider !== undefined) {
-            for (let room of gameEngine.entity_map.get("room")) {
-                for (let col of room.colliders) {
-                    c = {collider: col};
-                    prevent_overlap(character, c);
+            for (let wall of gameEngine.entity_map.get("wall")) {
+                prevent_overlap(character, wall);
+            }
+        }
+    }
+}
+
+function character_explosion_collisions(entities){
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
+    let explosions = gameEngine.entity_map.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for (let character of characters) {
+        if (character.collider !== undefined) {
+            for (let explosion of explosions) {
+                if (test_overlap(character.collider.area, explosion.collider.area)) {
+                    hit(character, explosion, 3);
                 }
             }
         }
@@ -127,7 +146,7 @@ function player_enemy_collisions(entities){
             if (enemy.collider !== undefined) {
                 if (test_overlap(player.collider.area, enemy.collider.area)) {
                     if (enemy.collider.block_move) {
-                        //prevent_overlap(player, enemy);
+                        soft_prevent_overlap(player, enemy);
                     }
                     if (enemy.overlap_damage) {
                         console.log("PLAYER HIT");
@@ -156,12 +175,20 @@ function sword_character_collisions(entities) {
                 if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
-                        hit(character, sword, sword.owner.damage);
+                        hit(character, sword.owner, sword.owner.damage);
                     }
                 }
             }
         }
     }
+}
+
+function prop_collisions(entities) {
+    character_prop_collisions(entities);
+    prop_room_collisions(entities);
+    prop_prop_collisions(entities);
+    prop_tile_collisions(entities);
+    prop_explosion_collisions(entities);
 }
 
 function character_prop_collisions(entities) {
@@ -189,6 +216,9 @@ function character_prop_collisions(entities) {
                     hit(character, prop, 1);
                     prop.shatter();
                 } 
+                if (prop instanceof Boomerang && character !== prop.holder){
+                    hit(character, prop, 1);
+                }
             }
             if (character.tag == "player" && prop.requires_facing) {
                 let point;
@@ -221,18 +251,89 @@ function prop_room_collisions(entities) {
 
     for (let prop of props) {
         if (prop.collider !== undefined) {
-            for (let room of gameEngine.entity_map.get("room")) {
-                for (let col of room.colliders) {
-                    c = {collider: col};
-                    let overlap = prevent_overlap(prop, c);
-                    if (overlap) {
-                        if (prop instanceof pot) {
+            for (let wall of gameEngine.entity_map.get("wall")) {
+                let overlap = prevent_overlap(prop, wall);
+                if (overlap) {
+                    if (prop instanceof pot) {
+                        if(!prop.picked_up){
                             prop.shatter();
                         }
-                        else if (prop instanceof block) {
-                            prop.reset();
+                    }
+                    else if (prop instanceof block) {
+                        prop.reset();
+                    }
+                }
+            }
+        }
+    }
+}
+
+function prop_prop_collisions(entities) {
+    let props = entities.get("prop");
+    if (props == undefined) { return; }
+
+    for (let a of props) {
+        if (a instanceof block) {
+            for (let b of props) {
+                if (b instanceof block && a != b) {
+                    if (test_overlap(a.collider.area, b.collider.area)) {
+                        if (a.moving) {
+                            a.reset();
+                        }
+                        if (b.moving) {
+                            b.reset();
                         }
                     }
+                }
+            }
+        }
+        if(a instanceof Boomerang){
+            for(let b of props){
+                if(b instanceof Item){
+                    if(test_overlap(a.collider.area, b.collider.area)){
+                        a.stick(b);
+                    }
+                }
+            }
+        }
+    }
+}
+
+function prop_tile_collisions(entities) {
+    let props = entities.get("prop");
+    if (props == undefined) { return; }
+
+    let tiles = entities.get("tile");
+    if (tiles == undefined) { return; }
+
+    for (let prop of props) {
+        if (prop instanceof block) {
+            for (let tile of tiles) {
+                if (test_overlap(prop.collider.area, tile.collider.area)) {
+                    prop.reset();
+                }
+            }
+        }
+        if(prop instanceof Boomerang){
+            for (let tile of tiles){
+                prevent_overlap(prop, tile)
+            }
+        }
+    }
+}
+
+function prop_explosion_collisions(entities){
+    let props = entities.get("prop");
+    if (props == undefined) {return; }
+
+    let explosions = entities.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for(let prop of props){
+        if(prop instanceof pot){
+            for(let explosion of explosions){
+                if (test_overlap(prop.collider.area, explosion.collider.area)) {
+                    prop.shatter();
                 }
             }
         }
@@ -533,6 +634,47 @@ function bounce(entity, normal, cr) {
 function sq_distance(a, b) {
     let distance_v = Vec2.diff(a, b);
     return distance_v.dot(distance_v);
+}
+
+function soft_prevent_overlap(a, b) {
+    let test = false;
+    if (a.collider.area instanceof AABB && b.collider.area instanceof AABB) {
+        test = test_AABBs(a.collider.area, b.collider.area);
+        
+    }
+    else if (a.collider.area instanceof Circle && b.collider.area instanceof Circle)
+    {
+        test = test_Circles(a.collider.area, b.collider.area);
+        
+    }
+    else {
+        let circle;
+        let box;
+        if (a.collider.area instanceof Circle && b.collider.area instanceof AABB) {
+            circle = a;
+            box = b;
+        }
+        else if (a.collider.area instanceof AABB && b.collider.area instanceof Circle) {
+            circle = b;
+            box = a;
+        }
+
+        test = test_Circle_AABB(circle.collider.area, box.collider.area);
+    }
+
+    if (test.test) {
+        push_out(a, b);
+    }
+
+    return test.test;
+}
+
+function push_out(a, b) {
+    let distance_vector = Vec2.diff(a.collider.area.center, b.collider.area.center); 
+    let distance = distance_vector.normalize();
+
+    let push_vector = Vec2.scale(distance_vector, 2.5 / distance);
+    a.transform.pos.add(push_vector);
 }
 
 class Test_Block {

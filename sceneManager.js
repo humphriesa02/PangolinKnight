@@ -7,20 +7,24 @@ class sceneManager{
 
         this.player = new Pangolin(gameEngine);
         this.hud = new HUD(this.player);
-        //this.loadLevel(1);
         this.updatable = true;
     }
-    loadLevel(level){
+    loadLevel(num){
+        ASSET_MANAGER.pauseBackgroundMusic();
         this.player.removeFromWorld = false;
         this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
-        this.level = levels[level];
+        this.num = num;
+        this.level = levels[num];
+        this.start = this.level.start;
+
         this.player.transform.pos.x = this.level.start[0] * tileSize + 8;
         this.player.transform.pos.y = this.level.start[1] * tileSize + 8;
-        this.x = Math.floor(this.player.transform.pos.x / roomWidth);
+        this.x = Math.floor(this.player.transform.pos.x /roomWidth);
         this.y = Math.floor(this.player.transform.pos.y/roomHeight);
-        this.map = new map(this.level.mapSprite);
+        this.map = new map(this.level.mapSprite, num);
         gameEngine.addEntity(this.map);
+        ASSET_MANAGER.autoRepead(this.level.soundtrack);
 
         this.rooms = []
         for(let i = 0; i < this.level.rooms.length; i++){
@@ -79,8 +83,17 @@ class sceneManager{
             gameEngine.addEntity(enemy);
 
         } 
-
-        gameEngine.addEntity(new stair(this.level.stairs));
+        for(let i = 0; i < this.level.doors.length; i++){
+            let adoor = new door(this.level.doors[i]);
+            if(this.level.doors[i].button){
+                gameEngine.addEntity(new button(this.level.doors[i].button,adoor));
+            }
+            this.rooms[Math.floor(adoor.transform.pos.x/roomWidth)][Math.floor(adoor.transform.pos.y/roomHeight)].addDoor(adoor);
+            gameEngine.addEntity(adoor);
+        }
+        for(let i = 0; i < this.level.triggers.length; i++){
+            gameEngine.addEntity(new trigger(this.level.triggers[i],this.rooms[Math.floor(this.level.triggers[i].position[0]/17)][Math.floor(this.level.triggers[i].position[1]/13)]));
+        }
         this.game.addEntity(this.player.shadow);
         gameEngine.player = this.player;
         gameEngine.addEntity(this.player);
@@ -88,12 +101,18 @@ class sceneManager{
 
         for(let i = 0; i < this.level.pots.length; i++){
             let apot = new pot(this.level.pots[i]);
-            this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
+           this.rooms[Math.floor(apot.transform.pos.x/roomWidth)][Math.floor(apot.transform.pos.y/roomHeight)].addEntity(apot);
             gameEngine.addEntity(apot);
+        }
+
+        for(let i = 0; i < this.level.Walls.length; i++){
+            gameEngine.addEntity(new wall(this.level.Walls[i]));
         }
         this.hud.removeFromWorld = false;
         this.rooms[this.x][this.y].activate();
-        gameEngine.addEntity(this.hud);
+       
+        gameEngine.hud = this.hud;
+        ASSET_MANAGER.playAsset(this.level.soundtrack);
     }
     update(){
 
@@ -134,7 +153,6 @@ class sceneManager{
                 this.rooms[this.x][this.y].activate();
             }
         }
-
     }
     draw(ctx){
 

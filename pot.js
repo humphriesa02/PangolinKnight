@@ -76,12 +76,15 @@ class pot{
         this.shadow.removeFromWorld = true;
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
+        if(this.holder && this.holder.inventory.key_items.bomb){
+            create_item(item_enum.bomb, this.transform.pos, 20, 0.3);
+        }
         this.holder = undefined;
         this.break_apart(4);
         create_item(item_enum.small_heart, this.transform.pos, 2, 0.4);
         create_item(item_enum.scale, this.transform.pos, 2, 0.3);
         create_item(item_enum.health_potion, this.transform.pos, 1, 0.15);
-        create_item(item_enum.damage_potion, this.transform.pos, 1, 0.1);
+        create_item(item_enum.damage_potion, this.transform.pos, 1, 0.1);  
     }
 
     // Used to "split" the pot into pieces
@@ -113,6 +116,7 @@ class pot{
         this.in_air.distance_remaining = this.in_air.air_distance * this.in_air.starting_percentage;
         this.transform.pos.x = this.position[0] * 16 + 8;
         this.transform.pos.y = this.position[1] * 16 + 8;
+        this.in_air.z = 0;
         this.picked_up = false;
         this.thrown = false;
         this.collider.block_move = true;
@@ -162,7 +166,6 @@ class Pieces{
         if(document.getElementById("debug").checked){
             draw_rect(ctx, this.transform.pos.x, this.transform.pos.y, 8, 8, false, true, 1);
         }
-        console.log(this.in_air.z);
         this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y - this.in_air.z, 8, 8);
     }
 }

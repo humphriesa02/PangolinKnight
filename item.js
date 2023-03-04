@@ -35,8 +35,14 @@ class Item{
         /* Item 4, health potion */
         this.animations[item_enum.health_potion] = new Animator(this.spritesheet, 16, 0, 16, 16, 1, 6, !this.removable);
 
-         /* Item 5, amage larvae */
-         this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 6, !this.removable);
+        /* Item 5, damage larvae */
+        this.animations[item_enum.damage_potion] = new Animator(this.spritesheet, 32, 0, 16, 16, 1, 6, !this.removable);
+
+        /* Item 6, bomb icon*/
+        this.animations[item_enum.bomb] = new Animator(this.spritesheet, 48, 48, 16, 16, 1, 6, !this.removable);
+
+        /* Item 7, boomerang icon*/
+        this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 6, this.removable);
     }
 
     update(){
@@ -83,6 +89,25 @@ class Item{
             case item_enum.damage_potion:
                 entity.inventory.add_item(this);
                 break;
+            case item_enum.bomb:
+                if(entity.inventory.key_items.bomb){
+                    if(entity.inventory.bomb_count < 20){
+                        entity.inventory.bomb_count++;
+                    }
+                    
+                }
+                else{
+                    entity.inventory.add_item(this);
+                    entity.inventory.key_items.bomb = true;
+                    entity.inventory.bomb_count++;
+                }
+                break;
+            case item_enum.boomerang:
+                if(!entity.inventory.key_items.boomerang){
+                    entity.inventory.key_items.boomerang = true;
+                }
+                entity.inventory.add_item(this);
+                break;
         }
         this.animations[this.item].repeat = false;
         this.animations[this.item].elapsedTime = 0;
@@ -96,19 +121,25 @@ class Item{
         switch(this.item){
             case item_enum.health_potion:
                 if(entity.health.current < entity.health.max){
-                    entity.health.current += 3;        
+                    entity.health.current += 3;
+                    if(entity.health.current > entity.health.max){
+                        entity.health.current = entity.health.max;
+                    }
                 }
                 break;
             case item_enum.damage_potion:
                 entity.damage = 3;
                 break;
+            case item_enum.bomb:
+                if(entity.inventory.bomb_count >0){
+                    entity.inventory.bomb_count--;
+                }
+                
         }
-        let inventory_item_index = entity.inventory.items.indexOf(this);
-        entity.inventory.items.splice(inventory_item_index, 1);
-        let inventory_hotbar_index = entity.inventory.hotbar.indexOf(this);
-        if(inventory_hotbar_index != -1){
-            entity.inventory.hotbar.splice(inventory_hotbar_index, 1);
+        if(this.item != item_enum.bomb){
+            entity.inventory.remove_item(this);
         }
+       
     }
 }
 
@@ -118,7 +149,9 @@ const item_enum={
     small_key: 2,
     sword: 3,
     health_potion: 4,
-    damage_potion: 5
+    damage_potion: 5,
+    bomb: 6,
+    boomerang: 7
 }
 
 /**
