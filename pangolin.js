@@ -27,7 +27,7 @@ class Pangolin{
         this.slash_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_slash_sheet.png");
 
         // Some state variables
-        this.facing = 2; // 0 = right, 1 = left, 2 = up, 3 = down
+        this.facing = 0; // 0 = right, 1 = left, 2 = up, 3 = down
         this.state = state_enum.idle; // 0 = idle, 1= walking, 2 = sword slash,
                                       // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = use_item
                                       // 8 = falling
@@ -435,17 +435,9 @@ class Pangolin{
         else if(this.state == state_enum.dead && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){ // end the game
             let explosion = new Explosion(this);
             gameEngine.addEntity(explosion);
+            this.removeFromWorld = true;
             this.game.paused = true;
             this.game.menu.current_displayed = menu_enum.lose;
-            this.health.current = this.health.max;
-            this.inventory.reset();
-            this.transform.pos.x = gameEngine.camera.level.start[0] * tileSize + 8;
-            this.transform.pos.y = gameEngine.camera.level.start[1] * tileSize + 8;
-            for(let i = 0; i < 4; i++){
-                this.animations[state_enum.dead][i][0].elapsedTime = 0;
-                this.animations[state_enum.dead][i][0].done = false;
-            }
-            this.state = state_enum.idle;
         }
     }
 
@@ -542,21 +534,7 @@ class Pangolin{
             }
             else if(this.inventory.secondary_item != null){
                 // Initiate using item
-                if(this.inventory.secondary_item.item == item_enum.bomb){
-                    if(this.inventory.bomb_count > 0){
-                        this.state = state_enum.holding;
-                        let bomb = new Bomb(this);
-                        gameEngine.addEntity(bomb);
-                        this.held_entity = bomb;
-                    }
-                }
-                else{
-                    if(this.inventory.secondary_item.item == item_enum.boomerang){
-                        let boomerang = new Boomerang(this);
-                        gameEngine.addEntity(boomerang);
-                    }
-                    this.state = state_enum.use_item;
-                }
+                this.state = state_enum.use_item;
                 this.inventory.secondary_item.use(this); 
             }
             this.rolling = false;
@@ -634,7 +612,7 @@ class Pangolin{
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
                 this.state != state_enum.holding && this.state != state_enum.use_item &&
                  this.state != state_enum.falling){
-                if (Math.abs(this.transform.velocity.x) <= 3 && Math.abs(this.transform.velocity.y) <= 3){
+                if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
                     this.state = state_enum.idle; // idle state
                 }
                 else{ // moving

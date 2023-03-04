@@ -47,31 +47,10 @@ class HUD{
 
         ctx.drawImage(this.item_spritesheet, 48, 64, 16, 16, 40 * params.scale, 180 * params.scale, 24 * params.scale, 24 * params.scale);
         if(this.player.held_entity != undefined){
-            if(this.player.held_entity instanceof Bomb){
-                this.player.held_entity.animations[0].drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
-            }
-            else{
-                this.player.held_entity.animator.drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
-            }
-           
+            this.player.held_entity.animator.drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
         }
         else if(this.player.inventory.secondary_item != undefined){
             this.player.inventory.animations[this.player.inventory.secondary_item.item].drawHUD(gameEngine.clockTick, ctx, 42, 182, 20, 20, false);
-            if(this.player.inventory.secondary_item.item == item_enum.bomb){
-                ctx.font = '32px "VT323"';
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = 6;
-                ctx.strokeText(this.player.inventory.bomb_count, (62 * params.scale) - 6 * params.scale, (202 * params.scale)-1 * params.scale);
-                if(this.player.inventory.bomb_count == 20){
-                    ctx.fillStyle = 'green'
-                }
-                else{
-                    ctx.fillStyle = "white";
-                }
-                ctx.fillText(this.player.inventory.bomb_count, (62 * params.scale) - 6 * params.scale, (202 * params.scale)-1 * params.scale);
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
         }
         
         ctx.drawImage(this.item_spritesheet, 64, 64, 16, 16, 60 * params.scale, 182 * params.scale, 20 * params.scale, 20 * params.scale);

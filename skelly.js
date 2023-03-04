@@ -12,6 +12,8 @@ class Skelly{
         this.move_time = 3;
         this.delay_time = 3;
         this.player = player;
+        this.animations = [];
+        this.loadAnimations();
         this.updatable = false;
 
         this.state = 0
@@ -19,13 +21,6 @@ class Skelly{
         this.attack_start;
         this.attack_on_cooldown = false;
         this.attacking = false;
-
-        this._WIND_UP_TIME = .7;
-        this._SLASH_TIME = .48;
-        this._COOLDOWN_TIME = this._WIND_UP_TIME + this._SLASH_TIME + 1.52;
-
-        this.animations = [];
-        this.loadAnimations();
     }
 
     loadAnimations(){
@@ -44,9 +39,9 @@ class Skelly{
         this.animations[1][1] = new Animator(this.spritesheet, 240, 0, 48, 78, 1, 1, true);
 
         // Attack right
-        this.animations[2][0] = new Animator(this.spritesheet, 288, 0, 48, 78, 3, this._SLASH_TIME / 3, true);
+        this.animations[2][0] = new Animator(this.spritesheet, 288, 0, 48, 78, 3, .16, true);
         // Attack left
-        this.animations[2][1] = new Animator(this.spritesheet, 432, 0, 48, 78, 3, this._SLASH_TIME / 3, true);
+        this.animations[2][1] = new Animator(this.spritesheet, 432, 0, 48, 78, 3, .16, true);
     }
     
 
@@ -75,7 +70,7 @@ class Skelly{
                 this.animations[2][1].elapsedTime = 0;
                 this.animations[2][1].done = false;
             }
-            else if (gameEngine.timer.gameTime >= this.attack_start + this._COOLDOWN_TIME) {
+            else if (gameEngine.timer.gameTime >= this.attack_start + 2.5) {
                 this.attack_on_cooldown = false;
             }
         }
@@ -87,17 +82,17 @@ class Skelly{
     }
 
     wind_up() {
-        if (gameEngine.timer.gameTime >= this.attack_start + this._WIND_UP_TIME) {
+        if (gameEngine.timer.gameTime >= this.attack_start + 0.5) {
             this.winding = false;
             this.attacking = true;
 
-            let sword = new Skelly_Sword(gameEngine, this.facing, this.transform.pos, this, this.damage, this._SLASH_TIME);
+            let sword = new Skelly_Sword(gameEngine, this.facing, this.transform.pos, this, this.damage, .48);
             gameEngine.addEntity(sword);
         }
     }
 
     slash() {
-        if (gameEngine.timer.gameTime >= this.attack_start + this._WIND_UP_TIME + this._SLASH_TIME) {
+        if (gameEngine.timer.gameTime >= this.attack_start + .98) {
             this.attacking = false;
         }
     }
@@ -132,6 +127,16 @@ class Skelly{
     }
 
     animation() {
+        // Figure out the direction for animation
+        if (Math.abs(this.player.transform.pos.x - this.transform.pos.x) > 8) {
+            if( this.player.transform.pos.x > this.transform.pos.x ) {
+                this.facing = 0;
+            }
+            else {
+                this.facing = 1;
+            }
+        }
+
         this.state = 0;
         this.idle = false;
         if (this.transform.velocity.x > 0 || this.transform.velocity.y > 0) {
@@ -145,18 +150,6 @@ class Skelly{
         }
         else if (this.attacking) {
             this.state = 2;
-        }
-
-        // Figure out the direction for animation
-        if (this.state == 0) {
-            if (Math.abs(this.player.transform.pos.x - this.transform.pos.x) > 8) {
-                if( this.player.transform.pos.x > this.transform.pos.x ) {
-                    this.facing = 0;
-                }
-                else {
-                    this.facing = 1;
-                }
-            }
         }
     }
 

@@ -28,7 +28,6 @@ class GameEngine {
 
         this.gravity = false;
         this.paused = false;
-        this.hud = null;
     };
 
     init(ctx) {
@@ -133,10 +132,6 @@ class GameEngine {
                 }
             }
         }
-        if(this.hud !== null){
-            this.hud.draw(this.ctx);
-        }
-        
 
         if(this.paused){
             this.menu.draw(this.ctx);
@@ -155,7 +150,7 @@ class GameEngine {
 
     update() {
         let entitiesCount = this.entities.length;
-        this.updateAuidio();
+
         if(!this.paused){
             for (let i = 0; i < entitiesCount; i++) {
                 let entity = this.entities[i];
@@ -174,10 +169,7 @@ class GameEngine {
                     this.entities.splice(i, 1);
                 }
             }
-            if(this.hud !== null){
-                this.hud.update();
-            }
-            
+    
             physics(this.entity_map);
         }
         else{
@@ -194,13 +186,7 @@ class GameEngine {
         this.rightclick = null;
         this.wheel = null;
     };
-    updateAuidio() {
-        var mute = document.getElementById("mute").checked;
-        var volume = document.getElementById("volume").value;
 
-        ASSET_MANAGER.muteAudio(mute);
-        ASSET_MANAGER.adjustVolume(volume);
-    }
 };
 
 // KV Le was here :)

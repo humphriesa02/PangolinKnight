@@ -31,25 +31,16 @@ class menuButton{
         if(this.state == 0){//start
             this.animator = new Animator(this.spritesheet, 0,0, 64, 32,1,1,true);
             this.pos = {x : 208, y : 32};
-        }else if(this.state == 1){//level Select
+        }else{//level Select
             this.animator = new Animator(this.spritesheet, 0,0, 64, 32,1,1,true);
             this.pos = {x : 208, y : 80};
-        }else{
-            this.animator = new Animator(this.spritesheet, 0,0, 64, 32,1,1,true);
-            this.pos = {x : roomWidth / 2, y : (roomHeight/2) + 80};
         }
     }
     update(){
         if(gameEngine.click && gameEngine.click.y < (this.pos.y + 16) * params.scale && gameEngine.click.y > (this.pos.y - 16) * params.scale){
             if(gameEngine.click.x < (this.pos.x + 32) * params.scale && gameEngine.click.x > (this.pos.x - 32) * params.scale){
-                if(this.state != 3){
-                    this.menu.removeMenu();
-                    gameEngine.camera.loadLevel(1);
-                }else{
-                    this.updatable = false;
-                    gameEngine.paused = false;
-                }
-                
+                this.menu.removeMenu();
+                gameEngine.camera.loadLevel(1);
             }
         }
     }
