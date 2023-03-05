@@ -38,6 +38,7 @@ function physics(entities,entity_map) {
     player_enemy_collisions(entity_map);
     sword_character_collisions(entity_map);
     prop_collisions(entity_map);
+    room_explosion_collisions(entity_map);
 }
 
 
@@ -136,6 +137,22 @@ function character_explosion_collisions(entity_map){
                 }
             }
         }
+    }
+}
+
+function room_explosion_collisions(entity_map){
+   
+    let explosions = entity_map.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for (let wall of entity_map.get("wall")) {
+        if(wall instanceof falsewall){
+            for (let explosion of explosions) {
+                if (test_overlap(wall.collider.area, explosion.collider.area)) {
+                    wall.removeFromWorld = true;
+                }
+            }
+        } 
     }
 }
 

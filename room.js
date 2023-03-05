@@ -16,7 +16,7 @@ class room{
         this.false_floor_room = info.false_floor_room;
         if(this.false_floor_room){
             this.total_false_floors = info.false_floor_total;
-            this.false_floor_count= 0;
+            this.broken_false_floors = [];
         }
         
     }
@@ -45,13 +45,11 @@ class room{
                 physics(this.entities, this.entity_map);
             }
             if(this.false_floor_room){
-                console.log("False floor room!")
                 let props = this.entity_map.get("prop");
                 for(let prop of props){
-                    console.log(prop);
                     if(prop instanceof falsefloor && prop.state == 1){
-                        this.false_floor_count+=1
-                        if(this.false_floor_count >= this.total_false_floors){
+                        if(!this.broken_false_floors.includes(prop)){this.broken_false_floors.push(prop);}
+                        if(this.broken_false_floors.length >= this.total_false_floors){
                             for(let door of this.doors){
                                 door.state = 1;
                             }
