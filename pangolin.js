@@ -438,7 +438,7 @@ class Pangolin{
         }
         else if(this.state == state_enum.dead && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){ // end the game
             let explosion = new Explosion(this);
-            gameEngine.addEntity(explosion);
+            this.game.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
             this.game.paused = true;
             this.game.menu.current_displayed = menu_enum.lose;
             this.health.current = this.health.max;
@@ -528,7 +528,7 @@ class Pangolin{
             this.rolling = false;
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
-            this.game.addEntity(sword);
+            this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
         else if (this.game.keys["ArrowLeft"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
@@ -555,14 +555,14 @@ class Pangolin{
                     if(this.inventory.bomb_count > 0){
                         this.state = state_enum.holding;
                         let bomb = new Bomb(this);
-                        gameEngine.addEntity(bomb);
+                        this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(bomb);
                         this.held_entity = bomb;
                     }
                 }
                 else{
                     if(this.inventory.secondary_item.item == item_enum.boomerang){
                         let boomerang = new Boomerang(this);
-                        gameEngine.addEntity(boomerang);
+                        this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(boomerang);
                         this.boomerang_respawn_time = this.game.timer.gameTime + this.boomerang_respawn_delay;
                     }
                     this.state = state_enum.use_item;

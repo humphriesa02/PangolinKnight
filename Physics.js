@@ -30,22 +30,22 @@ function physics_test_init() {
     return units;
 }
 
-function physics(entities) {
-    let movement_map = update_pos();
-    character_tile_collisions(movement_map);
-    character_room_collisions(movement_map);
-    character_explosion_collisions(entities)
-    player_enemy_collisions(entities);
-    sword_character_collisions(entities);
-    prop_collisions(entities);
+function physics(entities,entity_map) {
+    let movement_map = update_pos(entities);
+    character_tile_collisions(movement_map, entity_map);
+    character_room_collisions(movement_map, entity_map);
+    character_explosion_collisions(entity_map)
+    player_enemy_collisions(entity_map);
+    sword_character_collisions(entity_map);
+    prop_collisions(entity_map);
 }
 
 
 // Update the position of all entities and add them to the movement map if they moved
-function update_pos() {
+function update_pos(entities) {
     let movement_map = new Map([]);
     
-    for (let entity of gameEngine.entities) {
+    for (let entity of entities) {
         if (entity.transform !== undefined) {
             entity.transform.prev_pos = entity.transform.pos.clone();
 
@@ -77,19 +77,19 @@ function update_pos() {
 
 
 // Checks for and handles collision between characters and tiles
-function character_tile_collisions(entities) {
+function character_tile_collisions(moving_entities, entity_map) {
 
     let characters = [];
-    if (entities.get("player") !== undefined) {
-        characters = characters.concat(entities.get("player"));
+    if (moving_entities.get("player") !== undefined) {
+        characters = characters.concat(moving_entities.get("player"));
     }
-    if (entities.get("enemy") !== undefined) {
-        characters = characters.concat(entities.get("enemy"));
+    if (moving_entities.get("enemy") !== undefined) {
+        characters = characters.concat(moving_entities.get("enemy"));
     }
 
     for (let character of characters) {
         if (character.collider !== undefined) {
-            for (let tile of gameEngine.entity_map.get("tile")) {
+            for (let tile of entity_map.get("tile")) {
                 if (tile.collider.block_move) {
                     prevent_overlap(character, tile);
                 }
@@ -99,33 +99,33 @@ function character_tile_collisions(entities) {
 }
 
 
-function character_room_collisions(entities) {
+function character_room_collisions(moving_entities, entity_map) {
     let characters = [];
-    if (entities.get("player") !== undefined) {
-        characters = characters.concat(entities.get("player"));
+    if (moving_entities.get("player") !== undefined) {
+        characters = characters.concat(moving_entities.get("player"));
     }
-    if (entities.get("enemy") !== undefined) {
-        characters = characters.concat(entities.get("enemy"));
+    if (moving_entities.get("enemy") !== undefined) {
+        characters = characters.concat(moving_entities.get("enemy"));
     }
 
     for (let character of characters) {
         if (character.collider !== undefined) {
-            for (let wall of gameEngine.entity_map.get("wall")) {
+            for (let wall of entity_map.get("wall")) {
                 prevent_overlap(character, wall);
             }
         }
     }
 }
 
-function character_explosion_collisions(entities){
+function character_explosion_collisions(entity_map){
     let characters = [];
-    if (entities.get("player") !== undefined) {
-        characters = characters.concat(entities.get("player"));
+    if (entity_map.get("player") !== undefined) {
+        characters = characters.concat(entity_map.get("player"));
     }
-    if (entities.get("enemy") !== undefined) {
-        characters = characters.concat(entities.get("enemy"));
+    if (entity_map.get("enemy") !== undefined) {
+        characters = characters.concat(entity_map.get("enemy"));
     }
-    let explosions = gameEngine.entity_map.get("explosion");
+    let explosions = entity_map.get("explosion");
     if(explosions == undefined) {return;}
 
     for (let character of characters) {
@@ -251,7 +251,7 @@ function prop_room_collisions(entities) {
 
     for (let prop of props) {
         if (prop.collider !== undefined) {
-            for (let wall of gameEngine.entity_map.get("wall")) {
+            for (let wall of entities.get("wall")) {
                 let overlap = prevent_overlap(prop, wall);
                 if (overlap) {
                     if (prop instanceof pot) {

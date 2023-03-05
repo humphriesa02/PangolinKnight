@@ -16,7 +16,7 @@ class falsewall{
         this.tag = "wall"
         this.updatable = true;
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
-        this.collider = new Collider(new AABB(this.transform.pos, info.width, info.height), true, true, true);
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), true, true, true);
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/level_two_entities.png");
         this.facing = info.facing; // 0 = up, 1 = right, 2 = down, 3 = left
         this.loadAnimations(this.facing);

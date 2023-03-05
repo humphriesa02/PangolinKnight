@@ -178,7 +178,7 @@ class GameEngine {
                 this.hud.update();
             }
             
-            physics(this.entity_map);
+            //physics(this.entity_map);
         }
         else{
             this.menu.update();
