@@ -6,6 +6,9 @@ class Sword{
         let sword_pos = Object.assign({},player_pos);
 
         this.owner = player;
+
+        this.z = this.owner.in_air.z ?? 0;
+
         // Decide where the sword will initially start
         switch(this.facing){
             case 0:
@@ -122,7 +125,7 @@ class Sword{
 
     draw(ctx){
         if (this.render) {
-            this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y, 16, 16)
+            this.animations[this.facing].drawFrame(this.game.clockTick, ctx, this.transform.pos.x, this.transform.pos.y - this.z, 16, 16)
         }
     }
 }
