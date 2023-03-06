@@ -51,6 +51,12 @@ class Patrol_AI {
     }
 }
 
+class Gravity {
+    constructor() {
+        this.velocity = 0.0;
+    }
+}
+
 class In_Air{
     constructor(air_speed, air_time, air_distance, air_height, starting_percentage = 1){
         Object.assign(this, {air_speed, air_time, air_distance, air_height, starting_percentage});

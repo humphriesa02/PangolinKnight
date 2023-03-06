@@ -32,6 +32,7 @@ class sceneManager{
         }
         
         gameEngine.gravity = this.level.gravity;
+        this.player.gravity = new Gravity();
 
         for(let i = 0; i < this.level.pits.length; i++){
             gameEngine.addEntity(new pit(this.level.pits[i]))
@@ -96,89 +97,46 @@ class sceneManager{
     }
     update(){
 
-        if (!gameEngine.gravity) { // Camera behavior for top-down
-            if(this.x < Math.floor(this.player.transform.pos.x/roomWidth)){
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].reset();
-                }
-                this.x++;
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].activate();
-                }
+        if(this.x < Math.floor(this.player.transform.pos.x/roomWidth)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
             }
-            else if(this.x > Math.floor(this.player.transform.pos.x/roomWidth)){
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].reset();
-                }
-                this.x--;
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].activate();
-                }
-            }
-
-            if(this.y < Math.floor(this.player.transform.pos.y/roomHeight)){
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].reset();
-                }
-                this.y++;
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].activate();
-                }
-            }
-            else if(this.y > Math.floor(this.player.transform.pos.y/roomHeight)){
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].reset();
-                }
-                this.y--;
-                if(this.rooms[this.x][this.y]){
-                    this.rooms[this.x][this.y].activate();
-                }
+            this.x++;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
             }
         }
-        else { // Camera behavior for side-scroller
-            let player_pos = this.player.transform.pos;
-            let x = this.x * roomWidth + roomWidth / 2;
-            let y = this.y * roomHeight + roomHeight / 2;
-            let width_threshold = roomWidth / 8;
-
-            if (player_pos.x > x + width_threshold) {
-                x = player_pos.x - width_threshold;
+        else if(this.x > Math.floor(this.player.transform.pos.x/roomWidth)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
             }
-            else if (player_pos.x < x - width_threshold) {
-                x = player_pos.x + width_threshold;
+            this.x--;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
             }
+        }
 
-            let height_threshold = roomHeight / 3.5;
-
-            if (player_pos.y < y - height_threshold && this.y_destination == undefined) {
-                this.y_destination = player_pos.y - height_threshold;
-            } 
-            else if (this.y_destination !== undefined) {
-                y = this.camera_move_to(y);
+        if(this.y < Math.floor(this.player.transform.pos.y/roomHeight)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
             }
-
-            if (player_pos.y > y + height_threshold) {
-                this.y_destination = undefined;
-                y = player_pos.y - height_threshold;
+            this.y++;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
             }
-
-            this.x = (x - roomWidth / 2) / roomWidth;
-            this.y = (y - roomHeight / 2) / roomHeight;
+        }
+        else if(this.y > Math.floor(this.player.transform.pos.y/roomHeight)){
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].reset();
+            }
+            this.y--;
+            if(this.rooms[this.x][this.y]){
+                this.rooms[this.x][this.y].activate();
+            }
         }
 
     }
     draw(ctx){
 
-    }
-
-    camera_move_to(y) {
-        if (y > this.y_destination) {
-            return y - 70 * gameEngine.clockTick;
-        }
-        else {
-            let new_y = this.y_destination;
-            this.y_destination = undefined;
-            return new_y;
-        }
     }
 }

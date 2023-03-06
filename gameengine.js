@@ -117,16 +117,6 @@ class GameEngine {
                         draw_circle(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y,
                              this.entities[i].collider.area.radius, false, true, 1);
                     }
-                    else if (this.entities[i].collider.area instanceof Qtr_Pipe ||
-                        this.entities[i].collider.area instanceof Ramp) {
-                        let points = this.entities[i].collider.area.polygon;
-                        this.ctx.beginPath();
-                        for (let i = 0; i < points.length - 1; i++) {
-                            this.ctx.moveTo((points[i].x - screenX()) * params.scale, (points[i].y - screenY()) * params.scale);
-                            this.ctx.lineTo((points[i+1].x - screenX()) * params.scale, (points[i+1].y - screenY()) * params.scale);
-                        }
-                        this.ctx.stroke();
-                    }
                 }
                 if (this.entities[i].colliders !== undefined) {
                     for (let collider of this.entities[i].colliders) {
