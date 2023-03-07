@@ -8,7 +8,8 @@ class Inventory{
             sword: true,
             bomb:false,
             boomerang:false,
-            bow:false
+            bow:false,
+            boss_key: false
         }
         this.active = false;
         this.updatable = true;
@@ -59,6 +60,9 @@ class Inventory{
 
         // booomerang
         this.animations[item_enum.boomerang] = new Animator(this.spritesheet, 32, 32, 16, 16, 1, 1, true);
+
+        // boss key
+        this.animations[item_enum.boss_key] = new Animator(this.spritesheet, 80, 0, 16, 16, 1, 1, true);
     }
 
     init_buttons(){

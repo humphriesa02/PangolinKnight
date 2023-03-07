@@ -30,7 +30,7 @@ class rock{
                 this.picked_up = false;
                 this.holder.idle_holding = false;
                 this.holder.state = state_enum.throw;
-                gameEngine.addEntity(this.shadow);
+                gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
                 this.thrown = true;
                 this.direction = this.holder.facing;
             }
@@ -74,7 +74,7 @@ class rock{
     break_apart(count){
         for(let i = 0; i < count; i++){
             let temp_piece = new Pieces(this, i);
-            gameEngine.addEntity(temp_piece);
+            gameEngine.camera.rooms[Math.floor(temp_piece.transform.pos.x/roomWidth)][Math.floor(temp_piece.transform.pos.y/roomHeight)].addEntity(temp_piece);
         }
     }
 

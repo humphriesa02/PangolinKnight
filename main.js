@@ -6,7 +6,8 @@ ASSET_MANAGER.queueDownload("./sprites/pangolin_sheet.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_slash_sheet.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_sword_anim.png");
 ASSET_MANAGER.queueDownload("./sprites/map.png");
-ASSET_MANAGER.queueDownload("./sprites/Entities.png")
+ASSET_MANAGER.queueDownload("./sprites/Entities.png");
+ASSET_MANAGER.queueDownload("./sprites/level_two_entities.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_shadow.png");
 ASSET_MANAGER.queueDownload("./sprites/frog_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/Level1map.png");

@@ -96,11 +96,12 @@ class Boomerang{
     }
     end(){
         this.removeFromWorld = true;
-        create_item(item_enum.boomerang, this.transform.pos, 1, 1);
+        create_item(item_enum.boomerang, this.transform.pos, 1, 1, true);
     }
 
     activate(entity){
         if(entity.tag == "player" && this.state == 1){
+            entity.boomerang_respawn_time = undefined;
             this.end();
         }
     }
