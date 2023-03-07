@@ -1,4 +1,4 @@
-const _GRAVITY = 109;
+const _GRAVITY = 280;
 
 function physics_test_init() {
     let units = [];
@@ -34,6 +34,7 @@ function physics(entities) {
     let movement_map = update_pos();
     character_tile_collisions(movement_map);
     character_room_collisions(movement_map);
+    character_explosion_collisions(entities)
     player_enemy_collisions(entities);
     sword_character_collisions(entities);
     prop_collisions(entities);
@@ -48,10 +49,17 @@ function update_pos() {
         if (entity.transform !== undefined) {
             entity.transform.prev_pos = entity.transform.pos.clone();
 
-            if (entity.gravity !== undefined) {
-                if (gameEngine.gravity) {
-                    entity.gravity.velocity += _GRAVITY * gameEngine.clockTick;
-                    entity.transform.velocity.y = entity.gravity.velocity;
+            if (entity.tag == "player") {
+                console.log("here");
+            }
+            if (gameEngine.gravity) {
+                if (entity.gravity == true) {
+                    if (entity.rolling) {
+                        entity.transform.velocity.add(Vec2.scale(entity.centripetal_vector, _GRAVITY * gameEngine.clockTick)); 
+                    }
+                    else {
+                        entity.transform.velocity.y += _GRAVITY * gameEngine.clockTick;
+                    }
                 }
             }
 
@@ -67,6 +75,10 @@ function update_pos() {
                         movement_map.get(entity.tag).push(entity);
                     }
                 }
+            }
+
+            if (entity.grounded !== undefined) {
+                entity.grounded = false;
             }
         }
     }
@@ -111,6 +123,28 @@ function character_room_collisions(entities) {
         if (character.collider !== undefined) {
             for (let wall of gameEngine.entity_map.get("wall")) {
                 prevent_overlap(character, wall);
+            }
+        }
+    }
+}
+
+function character_explosion_collisions(entities){
+    let characters = [];
+    if (entities.get("player") !== undefined) {
+        characters = characters.concat(entities.get("player"));
+    }
+    if (entities.get("enemy") !== undefined) {
+        characters = characters.concat(entities.get("enemy"));
+    }
+    let explosions = gameEngine.entity_map.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for (let character of characters) {
+        if (character.collider !== undefined) {
+            for (let explosion of explosions) {
+                if (test_overlap(character.collider.area, explosion.collider.area)) {
+                    hit(character, explosion, 3);
+                }
             }
         }
     }
@@ -165,6 +199,7 @@ function prop_collisions(entities) {
     prop_room_collisions(entities);
     prop_prop_collisions(entities);
     prop_tile_collisions(entities);
+    prop_explosion_collisions(entities);
 }
 
 function character_prop_collisions(entities) {
@@ -192,6 +227,9 @@ function character_prop_collisions(entities) {
                     hit(character, prop, 1);
                     prop.shatter();
                 } 
+                if (prop instanceof Boomerang && character !== prop.holder){
+                    hit(character, prop, 1);
+                }
             }
             if (character.tag == "player" && prop.requires_facing) {
                 let point;
@@ -228,7 +266,9 @@ function prop_room_collisions(entities) {
                 let overlap = prevent_overlap(prop, wall);
                 if (overlap) {
                     if (prop instanceof pot) {
-                        prop.shatter();
+                        if(!prop.picked_up){
+                            prop.shatter();
+                        }
                     }
                     else if (prop instanceof block) {
                         prop.reset();
@@ -258,6 +298,15 @@ function prop_prop_collisions(entities) {
                 }
             }
         }
+        if(a instanceof Boomerang){
+            for(let b of props){
+                if(b instanceof Item){
+                    if(test_overlap(a.collider.area, b.collider.area)){
+                        a.stick(b);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -273,6 +322,29 @@ function prop_tile_collisions(entities) {
             for (let tile of tiles) {
                 if (test_overlap(prop.collider.area, tile.collider.area)) {
                     prop.reset();
+                }
+            }
+        }
+        if(prop instanceof Boomerang){
+            for (let tile of tiles){
+                prevent_overlap(prop, tile)
+            }
+        }
+    }
+}
+
+function prop_explosion_collisions(entities){
+    let props = entities.get("prop");
+    if (props == undefined) {return; }
+
+    let explosions = entities.get("explosion");
+    if(explosions == undefined) {return;}
+
+    for(let prop of props){
+        if(prop instanceof pot){
+            for(let explosion of explosions){
+                if (test_overlap(prop.collider.area, explosion.collider.area)) {
+                    prop.shatter();
                 }
             }
         }
@@ -331,6 +403,41 @@ function test_Circle_AABB(c, b) {
         point: point};
 }
 
+// Test if Circle c overlaps polygon p comprised of line segments
+function test_Circle_Polygon(c, p) {
+    if (!test_Circle_AABB(c, p.BB).test) { return {test: false}; }
+
+    let test = {test: false, collisions: []};
+    for (let i = 0; i < p.polygon.length - 1; i++) {
+        let line_overlap = test_Circle_Line(c, p.polygon[i], p.polygon[i+1]);
+        if (line_overlap.test) {
+            let line_unit = Vec2.diff(p.polygon[i+1], p.polygon[i])
+            line_unit.normalize();
+            let normal;
+            if (is_point_left_or_above_line(p.polygon[i+1], p.polygon[i], c.center)) {
+                normal = new Vec2(line_unit.y, -line_unit.x);
+            }
+            else {
+                normal = new Vec2(-line_unit.y, line_unit.x);
+            }
+
+            test.test = true;
+            test.collisions.push({sqdist: line_overlap.sqdist, normal: normal, unit: line_unit});
+        } 
+    }
+
+    if (!test.test) {
+        console.log("here");
+    }
+    return test;
+}
+
+// Test if line segment ab intersects circle c
+function test_Circle_Line(c, a, b) {
+    let sqdist = sqdist_point_segment(c.center, a, b);
+    return {test: sqdist <= c.radius * c.radius, sqdist: sqdist};
+}
+
 // Tests if a point p is inside an area a
 function test_point_inside(p, a) {
     if (a instanceof AABB) {
@@ -341,14 +448,16 @@ function test_point_inside(p, a) {
     }
 }
 
+function is_point_left_or_above_line(l1, l2, p) {
+    return ((l2.x - l1.x) * (p.y - l1.y) - (l2.y - l1.y) * (p.x - l1.x)) > 0;
+}
+
 // Prevents overlap between two Entities a and b
 function prevent_overlap(a, b) {
     let test;
     if (a.collider.area instanceof AABB && b.collider.area instanceof AABB) {
         test = test_AABBs(a.collider.area, b.collider.area);
         if(test.test) {
-            if (a.tag == "player" && !a.rolling && a.state == state_enum.walking) { a.state = state_enum.pushing; }
-            if (b.tag == "player" && !b.rolling && b.state == state_enum.walking) {b.state = state_enum.pushing; }
             prevent_overlap_AABBs(a, b, test.overlap);
         }
     }
@@ -356,8 +465,6 @@ function prevent_overlap(a, b) {
     {
         test = test_Circles(a.collider.area, b.collider.area);
         if (test.test) {
-            if (a.tag == "player" && !a.rolling && a.state == state_enum.walking) { a.state = state_enum.pushing; }
-            if (b.tag == "player" && !b.rolling && b.state == state_enum.walking) {b.state = state_enum.pushing; }
             let normal = prevent_overlap_circles(a, b, test.distance);
 
             if (normal !== undefined) {
@@ -370,6 +477,40 @@ function prevent_overlap(a, b) {
                     b.grounded = true;
                 }
             }
+        }
+    }
+    else if (a.collider.area instanceof Circle && (b.collider.area instanceof Qtr_Pipe || b.collider.area instanceof Ramp)) {
+        test = test_Circle_Polygon(a.collider.area, b.collider.area);
+        if (test.test) {
+            prevent_overlap_circle_Polygon(a, test.collisions);
+
+            let normal = test.collisions[0].normal;
+
+            if (b.collider.area instanceof Ramp) {
+                if (gameEngine.gravity && a.grounded !== undefined && Math.round(normal.y) == -1) {
+                    a.grounded = true;
+                } 
+                bounce(a, normal, a.cr);
+            }
+            else if (b.collider.area instanceof Qtr_Pipe) {
+                if (Math.round(normal.y) == -1) {
+                    a.grounded = true;
+                }
+
+                if (gameEngine.gravity && a.grounded !== undefined && 
+                    Math.acos(a.acceleration_vector.dot(test.collisions[0].unit) < 0.25 * Math.PI)) {
+                    if (a.rolling) {
+                        a.grounded = true;
+                        a.acceleration_vector = test.collisions[0].unit;
+                        curve_velocity(a.transform.velocity, test.collisions[0].unit);
+                        bounce(a, normal, 0);
+                    }
+                }
+                else {
+                    bounce(a, normal, a.cr);
+                }
+            }
+            
         }
     }
     else {
@@ -386,14 +527,29 @@ function prevent_overlap(a, b) {
 
         test = test_Circle_AABB(circle.collider.area, box.collider.area);
         if (test.test) {
-            if (circle.tag == "player" && !circle.rolling && circle.state == state_enum.walking) { circle.state = state_enum.pushing; }
-            if (box.tag == "player" && !box.rolling && box.state == state_enum.walking) {box.state = state_enum.pushing; }
             let normal = prevent_overlap_circle_AABB(circle, box, test.distance_v, test.sqdist, test.point);
+
+            if (circle.tag == "player" && !circle.rolling && circle.state == state_enum.walking) {
+                if (Math.sign(circle.transform.velocity.x) == Math.sign(-normal.x) && 
+                    Math.sign(circle.transform.velocity.y) == Math.sign(-normal.y))
+                {
+                    circle.state = state_enum.pushing;
+                }
+            } 
 
             if (normal !== undefined) {
                 bounce(circle, normal, circle.cr);
-                if (gameEngine.gravity && circle.grounded !== undefined && Math.round(normal.y) == -1) {
-                    circle.grounded = true;
+                
+                if (gameEngine.gravity && a.grounded !== undefined) {
+                    
+                    let acceleration_vector = a.acceleration_vector ?? new Vec2(1, 0);
+                    let angle = Math.acos(acceleration_vector.dot(normal));
+                    if (angle > 0.785398 && angle < 2.35619) {
+                        a.grounded = true;
+                    }
+                }
+                else {
+                    console.log("here");
                 }
             }
         }
@@ -429,7 +585,7 @@ function prevent_overlap_AABBs(a, b, overlap) {
         if (a_pos.y < b_pos.y) {
             a_pos.y -= overlap.y;
             if (gameEngine.gravity && a.gravity !== undefined) {
-                a.gravity.velocity = 0.0;
+                a.transform.velocity.y = 0.0;
                 a.grounded = true;
             }
         }
@@ -516,6 +672,17 @@ function prevent_overlap_circle_AABB(c, b, distance_vector, sq_dist, point) {
     return normal;
 }
 
+function prevent_overlap_circle_Polygon(c, collisions) {
+    for (let i = 0; i < collisions.length; i++) {
+        prevent_overlap_circle_segment(c, collisions[i].sqdist, collisions[i].normal);
+    }
+}
+function prevent_overlap_circle_segment(c, sqdist, normal) {
+    let overlap = c.collider.area.radius - Math.sqrt(sqdist);
+    let overlap_vector = Vec2.scale(normal, overlap);
+    c.transform.pos.add(overlap_vector);
+}
+
 // Computes the square distance between a point p and an AABB b
 function sqdist_point_AABB(p, b) {
     // For each axis count any excess distance outside box extents
@@ -540,6 +707,19 @@ function sqdist_point_circle(p, c) {
     return sqdist - (c.radius * c.radius);
 }
 
+function sqdist_point_segment(c, a, b) {
+    let ab = Vec2.diff(b, a);
+    let ac = Vec2.diff(c, a);
+    let bc = Vec2.diff(c, b);
+    let e = ac.dot(ab);
+    // Handle cases wehre c projects outside ab
+    if (e <= 0) { return ac.dot(ac); }
+    let f = ab.dot(ab);
+    if (e >= f) { return bc.dot(bc); }
+    // Handle cases where c projects onto ab
+    return ac.dot(ac) - e * e / f;
+}
+
 
 // Given point p, return the poin q on AABB b that is closest to p
 function closest_point_on_AABB_to_point(b, p) {
@@ -559,15 +739,10 @@ function closest_point_on_AABB_to_point(b, p) {
 }
 
 function bounce(entity, normal, cr) {
-    cr = cr == undefined ? 0 : cr;
+    cr = cr ?? 0;
     let dn = entity.transform.velocity.dot(normal);
     let transformation = Vec2.scale(normal, (1 + cr) * dn);
     entity.transform.velocity.minus(transformation);
-
-    if (entity.gravity !== undefined) {
-        entity.gravity.velocity -= transformation.y;
-        if (entity.gravity.velocity < 0) { entity.gravity.velocity = 0; }
-    }
 }
 
 function sq_distance(a, b) {
@@ -614,6 +789,11 @@ function push_out(a, b) {
 
     let push_vector = Vec2.scale(distance_vector, 2.5 / distance);
     a.transform.pos.add(push_vector);
+}
+
+function curve_velocity(velocity, unit) {
+    let magnitude = velocity.compute_magnitude();
+    velocity = Vec2.scale(unit, magnitude);
 }
 
 class Test_Block {

@@ -14,7 +14,7 @@ class Pangolin{
         this.in_air = new In_Air(53, 100, 60, 30, true);
         this.collider = new Collider(new Circle(this.transform.pos, 7.5), true, true, false);
         this.invincible = new Invincible();
-        this.gravity = new Gravity();
+        this.gravity = true;
         this.shadow = new Shadow(this.game, this.transform.pos);
         this.damage = 1;
 
@@ -27,21 +27,24 @@ class Pangolin{
         this.slash_spritesheet = ASSET_MANAGER.getAsset("./sprites/pangolin_slash_sheet.png");
 
         // Some state variables
-        this.facing = 0; // 0 = right, 1 = left, 2 = up, 3 = down
+        this.facing = 2; // 0 = right, 1 = left, 2 = up, 3 = down
         this.state = state_enum.idle; // 0 = idle, 1= walking, 2 = sword slash,
                                       // 3 = jumping, 4 = picking up, 5 = holding, 6 = throwing, 7 = use_item
                                       // 8 = falling
 
         // Some movement variables
         this.walk_speed = 35;
-        this.roll_acceleration = 180;
+        this.roll_acceleration = 220;
+        this.acceleration_vector = new Vec2(1, 0);
+        this.centripetal_vector = new Vec2(0, 1);
         this.rolling_friction = 100;
-        this.max_roll_speed_sqr = 10000;
-        this.min_roll_speed_sqr = 0.09;
+        this.max_roll_speed_sqr = 12000;
+        this.min_roll_speed_sqr = 0.9;
         this.cr = 0;
 
         // Jump variable
         this.grounded = true;
+        this.traction_loss_timer = 0;
 
         // If we pick up an item reference it here
         this.held_entity;
@@ -334,7 +337,7 @@ class Pangolin{
             this.input();
             this.movement();
             // top down jump
-            if(!gameEngine.gravity && this.state == state_enum.jumping){
+            if(!gameEngine.gravity){
                 in_air_jump(this);
             }
             else if(this.state != state_enum.jumping){
@@ -436,9 +439,17 @@ class Pangolin{
         else if(this.state == state_enum.dead && this.animations[this.state][this.facing][this.rolling ? 1 : 0].done){ // end the game
             let explosion = new Explosion(this);
             gameEngine.addEntity(explosion);
-            this.removeFromWorld = true;
             this.game.paused = true;
             this.game.menu.current_displayed = menu_enum.lose;
+            this.health.current = this.health.max;
+            this.inventory.reset();
+            this.transform.pos.x = gameEngine.camera.level.start[0] * tileSize + 8;
+            this.transform.pos.y = gameEngine.camera.level.start[1] * tileSize + 8;
+            for(let i = 0; i < 4; i++){
+                this.animations[state_enum.dead][i][0].elapsedTime = 0;
+                this.animations[state_enum.dead][i][0].done = false;
+            }
+            this.state = state_enum.idle;
         }
     }
 
@@ -465,7 +476,7 @@ class Pangolin{
         }
 
         // Rolling transition check
-        if((this.game.rightclick || this.game.keys["r"] || this.game.keys["ArrowRight"]) && this.game.timer.gameTime >= this.roll_cooldown_end && (this.state == state_enum.idle || this.state == state_enum.walking)){
+        if((this.game.rightclick || this.game.keys["r"] || this.game.keys["ArrowRight"]) && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding){
             if (this.rolling) {
                 this.collider.area.radius = 7.5;
                 this.rolling = false;
@@ -489,7 +500,7 @@ class Pangolin{
 
 
         // Sword slash check
-        if(this.game.click && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
+        if(this.game.click && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling){
             // Figure out which direction we are slashing in
             if(Math.abs( this.game.click.x - convertToScreenPos(this.transform.pos.x, 0).x ) > Math.abs( this.game.click.y - convertToScreenPos(0, this.transform.pos.y).y )){// X is farther
                 if( this.game.click.x > convertToScreenPos(this.transform.pos.x, 0).x){
@@ -512,6 +523,8 @@ class Pangolin{
             let slash_sound = './sounds/Slash' + this.slash_num + '.wav';
             this.slash_num = (this.slash_num % 4) + 1;
             this.rolling = false;
+            this.collider.area.radius = 7.5;
+            this.cr = 0;
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
             this.game.addEntity(sword);
@@ -519,12 +532,14 @@ class Pangolin{
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
         else if (this.game.keys["ArrowLeft"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
-             // Initiate the sword slash
-             this.rolling = false;
-             this.state = state_enum.slashing;
-             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
-             this.game.addEntity(sword);
-             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
+            // Initiate the sword slash
+            this.rolling = false;
+            this.collider.area.radius = 7.5;
+            this.cr = 0;
+            this.state = state_enum.slashing;
+            let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
+            this.game.addEntity(sword);
+            this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 
         // Use our offhand item
@@ -538,7 +553,21 @@ class Pangolin{
             }
             else if(this.inventory.secondary_item != null){
                 // Initiate using item
-                this.state = state_enum.use_item;
+                if(this.inventory.secondary_item.item == item_enum.bomb){
+                    if(this.inventory.bomb_count > 0){
+                        this.state = state_enum.holding;
+                        let bomb = new Bomb(this);
+                        gameEngine.addEntity(bomb);
+                        this.held_entity = bomb;
+                    }
+                }
+                else{
+                    if(this.inventory.secondary_item.item == item_enum.boomerang){
+                        let boomerang = new Boomerang(this);
+                        gameEngine.addEntity(boomerang);
+                    }
+                    this.state = state_enum.use_item;
+                }
                 this.inventory.secondary_item.use(this); 
             }
             this.rolling = false;
@@ -549,46 +578,110 @@ class Pangolin{
 
     // Move player
     movement(){
+
+        // If theres gravity, track how longer the player is in the air
+        // If the player is in the air for long enough, reset the momentum 
+        if (gameEngine.gravity) {
+            if (!this.grounded) {
+                if (this.traction_loss_timer != null) {
+                    this.traction_loss_timer += gameEngine.clockTick;
+                }
+            }
+            else {
+                this.can_jump = true;
+                this.traction_loss_timer = 0;
+            }
+
+            if (this.traction_loss_timer > 0.05 || !this.rolling) {
+
+                if (this.traction_loss_timer > 0.05 ) {
+                    let centripetal_component = this.transform.velocity.dot(this.centripetal_vector);
+                    if (centripetal_component > 0) {
+                        this.transform.velocity.minus(Vec2.scale(this.centripetal_vector, centripetal_component));
+                    }
+                }
+                this.acceleration_vector = new Vec2(1, 0);
+                this.centripetal_vector = new Vec2(0, 1);
+                this.traction_loss_timer = null;
+            }
+            if (this.traction_loss_timer > 0.04) {
+                this.can_jump = false;
+            }
+        }
+        
+
+        // If knockback, check knockback end
         if (this.knockback !== undefined){
             if(gameEngine.timer.gameTime >= this.knockback.knockback_end_time){
                 this.knockback = undefined;
             }
-        }
+        } // If not able to move, set velocity to 0
         else if(this.state == state_enum.pickup || this.state == state_enum.throw ||
              this.state == state_enum.falling){this.transform.velocity.x = 0; this.transform.velocity.y = 0;}
-        else{
-            //this.transform.velocity.x = 0;
-            //this.transform.velocity.y = 0;
-
+        else{ // If ot rolling, set velocity to match input
             if (!this.rolling) {
                 this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
-                this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+                if (!gameEngine.gravity) {
+                    this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
+                }
             }
-            else {
-                if (this.game.keys['a']) {
-                    this.transform.velocity.x -= this.roll_acceleration * gameEngine.clockTick;
-                }
-                else if (this.game.keys["d"]) {
-                    this.transform.velocity.x += this.roll_acceleration * gameEngine.clockTick;
-                }
+            else { // If rolling and theres not gravity, set acceleration to match input
+                let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
+
+                if (!gameEngine.gravity) {
+                    if (this.game.keys['a']) {
+                        this.transform.velocity.x -= this.roll_acceleration * gameEngine.clockTick;
+                    }
+                    else if (this.game.keys["d"]) {
+                        this.transform.velocity.x += this.roll_acceleration * gameEngine.clockTick;
+                    }
+                    else {
+                        this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction * gameEngine.clockTick;
+                    }
+
+                    if (this.game.keys["w"]) {
+                        this.transform.velocity.y -= this.roll_acceleration * gameEngine.clockTick;
+                    }
+                    else if (this.game.keys["s"]) {
+                        this.transform.velocity.y += this.roll_acceleration * gameEngine.clockTick;
+                    }
+                    else {
+                        this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction * gameEngine.clockTick;
+                    }
+                } // If theres gravity set acceralation to match input along the acceleration vector
                 else {
-                    this.transform.velocity.x -= Math.sign(this.transform.velocity.x) * this.rolling_friction * gameEngine.clockTick;
-                }
-                if (this.game.keys["w"]) {
-                    this.transform.velocity.y -= this.roll_acceleration * gameEngine.clockTick;
-                }
-                else if (this.game.keys["s"]) {
-                    this.transform.velocity.y += this.roll_acceleration * gameEngine.clockTick;
-                }
-                else {
-                    this.transform.velocity.y -= Math.sign(this.transform.velocity.y) * this.rolling_friction * gameEngine.clockTick;
+                    if (this.game.keys['a']) {
+                        if (sqr_speed < this.max_roll_speed_sqr) {
+                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.roll_acceleration * gameEngine.clockTick);
+                            this.transform.velocity.minus(delta_velocity);
+                        }
+                        this.centripetal_vector = new Vec2(-this.acceleration_vector.y, this.acceleration_vector.x);
+                    }
+                    if (this.game.keys["d"]) {
+                        if (sqr_speed < this.max_roll_speed_sqr) {
+                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.roll_acceleration * gameEngine.clockTick);
+                            this.transform.velocity.add(delta_velocity);
+                        }
+                        this.centripetal_vector = new Vec2(-this.acceleration_vector.y, this.acceleration_vector.x);
+                    }
+                    else if (!this.game.keys['a'] && this.grounded) {
+                        this.apply_friction();
+                    }
+
+                    if (Math.abs(this.transform.velocity.dot(Vec2.scale(this.acceleration_vector, -1))) < 8) {
+                        this.acceleration_vector = new Vec2(1, 0);
+                        this.centripetal_vector = new Vec2(0, 1);
+                    }
                 }
 
-                let sqr_speed = this.transform.velocity.dot(this.transform.velocity);
-                if (sqr_speed > this.max_roll_speed_sqr) {
+
+                sqr_speed = this.transform.velocity.dot(this.transform.velocity);
+                if (sqr_speed > this.max_roll_speed_sqr && (this.grounded || !gameEngine.gravity)) {
                     this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
                 }
                 else if (sqr_speed < this.min_roll_speed_sqr) {
+                    this.acceleration_vector = new Vec2(1, 0);
+                    this.centripetal_vector = new Vec2(0, 1);
                     this.transform.velocity.x = 0;
                     this.transform.velocity.y = 0;
                 }
@@ -616,7 +709,8 @@ class Pangolin{
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
                 this.state != state_enum.holding && this.state != state_enum.use_item &&
                  this.state != state_enum.falling){
-                if (this.transform.velocity.x == 0 && this.transform.velocity.y == 0){
+
+                if (Math.abs(this.transform.velocity.x) < 5 && Math.abs(this.transform.velocity.y) < 5){
                     this.state = state_enum.idle; // idle state
                 }
                 else{ // moving
@@ -630,11 +724,30 @@ class Pangolin{
         }
     }
 
+    apply_friction() {
+        let direction_vector = this.transform.velocity.clone();
+        let magnitude = direction_vector.normalize();
+
+        let friction_over_time = this.rolling_friction * gameEngine.clockTick;
+
+        if (magnitude - friction_over_time < 0) {
+            this.transform.velocity = new Vec2(0, 0);
+        }
+        else {
+            this.transform.velocity.minus(Vec2.scale(direction_vector, friction_over_time));
+        }
+    }
+
     // Initiate jump - called once. All that's needed for platformer
     jump(){
         this.state = state_enum.jumping;
-        if(gameEngine.gravity){
-            this.gravity.velocity = -80;
+        if(gameEngine.gravity && this.grounded){
+            // Remove all velocity in the direction of jumping
+            let centripetal_component = this.transform.velocity.dot(this.centripetal_vector);
+            this.transform.velocity.minus(Vec2.scale(this.centripetal_vector, centripetal_component));
+            
+            // Add 120 to the direction of jumping
+            this.transform.velocity.add(Vec2.scale(this.centripetal_vector, -120));
             this.grounded = false;
         }
     }
