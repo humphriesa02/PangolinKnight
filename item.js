@@ -12,7 +12,7 @@ class Item{
         this.updatable = true;
         this.shadow = new Shadow(gameEngine, this.transform.pos, 8);
         gameEngine.addEntity(this.shadow);
-        
+        this.sound;
         // Animations
         this.animations = [];
         this.loadAnimations();
@@ -68,6 +68,7 @@ class Item{
             //scale
             case item_enum.scale: 
                 entity.inventory.currency++;
+                ASSET_MANAGER.playAsset('./sounds/Scale_pick_up.wav');
                 break;
             // small heart
             case item_enum.small_heart:
@@ -78,6 +79,7 @@ class Item{
             // small key
             case item_enum.small_key:
                 entity.inventory.small_keys++;
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.health_potion:
             case item_enum.damage_potion:

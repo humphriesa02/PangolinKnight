@@ -33,6 +33,7 @@ class pot{
                 this.holder.state = state_enum.throw;
                 gameEngine.addEntity(this.shadow);
                 this.thrown = true;
+                ASSET_MANAGER.playAsset('./sounds/Throw.wav');
                 this.direction = this.holder.facing;
             }
         }
@@ -60,7 +61,7 @@ class pot{
         if(entity.interacting != undefined && entity.interacting && 
             entity.state != state_enum.pickup && entity.state != state_enum.throw &&
             entity.state != state_enum.holding && !entity.rolling){
-            
+                ASSET_MANAGER.playAsset('./sounds/PickUp.wav');
             entity.state = state_enum.pickup;
             entity.held_entity = this;
             this.picked_up = true;
@@ -71,6 +72,7 @@ class pot{
     }
 
     shatter() {
+        ASSET_MANAGER.playAsset('./sounds/Shatter.wav');
         this.thrown = false;
         this.removeFromWorld = true;
         this.shadow.removeFromWorld = true;

@@ -46,7 +46,7 @@ class block{
                 if (gameEngine.timer.gameTime >= this.pushed_start + this._PUSH_TIME) {
                     this.moving = true;
                     this.pushable = false;
-                    ASSET_MANAGER.playAsset("./sounds/Push.wav")
+                    ASSET_MANAGER.playAsset("./sounds/Push.wav");
                     if (entity.facing == 0) {       // Right
                         this.destination = new Vec2(this.transform.pos.x + 16, this.transform.pos.y);
                         this.transform.velocity.x = this._SPEED;

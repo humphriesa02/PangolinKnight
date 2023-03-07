@@ -30,6 +30,7 @@ class pit{
     activate(entity){
         if(entity.tag == "player"){
             if(entity.can_activate_pit && entity.state != state_enum.jumping){
+                ASSET_MANAGER.playAsset("./sounds/Fall.wav")
                 let our_pos = this.transform.pos.clone();
                 entity.transform.pos.x = our_pos.x;
                 entity.transform.pos.y = our_pos.y;
