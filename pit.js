@@ -3,9 +3,10 @@ class pit{
     this.tag = "prop"
     this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
     this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-    this.collider = new Collider(new AABB(this.transform.pos, 2, 2), false, true, true);
+    this.collider = new Collider(new AABB(this.transform.pos, 2.5, 2.5), false, true, true);
 
     this.loadAnimation(info.state)
+    this.updatable = false;
 }
     loadAnimation(state){
         switch(state){
@@ -24,7 +25,9 @@ class pit{
 
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
+        if(this.updatable){
+            this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y, 16, 16);
+        }
     }
 
     activate(entity){
@@ -32,27 +35,33 @@ class pit{
             if(entity.can_activate_pit && entity.state != state_enum.jumping){
                 ASSET_MANAGER.playAsset("./sounds/Fall.wav")
                 let our_pos = this.transform.pos.clone();
+                if(Math.abs( entity.transform.pos.x - this.transform.pos.x) > Math.abs( entity.transform.pos.y - this.transform.pos.y )){// X is farther
+                    if( entity.transform.pos.x < this.transform.pos.x){
+                        entity.fall_reset_pos = new Vec2(our_pos.x - 17, our_pos.y);
+                    }
+                    else if(entity.transform.pos.x > this.transform.pos.x){
+                        entity.fall_reset_pos = new Vec2(our_pos.x + 17, our_pos.y);
+                    }
+                }
+                else{
+                    if( entity.transform.pos.y > this.transform.pos.y){
+                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y + 17);
+                    }
+                    else if( entity.transform.pos.y < this.transform.pos.y){
+                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y - 17);
+                    }
+                }
                 entity.transform.pos.x = our_pos.x;
                 entity.transform.pos.y = our_pos.y;
                 entity.rolling = false;
                 entity.state = state_enum.falling;
                 entity.shadow.active = false;
                 entity.can_activate_pit = false;
-                switch(entity.facing){
-                    case 0: // right
-                        entity.fall_reset_pos = new Vec2(our_pos.x - 20, our_pos.y);
-                        break;
-                    case 1:
-                        entity.fall_reset_pos = new Vec2(our_pos.x + 20, our_pos.y);
-                        break;
-                    case 2:
-                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y + 20);
-                        break;
-                    case 3:
-                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y - 20);
-                        break;           
-                }
             }
         }
+    }
+
+    reset(){
+
     }
 }

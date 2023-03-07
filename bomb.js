@@ -48,7 +48,7 @@ class Bomb{
                 this.holder.idle_holding = false;
                 this.holder.held_entity = undefined;
                 this.holder.state = state_enum.throw;
-                gameEngine.addEntity(this.shadow);
+                gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
                 this.thrown = true;
                 this.direction = this.holder.facing;
             }
@@ -78,7 +78,7 @@ class Bomb{
 
     explode(){
         let explosion = new Explosion(this, this.in_air.z, true);
-        gameEngine.addEntity(explosion);
+        gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
         if(this.picked_up){
             this.picked_up = false;
             this.holder.idle_holding = false;

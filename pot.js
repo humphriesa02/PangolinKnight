@@ -31,7 +31,7 @@ class pot{
                 this.holder.idle_holding = false;
                 this.holder.held_entity = undefined;
                 this.holder.state = state_enum.throw;
-                gameEngine.addEntity(this.shadow);
+                gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
                 this.thrown = true;
                 ASSET_MANAGER.playAsset('./sounds/Throw.wav');
                 this.direction = this.holder.facing;
@@ -79,7 +79,7 @@ class pot{
         this.transform.velocity.x = 0;
         this.transform.velocity.y = 0;
         if(this.holder && this.holder.inventory.key_items.bomb){
-            create_item(item_enum.bomb, this.transform.pos, 20, 0.3);
+            create_item(item_enum.bomb, this.transform.pos, 15, 0.1);
         }
         this.holder = undefined;
         this.break_apart(4);
@@ -93,7 +93,7 @@ class pot{
     break_apart(count){
         for(let i = 0; i < count; i++){
             let temp_piece = new Pieces(this, i);
-            gameEngine.addEntity(temp_piece);
+            gameEngine.camera.rooms[Math.floor(temp_piece.transform.pos.x/roomWidth)][Math.floor(temp_piece.transform.pos.y/roomHeight)].addEntity(temp_piece);
         }
     }
 
