@@ -145,7 +145,18 @@ function character_explosion_collisions(entity_map){
         if (character.collider !== undefined) {
             for (let explosion of explosions) {
                 if (test_overlap(character.collider.area, explosion.collider.area)) {
-                    hit(character, explosion, 3);
+                    if(character instanceof CrabBoss){
+                        if(character.phase == 3 || character.phase == 2 && character.health.current >0){
+                            character.phase = 0;
+                            character.state = 0;
+                            character.claw.updatable = true;
+                            character.total_bubbles = 50;
+                            hit(character, explosion, 3);
+                        }
+                    }
+                    else{
+                        hit(character, explosion, 3);
+                    }
                 }
             }
         }
@@ -265,6 +276,10 @@ function character_prop_collisions(entities) {
                 if(character instanceof CrabBoss && character.phase == 1 && prop instanceof water){
                     character.state = 3;
                     character.phase = 2;
+                }
+
+                if(character instanceof CrabBoss && prop instanceof Bomb){
+                    prop.explode();
                 }
 
                 if (prop instanceof pot && prop.thrown && character !== prop.holder) {
