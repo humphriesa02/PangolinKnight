@@ -543,7 +543,7 @@ class Pangolin{
             this.cr = 0;
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
-            this.game.addEntity(sword);
+            this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 

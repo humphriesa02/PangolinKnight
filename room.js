@@ -179,6 +179,15 @@ class trigger{
                     this.actives[this.actives.length - 1].updatable = true;
                 }
             }
+            if(this.enemies.crab){
+                for(let i = 0; i < this.enemies.crab.length; i++){
+                    let crab = new CrabBoss(this.enemies.crab[i], gameEngine.player)
+                    this.actives.push(crab);
+                    this.actives.push(crab.claw);
+                    this.actives[this.actives.length - 1].updatable = true;
+                    this.actives[this.actives.length - 2].updatable = true;
+                }
+            }
             for(let i = 0; i < this.actives.length; i++){
                 this.room.addEntity(this.actives[i])
             }

@@ -37,6 +37,7 @@ function physics(entities,entity_map) {
     character_explosion_collisions(entity_map)
     player_enemy_collisions(entity_map);
     sword_character_collisions(entity_map);
+    sword_sword_collisions(entity_map);
     prop_collisions(entity_map);
     room_explosion_collisions(entity_map);
 }
@@ -199,7 +200,7 @@ function sword_character_collisions(entities) {
 
     for (let sword of entities.get("sword")) {
         for (let character of characters) {
-            if (character.tag != sword.owner.tag) {
+            if (character.tag != sword.owner.tag && !(character instanceof CrabBoss)) {
                 if (character.collider !== undefined && test_overlap(sword.collider.area, character.collider.area)) {
                     // Attack goes here
                     if(character.health !== undefined){
@@ -208,6 +209,27 @@ function sword_character_collisions(entities) {
                 }
             }
         }
+    }
+}
+
+function sword_sword_collisions(entities) {
+
+    let swords = [];
+    if (entities.get("sword") !== undefined) {
+        swords = entities.get("sword")
+    }
+
+    for (let a of swords) {
+        if(a instanceof Sword){
+            for (let b of swords) {
+                if(b instanceof Claw && test_overlap(a.collider.area, b.collider.area)){
+                    if(b.health !== undefined){
+                        hit(b, a.owner, a.owner.damage);
+                    }
+                }
+            }
+        }
+        
     }
 }
 
@@ -238,6 +260,11 @@ function character_prop_collisions(entities) {
 
                 if (character.tag == "player" && (prop.requires_facing == undefined || prop.requires_facing == false)) {
                     prop.activate(character);
+                }
+
+                if(character instanceof CrabBoss && character.phase == 1 && prop instanceof water){
+                    character.state = 3;
+                    character.phase = 2;
                 }
 
                 if (prop instanceof pot && prop.thrown && character !== prop.holder) {

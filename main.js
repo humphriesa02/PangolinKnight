@@ -21,6 +21,7 @@ ASSET_MANAGER.queueDownload("./sprites/slime_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/title_screen.png");
 ASSET_MANAGER.queueDownload("./sprites/slime_child_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/skelly.png");
+ASSET_MANAGER.queueDownload("./sprites/level_two_boss.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_play.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_lose_screen.png");
 ASSET_MANAGER.queueDownload("./sounds/Memoraphile.mp3");

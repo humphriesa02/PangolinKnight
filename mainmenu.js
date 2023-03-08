@@ -44,7 +44,7 @@ class menuButton{
             if(gameEngine.click.x < (this.pos.x + 32) * params.scale && gameEngine.click.x > (this.pos.x - 32) * params.scale){
                 if(this.state != 3){
                     this.menu.removeMenu();
-                    gameEngine.camera.loadLevel(1);
+                    gameEngine.camera.loadLevel(2);
                 }else{
                     this.updatable = false;
                     gameEngine.paused = false;
