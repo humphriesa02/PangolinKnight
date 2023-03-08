@@ -12,7 +12,8 @@ class GameEngine {
             ["player", []],
             ["enemy", []],
             ["sword", []],
-            ["prop", []]
+            ["prop", []],
+            ["tile", []]
         ]);
 
         // Information on the input
@@ -189,8 +190,10 @@ class GameEngine {
             if(this.hud !== null){
                 this.hud.update();
             }
+            if(this.gravity){
+                physics(this.entities, this.entity_map);
+            }
             
-            //physics(this.entity_map);
         }
         else{
             this.menu.update();

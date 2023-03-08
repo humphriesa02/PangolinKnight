@@ -538,7 +538,12 @@ class Pangolin{
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
             ASSET_MANAGER.playAsset(slash_sound);
-            this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            if(this.game.gravity){
+                this.game.addEntity(sword);
+            }
+            else{
+                this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            }
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
         else if (this.game.keys["ArrowLeft"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){

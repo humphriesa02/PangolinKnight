@@ -103,13 +103,21 @@ class Slime{
 
     die(){
         let explosion = new Explosion(this);
-        gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        if(gameEngine.gravity){
+            gameEngine.addEntity(explosion);
+        }else{
+            gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        }
         this.removeFromWorld = true;
         for(let i = 0; i < 4; i++){
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
             let slime_child = new SlimeChild(new Vec2(this.transform.pos.x + random_modifier_x, this.transform.pos.y + random_modifier_y), this.player);
-            gameEngine.camera.rooms[Math.floor(slime_child.transform.pos.x/roomWidth)][Math.floor(slime_child.transform.pos.y/roomHeight)].addEntity(slime_child);
+            if(gameEngine.gravity){
+                gameEngine.addEntity(slime_child);
+            }else{
+                gameEngine.camera.rooms[Math.floor(slime_child.transform.pos.x/roomWidth)][Math.floor(slime_child.transform.pos.y/roomHeight)].addEntity(slime_child);
+            }
         }
     }
 }
