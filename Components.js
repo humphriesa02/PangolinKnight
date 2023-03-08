@@ -108,6 +108,15 @@ class Knockback{
 // Decrement health, and other things depending on what
 // components they have
 function hit(entity,attacker,damage = 1){
+    if(entity instanceof Pangolin && entity.state != state_enum.falling){
+        ASSET_MANAGER.playAsset('./sounds/Hurt.wav');
+    }
+    else if(entity instanceof Skelly){
+        ASSET_MANAGER.playAsset('./sounds/Boss_Hit.wav');
+    }
+    else{
+        ASSET_MANAGER.playAsset('./sounds/Enemy_Hit.wav');
+    }
     if(entity.health !== undefined){
         // Entity contains invincible
         // Check if we are invincible before taking damage
@@ -116,6 +125,8 @@ function hit(entity,attacker,damage = 1){
             if(!entity.invincible.active){
                 entity.health.current -= damage;
                 if(entity.health.current <= 0){
+                    if(entity instanceof Pangolin){ASSET_MANAGER.playAsset('./sounds/Death.wav');}
+                    else{ASSET_MANAGER.playAsset('./sounds/Enemy_Die.wav');}
                     entity.die();
                 }
                 entity.invincible.active = true;

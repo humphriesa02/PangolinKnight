@@ -90,6 +90,7 @@ class Item{
                 if(entity.health.current < entity.health.max){
                     entity.health.current++;        
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             // small key
             case item_enum.small_key:
@@ -99,6 +100,7 @@ class Item{
             case item_enum.health_potion:
             case item_enum.damage_potion:
                 entity.inventory.add_item(this);
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.bomb:
                 if(entity.inventory.key_items.bomb){
@@ -112,22 +114,26 @@ class Item{
                     entity.inventory.key_items.bomb = true;
                     entity.inventory.bomb_count++;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.boomerang:
                 if(!entity.inventory.key_items.boomerang){
                     entity.inventory.key_items.boomerang = true;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 entity.inventory.add_item(this);
                 break;
             case item_enum.boss_key:
                 if(!entity.inventory.key_items.boss_key){
                     entity.inventory.key_items.boss_key = true;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 entity.inventory.add_item(this);
                 break;
             case item_enum.heart_upgrade:
                 entity.health.max += 5;
                 entity.health.current = entity.health.max;
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
         }
         this.animations[this.item].repeat = false;

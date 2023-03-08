@@ -157,9 +157,9 @@ class SlimeChild{
         if(this.invincible.active){
             invulnerability_active(this);  
         }
-        console.log(this.transform.pos.compute_distance(this.player.transform.pos));
+        //console.log(this.transform.pos.compute_distance(this.player.transform.pos));
         if(this.transform.pos.compute_distance(this.player.transform.pos) < this.player_distance_threshhold && !this.jumping && !this.invincible.active){
-            console.log("close");
+            //console.log("close");
             this.jumping = true;
             this.shadow.active = true;
             if(Math.abs( this.player.transform.pos.x - this.transform.pos.x) > Math.abs(this.player.transform.pos.y - this.transform.pos.y)){// X is closer

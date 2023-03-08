@@ -1,7 +1,7 @@
 class map{
     constructor(spritesheet, level){
         this.spriteSheet = ASSET_MANAGER.getAsset(spritesheet);
-        this.updatable = false;
+        this.updatable = true;
         this.load_map(level);
     }
     load_map(level){

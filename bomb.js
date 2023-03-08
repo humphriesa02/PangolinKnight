@@ -3,6 +3,7 @@ class Bomb{
         this.tag = "prop";
         this.transform = new Transform(new Vec2(0, 0), 1, new Vec2(0,0));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
+        ASSET_MANAGER.autoRepeat('./sounds/Fuse.mp3');
 
         this.in_air = new In_Air(120, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), false, true, false);
@@ -34,6 +35,8 @@ class Bomb{
             this.state = 1;
         }
         else if(gameEngine.timer.gameTime >= this.total_time){
+            ASSET_MANAGER.playAsset('./sounds/Bomb_Explode.wav');
+            ASSET_MANAGER.pauseAsset('./sounds/Fuse.mp3');
             this.explode();
         }
         if(this.picked_up){
