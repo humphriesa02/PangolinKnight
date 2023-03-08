@@ -11,7 +11,9 @@ class Item{
         this.draw_size = new Vec2(16, 16);
         this.updatable = true;
         this.shadow = new Shadow(gameEngine, this.transform.pos, 8);
-        if(gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)] != undefined && gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)] != undefined){
+        if(gameEngine.gravity){
+            gameEngine.addEntity(this.shadow);
+        }else if(gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)] != undefined && gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)] != undefined){
             gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
         }
         
@@ -189,7 +191,11 @@ function create_item(item_type, pos, quantity = 1, chance = 1, removable = true)
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
             let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier_x, pos.y + random_modifier_y), removable)
-            gameEngine.camera.rooms[Math.floor(temp_item.transform.pos.x/roomWidth)][Math.floor(temp_item.transform.pos.y/roomHeight)].addEntity(temp_item);
+            if(gameEngine.gravity){
+                gameEngine.addEntity(temp_item);
+            }else{
+                gameEngine.camera.rooms[Math.floor(temp_item.transform.pos.x/roomWidth)][Math.floor(temp_item.transform.pos.y/roomHeight)].addEntity(temp_item);
+            }
         }
         
     }

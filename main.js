@@ -11,6 +11,8 @@ ASSET_MANAGER.queueDownload("./sprites/level_two_entities.png");
 ASSET_MANAGER.queueDownload("./sprites/pangolin_shadow.png");
 ASSET_MANAGER.queueDownload("./sprites/frog_enemy.png");
 ASSET_MANAGER.queueDownload("./sprites/Level1map.png");
+ASSET_MANAGER.queueDownload("./sprites/level_1_to_2.png");
+ASSET_MANAGER.queueDownload("./sprites/level_one_to_two_tileset.png");
 ASSET_MANAGER.queueDownload("./sprites/explosion.png");
 ASSET_MANAGER.queueDownload("./sprites/Items.png");
 ASSET_MANAGER.queueDownload("./sprites/leveltwo.png");

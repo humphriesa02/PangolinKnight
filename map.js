@@ -10,6 +10,10 @@ class map{
                 this.x = 1360;
                 this.y = 1040;
                 break;
+            case 1.5:
+                this.x = 2720;
+                this.y = 928;
+                break;
             case 2:
                 this.x = 1904;
                 this.y = 1456;
