@@ -11,11 +11,13 @@ class Item{
         this.draw_size = new Vec2(16, 16);
         this.updatable = true;
         this.shadow = new Shadow(gameEngine, this.transform.pos, 8);
-        if(gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)] != undefined && gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)] != undefined){
+        this.sound;
+        if(gameEngine.gravity){
+            gameEngine.addEntity(this.shadow);
+        }else if(gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)] != undefined && gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)] != undefined){
             gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
         }
-        
-        
+
         // Animations
         this.animations = [];
         this.loadAnimations();
@@ -83,20 +85,24 @@ class Item{
             //scale
             case item_enum.scale: 
                 entity.inventory.currency++;
+                ASSET_MANAGER.playAsset('./sounds/Scale_pick_up.wav');
                 break;
             // small heart
             case item_enum.small_heart:
                 if(entity.health.current < entity.health.max){
                     entity.health.current++;        
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             // small key
             case item_enum.small_key:
                 entity.inventory.small_keys++;
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.health_potion:
             case item_enum.damage_potion:
                 entity.inventory.add_item(this);
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.bomb:
                 if(entity.inventory.key_items.bomb){
@@ -110,22 +116,26 @@ class Item{
                     entity.inventory.key_items.bomb = true;
                     entity.inventory.bomb_count++;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
             case item_enum.boomerang:
                 if(!entity.inventory.key_items.boomerang){
                     entity.inventory.key_items.boomerang = true;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 entity.inventory.add_item(this);
                 break;
             case item_enum.boss_key:
                 if(!entity.inventory.key_items.boss_key){
                     entity.inventory.key_items.boss_key = true;
                 }
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 entity.inventory.add_item(this);
                 break;
             case item_enum.heart_upgrade:
                 entity.health.max += 5;
                 entity.health.current = entity.health.max;
+                ASSET_MANAGER.playAsset('./sounds/Key_get.wav');
                 break;
         }
         this.animations[this.item].repeat = false;
@@ -189,7 +199,11 @@ function create_item(item_type, pos, quantity = 1, chance = 1, removable = true)
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
             let temp_item = new Item(item_type, new Vec2(pos.x + random_modifier_x, pos.y + random_modifier_y), removable)
-            gameEngine.camera.rooms[Math.floor(temp_item.transform.pos.x/roomWidth)][Math.floor(temp_item.transform.pos.y/roomHeight)].addEntity(temp_item);
+            if(gameEngine.gravity){
+                gameEngine.addEntity(temp_item);
+            }else{
+                gameEngine.camera.rooms[Math.floor(temp_item.transform.pos.x/roomWidth)][Math.floor(temp_item.transform.pos.y/roomHeight)].addEntity(temp_item);
+            }
         }
         
     }

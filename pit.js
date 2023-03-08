@@ -3,10 +3,17 @@ class pit{
     this.tag = "prop"
     this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
     this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
-    this.collider = new Collider(new AABB(this.transform.pos, 2.5, 2.5), false, true, true);
+    if(gameEngine.gravity){
+        this.collider = new Collider(new AABB(this.transform.pos, 8, 8), false, true, true);
+        this.updatable = true;
+    }
+    else{
+        this.collider = new Collider(new AABB(this.transform.pos, 2.5, 2.5), false, true, true);
+        this.updatable = false;
+    }
+    
 
     this.loadAnimation(info.state)
-    this.updatable = false;
 }
     loadAnimation(state){
         switch(state){
@@ -32,30 +39,38 @@ class pit{
 
     activate(entity){
         if(entity.tag == "player"){
-            if(entity.can_activate_pit && entity.state != state_enum.jumping){
-                let our_pos = this.transform.pos.clone();
-                if(Math.abs( entity.transform.pos.x - this.transform.pos.x) > Math.abs( entity.transform.pos.y - this.transform.pos.y )){// X is farther
-                    if( entity.transform.pos.x < this.transform.pos.x){
-                        entity.fall_reset_pos = new Vec2(our_pos.x - 17, our_pos.y);
+            if(entity.can_activate_pit){
+                if(gameEngine.gravity || entity.state != state_enum.jumping){
+                    ASSET_MANAGER.playAsset("./sounds/Fall.wav")
+                    let our_pos = this.transform.pos.clone();
+                    if(gameEngine.gravity && entity.fall_reset_pos == undefined){
+                        entity.fall_reset_pos = new Vec2(gameEngine.camera.level.start[0] * 16 + 8, gameEngine.camera.level.start[1] * 16 + 8);
                     }
-                    else if(entity.transform.pos.x > this.transform.pos.x){
-                        entity.fall_reset_pos = new Vec2(our_pos.x + 17, our_pos.y);
+                    else{
+                        if(Math.abs( entity.transform.pos.x - this.transform.pos.x) > Math.abs( entity.transform.pos.y - this.transform.pos.y )){// X is farther
+                            if( entity.transform.pos.x < this.transform.pos.x){
+                                entity.fall_reset_pos = new Vec2(our_pos.x - 17, our_pos.y);
+                            }
+                            else if(entity.transform.pos.x > this.transform.pos.x){
+                                entity.fall_reset_pos = new Vec2(our_pos.x + 17, our_pos.y);
+                            }
+                        }
+                        else{
+                            if( entity.transform.pos.y > this.transform.pos.y){
+                                entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y + 17);
+                            }
+                            else if( entity.transform.pos.y < this.transform.pos.y){
+                                entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y - 17);
+                            }
+                        }
                     }
-                }
-                else{
-                    if( entity.transform.pos.y > this.transform.pos.y){
-                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y + 17);
-                    }
-                    else if( entity.transform.pos.y < this.transform.pos.y){
-                        entity.fall_reset_pos = new Vec2(our_pos.x, our_pos.y - 17);
-                    }
-                }
-                entity.transform.pos.x = our_pos.x;
-                entity.transform.pos.y = our_pos.y;
-                entity.rolling = false;
-                entity.state = state_enum.falling;
-                entity.shadow.active = false;
-                entity.can_activate_pit = false;
+                    entity.transform.pos.x = our_pos.x;
+                    entity.transform.pos.y = our_pos.y;
+                    entity.rolling = false;
+                    entity.state = state_enum.falling;
+                    entity.shadow.active = false;
+                    entity.can_activate_pit = false;
+                } 
             }
         }
     }

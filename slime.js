@@ -103,13 +103,21 @@ class Slime{
 
     die(){
         let explosion = new Explosion(this);
-        gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        if(gameEngine.gravity){
+            gameEngine.addEntity(explosion);
+        }else{
+            gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        }
         this.removeFromWorld = true;
         for(let i = 0; i < 4; i++){
             let random_modifier_x = (Math.random() * 16) - 8;
             let random_modifier_y = (Math.random() * 16) - 8;
             let slime_child = new SlimeChild(new Vec2(this.transform.pos.x + random_modifier_x, this.transform.pos.y + random_modifier_y), this.player);
-            gameEngine.camera.rooms[Math.floor(slime_child.transform.pos.x/roomWidth)][Math.floor(slime_child.transform.pos.y/roomHeight)].addEntity(slime_child);
+            if(gameEngine.gravity){
+                gameEngine.addEntity(slime_child);
+            }else{
+                gameEngine.camera.rooms[Math.floor(slime_child.transform.pos.x/roomWidth)][Math.floor(slime_child.transform.pos.y/roomHeight)].addEntity(slime_child);
+            }
         }
     }
 }
@@ -157,9 +165,9 @@ class SlimeChild{
         if(this.invincible.active){
             invulnerability_active(this);  
         }
-        console.log(this.transform.pos.compute_distance(this.player.transform.pos));
+        //console.log(this.transform.pos.compute_distance(this.player.transform.pos));
         if(this.transform.pos.compute_distance(this.player.transform.pos) < this.player_distance_threshhold && !this.jumping && !this.invincible.active){
-            console.log("close");
+            //console.log("close");
             this.jumping = true;
             this.shadow.active = true;
             if(Math.abs( this.player.transform.pos.x - this.transform.pos.x) > Math.abs(this.player.transform.pos.y - this.transform.pos.y)){// X is closer

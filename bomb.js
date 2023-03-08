@@ -3,6 +3,7 @@ class Bomb{
         this.tag = "prop";
         this.transform = new Transform(new Vec2(0, 0), 1, new Vec2(0,0));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Items.png");
+        ASSET_MANAGER.autoRepeat('./sounds/Fuse.mp3');
 
         this.in_air = new In_Air(120, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), false, true, false);
@@ -34,6 +35,8 @@ class Bomb{
             this.state = 1;
         }
         else if(gameEngine.timer.gameTime >= this.total_time){
+            ASSET_MANAGER.playAsset('./sounds/Bomb_Explode.wav');
+            ASSET_MANAGER.pauseAsset('./sounds/Fuse.mp3');
             this.explode();
         }
         if(this.picked_up){
@@ -48,7 +51,11 @@ class Bomb{
                 this.holder.idle_holding = false;
                 this.holder.held_entity = undefined;
                 this.holder.state = state_enum.throw;
-                gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
+                if(gameEngine.gravity){
+                    gameEngine.addEntity(this.shadow);
+                }else{
+                    gameEngine.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(this.shadow);
+                }
                 this.thrown = true;
                 this.direction = this.holder.facing;
             }
@@ -78,7 +85,11 @@ class Bomb{
 
     explode(){
         let explosion = new Explosion(this, this.in_air.z, true);
-        gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        if(gameEngine.gravity){
+            gameEngine.addEntity(explosion);
+        }else{
+            gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        }
         if(this.picked_up){
             this.picked_up = false;
             this.holder.idle_holding = false;

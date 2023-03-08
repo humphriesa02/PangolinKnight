@@ -52,7 +52,7 @@ function update_pos(entities) {
             entity.transform.prev_pos = entity.transform.pos.clone();
 
             if (entity.tag == "player") {
-                console.log("here");
+                //console.log("here");
             }
             if (gameEngine.gravity) {
                 if (entity.gravity == true) {
@@ -178,7 +178,7 @@ function player_enemy_collisions(entities){
                         soft_prevent_overlap(player, enemy);
                     }
                     if (enemy.overlap_damage) {
-                        console.log("PLAYER HIT");
+                        //console.log("PLAYER HIT");
                         hit(player, enemy);
                     }
                 }
@@ -478,7 +478,7 @@ function test_Circle_Polygon(c, p) {
     }
 
     if (!test.test) {
-        console.log("here");
+        //console.log("here");
     }
     return test;
 }
@@ -600,7 +600,7 @@ function prevent_overlap(a, b) {
                     }
                 }
                 else {
-                    console.log("here");
+                    //console.log("here");
                 }
             }
         }

@@ -12,7 +12,8 @@ class GameEngine {
             ["player", []],
             ["enemy", []],
             ["sword", []],
-            ["prop", []]
+            ["prop", []],
+            ["tile", []]
         ]);
 
         // Information on the input
@@ -107,37 +108,39 @@ class GameEngine {
 
         // Draw latest things first
         for (let i =  0; i < this.entities.length; i++) {
-            this.entities[i].draw(this.ctx, this);
-            if(document.getElementById("debug").checked){
-                if (this.entities[i].collider !== undefined) {
-                    if (this.entities[i].collider.area instanceof AABB) {
-                        draw_rect(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y, 
-                            this.entities[i].collider.area.half.x * 2, this.entities[i].collider.area.half.y * 2, false, true, 1);
-                    }
-                    else if (this.entities[i].collider.area instanceof Circle) {
-                        draw_circle(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y,
-                             this.entities[i].collider.area.radius, false, true, 1);
-                    }
-                    else if (this.entities[i].collider.area instanceof Qtr_Pipe ||
-                        this.entities[i].collider.area instanceof Ramp) {
-                        let points = this.entities[i].collider.area.polygon;
-                        this.ctx.beginPath();
-                        for (let i = 0; i < points.length - 1; i++) {
-                            this.ctx.moveTo((points[i].x - screenX()) * params.scale, (points[i].y - screenY()) * params.scale);
-                            this.ctx.lineTo((points[i+1].x - screenX()) * params.scale, (points[i+1].y - screenY()) * params.scale);
+            if(this.entities[i].updatable){
+                this.entities[i].draw(this.ctx, this);
+                if(document.getElementById("debug").checked){
+                    if (this.entities[i].collider !== undefined) {
+                        if (this.entities[i].collider.area instanceof AABB) {
+                            draw_rect(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y, 
+                                this.entities[i].collider.area.half.x * 2, this.entities[i].collider.area.half.y * 2, false, true, 1);
                         }
-                        this.ctx.stroke();
-                    }
-                }
-                if (this.entities[i].colliders !== undefined) {
-                    for (let collider of this.entities[i].colliders) {
-                        if (collider.area instanceof AABB) {
-                            draw_rect(this.ctx, collider.area.center.x, collider.area.center.y, 
-                                collider.area.half.x * 2, collider.area.half.y * 2, false, true, 1);
+                        else if (this.entities[i].collider.area instanceof Circle) {
+                            draw_circle(this.ctx, this.entities[i].transform.pos.x, this.entities[i].transform.pos.y,
+                                this.entities[i].collider.area.radius, false, true, 1);
                         }
-                        else if (collider.area instanceof Circle) {
-                            draw_circle(this.ctx, collider.area.center.x, collider.area.center.y,
-                                 collider.area.radius, false, true, 1);
+                        else if (this.entities[i].collider.area instanceof Qtr_Pipe ||
+                            this.entities[i].collider.area instanceof Ramp) {
+                            let points = this.entities[i].collider.area.polygon;
+                            this.ctx.beginPath();
+                            for (let i = 0; i < points.length - 1; i++) {
+                                this.ctx.moveTo((points[i].x - screenX()) * params.scale, (points[i].y - screenY()) * params.scale);
+                                this.ctx.lineTo((points[i+1].x - screenX()) * params.scale, (points[i+1].y - screenY()) * params.scale);
+                            }
+                            this.ctx.stroke();
+                        }
+                    }
+                    if (this.entities[i].colliders !== undefined) {
+                        for (let collider of this.entities[i].colliders) {
+                            if (collider.area instanceof AABB) {
+                                draw_rect(this.ctx, collider.area.center.x, collider.area.center.y, 
+                                    collider.area.half.x * 2, collider.area.half.y * 2, false, true, 1);
+                            }
+                            else if (collider.area instanceof Circle) {
+                                draw_circle(this.ctx, collider.area.center.x, collider.area.center.y,
+                                    collider.area.radius, false, true, 1);
+                            }
                         }
                     }
                 }
@@ -187,8 +190,10 @@ class GameEngine {
             if(this.hud !== null){
                 this.hud.update();
             }
+            if(this.gravity){
+                physics(this.entities, this.entity_map);
+            }
             
-            //physics(this.entity_map);
         }
         else{
             this.menu.update();

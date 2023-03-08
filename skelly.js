@@ -92,7 +92,11 @@ class Skelly{
             this.attacking = true;
 
             let sword = new Skelly_Sword(gameEngine, this.facing, this.transform.pos, this, this.damage, this._SLASH_TIME);
-            gameEngine.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            if(gameEngine.gravity){
+                gameEngine.addEntity(sword);
+            }else{
+                gameEngine.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            }
         }
     }
 
@@ -184,7 +188,11 @@ class Skelly{
 
     die(){
         let explosion = new Explosion(this);
-        gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        if(gameEngine.gravity){
+            gameEngine.addEntity(explosion);
+        }else{
+            gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
+        }
         this.removeFromWorld = true;
         create_item(item_enum.small_heart, this.transform.pos, 1, 0.6);
     }

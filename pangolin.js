@@ -64,6 +64,7 @@ class Pangolin{
         this.interaction_end = 0;
         this.extra_damage_total_time = 15;
         this.leave_pit_buffer_time = 0.1;
+        this.slash_num = 1;
 
         // Flag variables
         this.rolling = false;
@@ -421,6 +422,7 @@ class Pangolin{
             this.fall_reset_pos = undefined;
             if(this.health.current <= 0){
                 this.die();
+                ASSET_MANAGER.playAsset('./sounds/Death.wav');
             }else{
                 this.state = state_enum.idle;
             }
@@ -484,7 +486,7 @@ class Pangolin{
         }
 
         // Rolling transition check
-        if((this.game.rightclick || this.game.keys["r"] || this.game.keys["ArrowRight"]) && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding){
+        if((this.game.rightclick || this.game.keys["r"] || this.game.keys["ArrowRight"]) && this.game.timer.gameTime >= this.roll_cooldown_end && this.state != state_enum.holding && this.state != state_enum.falling && this.state != state_enum.dead && this.state != state_enum.throw){
             if (this.rolling) {
                 this.collider.area.radius = 7.5;
                 this.rolling = false;
@@ -528,12 +530,20 @@ class Pangolin{
             }
 
             // Initiate the sword slash
+            let slash_sound = './sounds/Slash' + this.slash_num + '.wav';
+            this.slash_num = (this.slash_num % 4) + 1;
             this.rolling = false;
             this.collider.area.radius = 7.5;
             this.cr = 0;
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
-            this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            ASSET_MANAGER.playAsset(slash_sound);
+            if(this.game.gravity){
+                this.game.addEntity(sword);
+            }
+            else{
+                this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            }
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
         else if (this.game.keys["ArrowLeft"] && this.game.timer.gameTime >= this.attack_cooldown_end && this.state != state_enum.jumping && this.state != state_enum.holding && this.state != state_enum.falling){
@@ -543,7 +553,12 @@ class Pangolin{
             this.cr = 0;
             this.state = state_enum.slashing;
             let sword = new Sword(this.game, this.facing, this.transform.pos, this, this.damage, true);
-            this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            if(this.game.gravity){
+                this.game.addEntity(sword);
+            }
+            else{
+                this.game.camera.rooms[Math.floor(sword.transform.pos.x/roomWidth)][Math.floor(sword.transform.pos.y/roomHeight)].addEntity(sword);
+            }
             this.attack_cooldown_end = this.game.timer.gameTime + this.animations[state_enum.slashing][0][this.rolling ? 1 : 0].totalTime;
         }
 
@@ -562,6 +577,7 @@ class Pangolin{
                     if(this.inventory.bomb_count > 0){
                         this.state = state_enum.holding;
                         let bomb = new Bomb(this);
+                        ASSET_MANAGER.playAsset('./sounds/Fuse.mp3');
                         this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(bomb);
                         this.held_entity = bomb;
                     }
@@ -569,6 +585,7 @@ class Pangolin{
                 else{
                     if(this.inventory.secondary_item.item == item_enum.boomerang){
                         let boomerang = new Boomerang(this);
+                        ASSET_MANAGER.playAsset('./sounds/Boomerang.wav');
                         this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(boomerang);
                         this.boomerang_respawn_time = this.game.timer.gameTime + this.boomerang_respawn_delay;
                     }
@@ -747,6 +764,7 @@ class Pangolin{
     // Initiate jump - called once. All that's needed for platformer
     jump(){
         this.state = state_enum.jumping;
+        ASSET_MANAGER.playAsset('./sounds/Jump.wav');
         if(gameEngine.gravity && this.grounded){
             // Remove all velocity in the direction of jumping
             let centripetal_component = this.transform.velocity.dot(this.centripetal_vector);

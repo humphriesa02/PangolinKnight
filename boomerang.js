@@ -7,6 +7,7 @@ class Boomerang{
         this.holder = holder;
         this.holder_facing = holder.facing;
         this.updatable = true;
+        ASSET_MANAGER.autoRepeat('./sounds/Boomerang.wav');
 
         this.in_air = new In_Air(120, 120, 120, 12);
         this.collider = new Collider(new Circle(this.transform.pos, 5.5), false, true, false);
@@ -96,6 +97,7 @@ class Boomerang{
     }
     end(){
         this.removeFromWorld = true;
+        ASSET_MANAGER.pauseAsset('./sounds/Boomerang.wav');
         create_item(item_enum.boomerang, this.transform.pos, 1, 1, true);
     }
 
