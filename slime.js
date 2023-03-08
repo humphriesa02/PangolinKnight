@@ -93,7 +93,7 @@ class Slime{
         this.invincible.active = false;
         if(this.removeFromWorld){
             this.removeFromWorld = false;
-            gameEngine.addEntity(this);
+            //gameEngine.addEntity(this);
         }
     }
 
