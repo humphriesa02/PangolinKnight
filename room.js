@@ -23,9 +23,8 @@ class room{
     }
     update(){
         if(this.active){
-            let entitiesCount = this.entities.length;
             if(!this.paused){
-                for (let i = 0; i < entitiesCount; i++) {
+                for (let i = 0; i < this.entities.length; i++) {
                     let entity = this.entities[i];
         
                     if (!entity.removeFromWorld && entity.updatable) {
