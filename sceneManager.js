@@ -179,7 +179,7 @@ class sceneManager{
         this.y = Math.floor(this.player.transform.pos.y/roomHeight);
         this.map = new map(this.level.mapSprite, num);
         gameEngine.addEntity(this.map);
-        ASSET_MANAGER.autoRepead(this.level.soundtrack);
+        ASSET_MANAGER.autoRepeat(this.level.soundtrack);
 
         gameEngine.gravity = this.level.gravity;
 

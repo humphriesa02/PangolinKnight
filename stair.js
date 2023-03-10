@@ -18,13 +18,21 @@ class stair{
     activate(){
         clearEntities();
         let current_state = this.state;
-        if(levels[current_state].gravity){
-            gameEngine.camera.loadSideScrollerLevel(this.state);
+        gameEngine.camera.player.health.max += 5;
+        gameEngine.camera.player.health.current = gameEngine.camera.player.health.max;
+        if(current_state == 3){
+            gameEngine.paused = true;
+            gameEngine.menu.current_displayed = menu_enum.win;
         }
         else{
-            gameEngine.camera.loadLevel(this.state);
+            if(levels[current_state].gravity){
+                gameEngine.camera.loadSideScrollerLevel(this.state);
+            }
+            else{
+                gameEngine.camera.loadLevel(this.state);
+            }
         }
-        //gameEngine.paused = true;
-        //gameEngine.menu.current_displayed = menu_enum.win;
+        
+        
     }
 }

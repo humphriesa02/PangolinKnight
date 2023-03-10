@@ -275,7 +275,8 @@ class CrabBoss{
         let explosion = new Explosion(this);
         gameEngine.camera.rooms[Math.floor(explosion.transform.pos.x/roomWidth)][Math.floor(explosion.transform.pos.y/roomHeight)].addEntity(explosion);
         this.removeFromWorld = true;
-        create_item(item_enum.small_heart, this.transform.pos, 1, 0.6);
+        this.claw.removeFromWorld = true;
+        create_item(item_enum.scale, this.transform.pos, 3, 1);
     }
 }
 
