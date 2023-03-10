@@ -98,22 +98,39 @@ class Menu{ // If we are paused, let Menu decide what gets displayed
     }
 
     draw_win_menu(ctx){
-        ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/PangolinPauseScreen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
+        ctx.drawImage(ASSET_MANAGER.getAsset("./sprites/pangolin_win_screen.png"), 0, 0, roomWidth * params.scale, roomHeight * params.scale);
         ctx.font = '70px "VT323"';
         ctx.strokeStyle = 'black';
         ctx.fillStyle = "white";
         ctx.lineWidth = 8;
         ctx.textAlign = "center";
 
-        ctx.strokeText("Congratulations!", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 25);
-        ctx.fillText("Congratulations!", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 25);
+        ctx.strokeText("Congratulations!", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 82 * params.scale);
+        ctx.fillText("Congratulations!", (roomWidth * params.scale) /2, (roomHeight * params.scale) / 2 - 82 * params.scale);
         ctx.font = '40px "VT323"';
-        ctx.strokeText("You have made it past level 1!", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 + 60);
-        ctx.fillText("You have made it past level 1!", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 + 60);
-        ctx.strokeText("Please keep an eye out for", (roomWidth * params.scale) /2, ((roomHeight * params.scale) / 2) + 100);
-        ctx.fillText("Please keep an eye out for", (roomWidth * params.scale) /2, ((roomHeight * params.scale) / 2) + 100);
-        ctx.strokeText("when future levels are released!", (roomWidth * params.scale) /2, ((roomHeight * params.scale) / 2) + 140);
-        ctx.fillText("when future levels are released!", (roomWidth * params.scale) /2, ((roomHeight * params.scale) / 2) + 140);
+        ctx.strokeText("Pangolin Knight has defeated the tower,", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 - 62 * params.scale);
+        ctx.fillText("Pangolin Knight has defeated the tower,", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 - 62 * params.scale);
+        ctx.strokeText("and fulfilled his promise...", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 -50 * params.scale);
+        ctx.fillText("and fulfilled his promise...", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 - 50 * params.scale);
+        ctx.strokeText("To save his child!", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 - 38 * params.scale);
+        ctx.fillText("To save his child!", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 - 38 * params.scale);
+        ctx.strokeText("Huge thanks for playing from the devs:", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 - 14 * params.scale);
+        ctx.fillText("Huge thanks for playing from the devs:", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 - 14 * params.scale);
+        ctx.strokeText("Justin Goding", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 - 2 * params.scale);
+        ctx.fillText("Justin Goding", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 - 2 * params.scale);
+        ctx.strokeText("Alex Humphries", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 + 10 * params.scale);
+        ctx.fillText("Alex Humphries", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 + 10 * params.scale);
+        ctx.strokeText("Zac Moriarty", (roomWidth * params.scale) /2, ((roomHeight * params.scale)) / 2 + 22 * params.scale);
+        ctx.fillText("Zac Moriarty", (roomWidth * params.scale) / 2, ((roomHeight * params.scale)) / 2 + 22 * params.scale);
+
+        ctx.font = '16px "VT323"';
+    
+
+        ctx.strokeText("Disclaimer: this game was as an academic project, it uses some assets we do not legally own.", (roomWidth * params.scale) /2, (roomHeight * params.scale - 14 * params.scale));
+        ctx.fillText("Disclaimer: this game was as an academic project, it uses some assets we do not legally own.", (roomWidth * params.scale) /2, (roomHeight * params.scale - 14 * params.scale));
+        ctx.strokeText("All rights reserved to the original creators, contact the devs if you want the assets removed.", (roomWidth * params.scale) /2, (roomHeight * params.scale - 6 * params.scale));
+        ctx.fillText("All rights reserved to the original creators, contact the devs if you want the assets removed.", (roomWidth * params.scale) /2, (roomHeight * params.scale - 6 * params.scale));
+        //it contains copyright material and is not meant for selling
         ctx.lineWidth = 2;
         ctx.stroke();
     }
