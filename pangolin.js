@@ -70,6 +70,7 @@ class Pangolin{
         this.rolling = false;
         this.idle_holding = false;
         this.can_activate_pit = true;
+        this.on_ladder = false;
         this.animation_modifier = 0; // Used for extra modifications to animations we don't want to make states for.
                                      // Factor in rolling here, as well as holding idle
         this.interacting = false; // Used for collision based interactions with other entities
@@ -331,12 +332,11 @@ class Pangolin{
             this.health.max = 20;
             this.health.current = 20;
         }
-        
-            if(this.invincible.active){
-                invulnerability_active(this);
-            }
-            this.check_ability();
-            this.check_state_end();
+        if(this.invincible.active){
+            invulnerability_active(this);
+        }
+        this.check_ability();
+        this.check_state_end();
         if(this.state != state_enum.dead){
             this.input();
             this.movement();
@@ -348,6 +348,7 @@ class Pangolin{
                 this.in_air.z = 0;
             }
         }
+        this.on_ladder = false;
     }
 
     draw(ctx){
@@ -644,7 +645,7 @@ class Pangolin{
         else{ // If ot rolling, set velocity to match input
             if (!this.rolling) {
                 this.transform.velocity.x = ((-(this.game.keys["a"] ? 1: 0) + (this.game.keys["d"] ? 1: 0)) * this.walk_speed);
-                if (!gameEngine.gravity) {
+                if (!gameEngine.gravity || this.on_ladder) {
                     this.transform.velocity.y = ((-(this.game.keys["w"] ? 1: 0) + (this.game.keys["s"] ? 1: 0)) * this.walk_speed);
                 }
             }

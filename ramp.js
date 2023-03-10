@@ -13,7 +13,7 @@ class ramps{
             this.animator = new Animator(this.spritesheet, 16, 80, 16, 16, 1, 1, true);
         }
         else if (info.state == 2){
-            this.collider = new Collider(new Ramp(new Vec2(this.transform.pos.x, this.transform.pos.y + 16), new Vec2(this.transform.pos.x + 16, this.transform.pos.y+4)), true, true, false);
+            this.collider = new Collider(new Ramp(new Vec2(this.transform.pos.x, this.transform.pos.y + 12), new Vec2(this.transform.pos.x + 16, this.transform.pos.y+4)), true, true, false);
             this.animator = new Animator(this.spritesheet, 0, 80, 16, 16, 1, 1, true);
         }
         else if(info.state == 3){

@@ -106,6 +106,12 @@ function character_tile_collisions(moving_entities, entity_map) {
                 if (tile.collider.block_move) {
                     prevent_overlap(character, tile);
                 }
+                else if( character instanceof Pangolin && tile instanceof ladder){
+                    if (test_overlap(character.collider.area, tile.collider.area)) {
+                    console.log("On ladder");
+                    character.on_ladder = true;
+                    }
+                }
             }
         }
     }

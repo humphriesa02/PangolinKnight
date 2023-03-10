@@ -202,6 +202,12 @@ class sceneManager{
             let alock = new lock(this.level.locks[i])
             gameEngine.addEntity(alock)
         }
+
+        for(let i = 0; i < this.level.ladders.length; i++){
+            let aladder = new ladder(this.level.ladders[i])
+            gameEngine.addEntity(aladder)
+        }
+
         for(let i = 0; i < this.level.bossdoor.length; i++){
             let abossdoor = new boss_door(this.level.bossdoor[i]);
             gameEngine.addEntity(abossdoor)

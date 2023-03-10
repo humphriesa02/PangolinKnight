@@ -4,11 +4,14 @@ class pot{
         this.position = info.position;
         this.transform = new Transform(new Vec2(info.position[0] * 16 + 8, info.position[1] * 16 + 8));
         this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Entities.png");
+        this.gravity_spritesheet = ASSET_MANAGER.getAsset("./sprites/level_one_to_two_tileset.png");
 
         this.in_air = new In_Air(120, 100, 90, 26, 0.75);
         this.collider = new Collider(new Circle(this.transform.pos, 8), true, true, false);
 
         this.animator = new Animator(this.spritesheet, 48, 0, 16, 16, 1, 1, true);
+        this.gravity_animator = new Animator(this.gravity_spritesheet, 32, 32, 16, 16, 1, 1, true);
+        this.gravity
         this.facing_correct_direction = false;
         this.requires_facing = true;
         this.picked_up = false;
@@ -16,13 +19,24 @@ class pot{
         this.thrown = false;
         this.direction;
         this.shadow = new Shadow(gameEngine, this.transform.pos);
-        this.updatable = false;
+
+        if(gameEngine.gravity){
+            this.updatable = true;
+        }
+        else{
+            this.updatable = false;
+        }
     }
     update(){
         if(this.picked_up){
             if(this.holder.state == state_enum.holding && !this.holder.interacting){
+                if(gameEngine.gravity){
+                    this.transform.pos.y = this.holder.transform.pos.y - 2;
+                }
+                else{
+                    this.transform.pos.y = this.holder.transform.pos.y;
+                }
                 this.transform.pos.x = this.holder.transform.pos.x;
-                this.transform.pos.y = this.holder.transform.pos.y;
                 this.in_air.z = 15;
             }
             else if(this.holder.state == state_enum.holding && this.holder.interacting){
@@ -58,7 +72,12 @@ class pot{
         }  
     }
     draw(ctx){
-        this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.in_air.z, 16, 16);
+        if(gameEngine.gravity){
+            this.gravity_animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.in_air.z, 16, 16);
+        }
+        else{
+            this.animator.drawFrame(gameEngine.clockTick,ctx,this.transform.pos.x, this.transform.pos.y-this.in_air.z, 16, 16)
+        }
     }
 
     activate(entity){
