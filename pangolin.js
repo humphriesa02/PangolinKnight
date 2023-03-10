@@ -579,7 +579,12 @@ class Pangolin{
                         this.state = state_enum.holding;
                         let bomb = new Bomb(this);
                         ASSET_MANAGER.playAsset('./sounds/Fuse.mp3');
-                        this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(bomb);
+                        if(this.game.gravity){
+                            this.game.addEntity(bomb);
+                        }
+                        else{
+                            this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(bomb);
+                        }
                         this.held_entity = bomb;
                     }
                 }
@@ -587,7 +592,12 @@ class Pangolin{
                     if(this.inventory.secondary_item.item == item_enum.boomerang){
                         let boomerang = new Boomerang(this);
                         ASSET_MANAGER.playAsset('./sounds/Boomerang.wav');
-                        this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(boomerang);
+                        if(this.game.gravity){
+                            this.game.addEntity(boomerang);
+                        }
+                        else{
+                            this.game.camera.rooms[Math.floor(this.transform.pos.x/roomWidth)][Math.floor(this.transform.pos.y/roomHeight)].addEntity(boomerang);
+                        }
                         this.boomerang_respawn_time = this.game.timer.gameTime + this.boomerang_respawn_delay;
                     }
                     this.state = state_enum.use_item;
