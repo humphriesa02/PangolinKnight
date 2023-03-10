@@ -4,6 +4,7 @@ class room{
         this.position = info.position;
         this.doors = [];
         this.entities = [];
+        this.deads = [];
         this.entity_map = new Map([
             ["player", []],
             ["enemy", []],
@@ -37,6 +38,9 @@ class room{
                         if(this.entities[i].tag != undefined){
                             let index = this.entity_map.get(this.entities[i].tag).indexOf(this.entities[i]);
                             this.entity_map.get(this.entities[i].tag).splice(index, 1);
+                        }
+                        if(!(this.entities[i] instanceof trigger || this.entities[i] instanceof Sword || this.entities[i] instanceof Bomb)){
+                            this.deads.push(this.entities[i]);
                         }
                         this.entities.splice(i, 1);
                     }
@@ -94,6 +98,10 @@ class room{
     }
     reset(){
         this.active = false;
+        for(let i = this.deads.length - 1; i >= 0; --i){
+            this.addEntity(this.deads[i]);
+            this.deads.splice(i,1);
+        }
         for(let i = 0; i < this.entities.length; i++){
             if('reset' in this.entities[i]){
                 this.entities[i].reset();
@@ -141,9 +149,13 @@ class trigger{
         this.boss = info.boss;
     }
     update(){
-        for(let i = 0; i < this.actives.length; i++){
+        for(let i = this.actives.length -1; i >= 0; i--){
             if(this.actives[i].removeFromWorld){
-                this.actives.splice(i, 1);
+                if(this.room.deads.indexOf(this.actives[i]) > -1){
+                    this.room.deads.splice(this.room.deads.indexOf(this.actives[i]),1)
+                    this.actives.splice(i, 1);
+                }
+               
             }
         }
         if(this.activated && this.actives.length == 0){
@@ -193,5 +205,18 @@ class trigger{
             }
             this.activated = true;
         }
+    }
+    reset(){
+        this.activated = false;
+        for(let i = this.actives.length-1; i >= 0; i--){
+            this.actives[i].removeFromWorld = true;
+        }
+        for(let i = 0; i < this.doors.length; i++){
+            this.doors[i].state = 1;
+        }
+        this.room.active = true;
+        this.room.update();
+        this.room.active = false;
+        this.update();
     }
 }
