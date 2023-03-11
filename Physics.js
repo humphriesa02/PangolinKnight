@@ -570,7 +570,7 @@ function prevent_overlap(a, b) {
                 }
 
                 if (gameEngine.gravity && a.grounded !== undefined && 
-                    Math.acos(a.acceleration_vector.dot(test.collisions[0].unit) < 0.25 * Math.PI)) {
+                    Math.acos(a.acceleration_vector.dot(test.collisions[0].unit) < 0.3 * Math.PI)) {
                     if (a.rolling) {
                         a.grounded = true;
                         a.acceleration_vector = test.collisions[0].unit;
@@ -582,7 +582,8 @@ function prevent_overlap(a, b) {
                     bounce(a, normal, a.cr);
                 }
             }
-            
+            a.boosted = true;
+            a.boost = 4.2;
         }
     }
     else {

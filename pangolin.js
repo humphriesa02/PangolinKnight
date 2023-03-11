@@ -42,6 +42,9 @@ class Pangolin{
         this.min_roll_speed_sqr = 0.9;
         this.cr = 0;
 
+        this.boosted = false;
+        this.boost = 1;
+
         // To reset boomerang
         this.boomerang_respawn_delay = 15;
         this.boomerang_respawn_time;
@@ -626,7 +629,7 @@ class Pangolin{
                 this.traction_loss_timer = 0;
             }
 
-            if (this.traction_loss_timer > 0.05 || !this.rolling) {
+            if (this.traction_loss_timer > 0.07 || !this.rolling) {
 
                 if (this.traction_loss_timer > 0.05 ) {
                     let centripetal_component = this.transform.velocity.dot(this.centripetal_vector);
@@ -638,7 +641,7 @@ class Pangolin{
                 this.centripetal_vector = new Vec2(0, 1);
                 this.traction_loss_timer = null;
             }
-            if (this.traction_loss_timer > 0.04) {
+            if (this.traction_loss_timer > 0.05) {
                 this.can_jump = false;
             }
         }
@@ -685,15 +688,15 @@ class Pangolin{
                 } // If theres gravity set acceralation to match input along the acceleration vector
                 else {
                     if (this.game.keys['a']) {
-                        if (sqr_speed < this.max_roll_speed_sqr) {
-                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.roll_acceleration * gameEngine.clockTick);
+                        if (sqr_speed < this.max_roll_speed_sqr || this.boosted) {
+                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.boost * this.roll_acceleration * gameEngine.clockTick);
                             this.transform.velocity.minus(delta_velocity);
                         }
                         this.centripetal_vector = new Vec2(-this.acceleration_vector.y, this.acceleration_vector.x);
                     }
                     if (this.game.keys["d"]) {
-                        if (sqr_speed < this.max_roll_speed_sqr) {
-                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.roll_acceleration * gameEngine.clockTick);
+                        if (sqr_speed < this.max_roll_speed_sqr || this.boosted) {
+                            let delta_velocity = Vec2.scale(this.acceleration_vector, this.boost * this.roll_acceleration * gameEngine.clockTick);
                             this.transform.velocity.add(delta_velocity);
                         }
                         this.centripetal_vector = new Vec2(-this.acceleration_vector.y, this.acceleration_vector.x);
@@ -710,7 +713,7 @@ class Pangolin{
 
 
                 sqr_speed = this.transform.velocity.dot(this.transform.velocity);
-                if (sqr_speed > this.max_roll_speed_sqr && (this.grounded || !gameEngine.gravity)) {
+                if (sqr_speed > this.max_roll_speed_sqr && (this.grounded || !gameEngine.gravity) && !this.boosted) {
                     this.transform.velocity.multiply(this.max_roll_speed_sqr / sqr_speed);
                 }
                 else if (sqr_speed < this.min_roll_speed_sqr) {
@@ -720,6 +723,9 @@ class Pangolin{
                     this.transform.velocity.y = 0;
                 }
             }
+
+            this.boosted = false;
+            this.boost = 1;
             if(this.state != state_enum.slashing){
                 if(Math.abs(this.transform.velocity.x) > Math.abs(this.transform.velocity.y)){
                     if(this.transform.velocity.x > 0){ // Facing right
@@ -738,8 +744,9 @@ class Pangolin{
                     }
                 }
             }
+
+
             // Figure out the direction for animation
-            
             if(this.state != state_enum.jumping && this.state != state_enum.slashing &&
                 this.state != state_enum.holding && this.state != state_enum.use_item &&
                  this.state != state_enum.falling){
@@ -782,7 +789,7 @@ class Pangolin{
             this.transform.velocity.minus(Vec2.scale(this.centripetal_vector, centripetal_component));
             
             // Add 120 to the direction of jumping
-            this.transform.velocity.add(Vec2.scale(this.centripetal_vector, -120));
+            this.transform.velocity.add(Vec2.scale(this.centripetal_vector, -160));
             this.grounded = false;
         }
     }

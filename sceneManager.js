@@ -12,6 +12,7 @@ class sceneManager{
     loadLevel(num){
         ASSET_MANAGER.pauseBackgroundMusic();
         this.player.removeFromWorld = false;
+        this.player.max_roll_speed_sqr = 12000
         this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
         this.num = num;
@@ -166,6 +167,7 @@ class sceneManager{
     loadSideScrollerLevel(num){
         ASSET_MANAGER.pauseBackgroundMusic();
         this.player.removeFromWorld = false;
+        this.player.max_roll_speed_sqr = 20000
         this.hud.removeFromWorld = false;
         this.removeFromWorld = false;
         this.num = num;
@@ -296,6 +298,12 @@ class sceneManager{
             let awall = new wall(this.level.Walls[i])
             gameEngine.addEntity(awall);
         }
+
+        for(let i = 0; i < this.level.stairs.length; i++){
+            let astair = new stair(this.level.stairs[i])
+            gameEngine.addEntity(astair);
+        }
+
         this.hud.removeFromWorld = false;
         gameEngine.hud = this.hud;
         ASSET_MANAGER.playAsset(this.level.soundtrack);
